@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index dd81e2db..f3290ab7 100644
+index b014d5f3..8fe5aceb 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -91,7 +91,7 @@ index dd81e2db..f3290ab7 100644
    std::unordered_set<image_t> constant_cam_poses_;
    std::unordered_map<image_t, std::vector<int>> constant_cam_positions_;
  };
-@@ -212,10 +258,15 @@ class BundleAdjuster {
+@@ -212,9 +258,14 @@ class BundleAdjuster {
    void AddPointToProblem(point3D_t point3D_id,
                           Reconstruction* reconstruction,
                           ceres::LossFunction* loss_function);
@@ -100,7 +100,6 @@ index dd81e2db..f3290ab7 100644
 +                     Reconstruction* reconstruction,
 +                         ceres::LossFunction* loss_function);
  
-  protected:
    void ParameterizeCameras(Reconstruction* reconstruction);
    void ParameterizePoints(Reconstruction* reconstruction);
 +  // void ParameterizeConstrainedPoints(Reconstruction* reconstruction);

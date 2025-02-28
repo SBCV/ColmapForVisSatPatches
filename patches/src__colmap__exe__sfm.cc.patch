@@ -1,5 +1,5 @@
 diff --git a/src/colmap/exe/sfm.cc b/src/colmap/exe/sfm.cc
-index 646a6345..82185fe7 100644
+index e5557734..ff646af8 100644
 --- a/src/colmap/exe/sfm.cc
 +++ b/src/colmap/exe/sfm.cc
 @@ -1,3 +1,35 @@
@@ -49,8 +49,8 @@ index 646a6345..82185fe7 100644
 +
  namespace colmap {
  
- int RunAutomaticReconstructor(int argc, char** argv) {
-@@ -157,11 +194,69 @@ int RunBundleAdjuster(int argc, char** argv) {
+ void UpdateDatabasePosePriorsCovariance(const std::string& database_path,
+@@ -175,11 +212,69 @@ int RunBundleAdjuster(int argc, char** argv) {
    auto reconstruction = std::make_shared<Reconstruction>();
    reconstruction->Read(input_path);
  
@@ -120,7 +120,7 @@ index 646a6345..82185fe7 100644
    return EXIT_SUCCESS;
  }
  
-@@ -450,8 +545,22 @@ void RunPointTriangulatorImpl(
+@@ -606,8 +701,22 @@ void RunPointTriangulatorImpl(
    auto reconstruction_manager = std::make_shared<ReconstructionManager>();
    IncrementalPipeline mapper(
        options_tmp, image_path, database_path, reconstruction_manager);

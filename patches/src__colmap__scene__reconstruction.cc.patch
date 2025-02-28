@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 3b051d3e..5a8d56a0 100644
+index 46e77dcc..49661175 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 3b051d3e..5a8d56a0 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -269,10 +301,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -269,11 +301,20 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -46,11 +46,12 @@ index 3b051d3e..5a8d56a0 100644
 +// void Reconstruction::Normalize(const double extent, const double p0,
 +//                                const double p1, const bool use_images) {
 +// }
- void Reconstruction::Normalize(const double extent,
-                                const double p0,
-                                const double p1,
--                               const bool use_images) {
-+                               const bool use_images,
+ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+                                 const double extent,
+                                 const double p0,
+                                 const double p1,
+-                                const bool use_images) {
++                                const bool use_images,
 +                               Eigen::Vector3d *translation_applied,
 +                               double *scale_applied) {
 +
@@ -59,11 +60,10 @@ index 3b051d3e..5a8d56a0 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -295,6 +336,20 @@ void Reconstruction::Normalize(const double extent,
-   Sim3d tform(
+@@ -297,6 +338,20 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
-+
+ 
 +  // @Sebastian
 +  // bound = bbox_min, bbox_max, mean_coord
 +  const Eigen::Vector3d mean_coord = std::get<2>(bound);
@@ -77,10 +77,11 @@ index 3b051d3e..5a8d56a0 100644
 +    (*translation_applied)(2) = translation(2);
 +    *scale_applied = scale;
 +  }
++
+   return tform;
  }
  
- Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -535,14 +590,41 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -538,14 +593,41 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
@@ -129,7 +130,7 @@ index 3b051d3e..5a8d56a0 100644
      ReadText(path);
    } else {
      LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
-@@ -550,7 +632,9 @@ void Reconstruction::Read(const std::string& path) {
+@@ -553,7 +635,9 @@ void Reconstruction::Read(const std::string& path) {
    }
  }
  
