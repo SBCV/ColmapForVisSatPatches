@@ -1,2 +1,2 @@
-09c22c3c3603dc981d80b6d816fcbdbc4fa9a81a   (2024-12-16 10:03:13 +0100)
-Reorder destructors for better safety in EndReconstruction (#3046)
+d7951aad66572f3b80d6d4ec2b00e4d451eb4fe0   (2024-12-16 15:50:29 +0000)
+Improvements for reconstruction normalization / bbox / centroid (#3047)
