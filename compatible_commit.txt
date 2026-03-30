@@ -1,2 +1,2 @@
-ad19cd17179deb0fa4974370c0f29b7e87336c10   (2024-12-26 07:04:08 +0100)
-Make it possible to build the MVS doc even when CUDA is not installed (#3078)
+81bc9930ae861bb6acc0ea285713ab8dd8351fa1   (2025-01-25 13:23:36 +0000)
+Expose incremental mapper pose prior options in pycolmap (#3123)
