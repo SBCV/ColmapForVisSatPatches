@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index f58bdf17..6d3e9f20 100644
+index 8b5bdb67..2776ce99 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index f58bdf17..6d3e9f20 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -67,8 +99,29 @@ ceres::LossFunction* BundleAdjustmentOptions::CreateLossFunction() const {
+@@ -63,8 +95,29 @@ ceres::LossFunction* BundleAdjustmentOptions::CreateLossFunction() const {
    return loss_function;
  }
  
@@ -68,7 +68,7 @@ index f58bdf17..6d3e9f20 100644
    return true;
  }
  
-@@ -214,6 +267,10 @@ const std::unordered_set<point3D_t>& BundleAdjustmentConfig::ConstantPoints()
+@@ -210,6 +263,10 @@ const std::unordered_set<point3D_t>& BundleAdjustmentConfig::ConstantPoints()
    return constant_point3D_ids_;
  }
  
@@ -79,7 +79,7 @@ index f58bdf17..6d3e9f20 100644
  const std::vector<int>& BundleAdjustmentConfig::ConstantCamPositions(
      const image_t image_id) const {
    return constant_cam_positions_.at(image_id);
-@@ -229,6 +286,11 @@ void BundleAdjustmentConfig::AddConstantPoint(const point3D_t point3D_id) {
+@@ -225,6 +282,11 @@ void BundleAdjustmentConfig::AddConstantPoint(const point3D_t point3D_id) {
    constant_point3D_ids_.insert(point3D_id);
  }
  
@@ -91,7 +91,7 @@ index f58bdf17..6d3e9f20 100644
  bool BundleAdjustmentConfig::HasPoint(const point3D_t point3D_id) const {
    return HasVariablePoint(point3D_id) || HasConstantPoint(point3D_id);
  }
-@@ -243,6 +305,10 @@ bool BundleAdjustmentConfig::HasConstantPoint(
+@@ -239,6 +301,10 @@ bool BundleAdjustmentConfig::HasConstantPoint(
    return constant_point3D_ids_.find(point3D_id) != constant_point3D_ids_.end();
  }
  
@@ -102,7 +102,7 @@ index f58bdf17..6d3e9f20 100644
  void BundleAdjustmentConfig::RemoveVariablePoint(const point3D_t point3D_id) {
    variable_point3D_ids_.erase(point3D_id);
  }
-@@ -251,6 +317,10 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
+@@ -247,6 +313,10 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
    constant_point3D_ids_.erase(point3D_id);
  }
  
@@ -113,7 +113,7 @@ index f58bdf17..6d3e9f20 100644
  ////////////////////////////////////////////////////////////////////////////////
  // BundleAdjuster
  ////////////////////////////////////////////////////////////////////////////////
-@@ -346,6 +416,12 @@ void BundleAdjuster::SetUp(Reconstruction* reconstruction,
+@@ -342,6 +412,12 @@ void BundleAdjuster::SetUp(Reconstruction* reconstruction,
      AddPointToProblem(point3D_id, reconstruction, loss_function);
    }
  
@@ -126,7 +126,7 @@ index f58bdf17..6d3e9f20 100644
    ParameterizeCameras(reconstruction);
    ParameterizePoints(reconstruction);
  }
-@@ -495,6 +571,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
+@@ -491,6 +567,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
    }
  }
  

@@ -1,2 +1,2 @@
-5a6b3a8c33431e7d322f043d4121d08f399f3907   (2023-07-23 14:24:49 +0000)
-Option manager moves to controllers to disentangle circular deps (#2058)
+4afd5d986823fea0b629b958fc2bb3e25695c99f   (2023-07-26 20:30:10 +0200)
+Granular CMake modules and build targets (#2059)
