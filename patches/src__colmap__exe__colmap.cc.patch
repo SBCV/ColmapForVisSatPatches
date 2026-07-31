@@ -1,10 +1,10 @@
 diff --git a/src/colmap/exe/colmap.cc b/src/colmap/exe/colmap.cc
-index cc5995ad..77bec353 100644
+index 3b21d8c4..13686a01 100644
 --- a/src/colmap/exe/colmap.cc
 +++ b/src/colmap/exe/colmap.cc
-@@ -145,6 +145,9 @@ int main(int argc, char** argv) {
-   commands.emplace_back("vocab_tree_matcher", &RunVocabTreeMatcher);
-   commands.emplace_back("vocab_tree_retriever", &RunVocabTreeRetriever);
+@@ -142,6 +142,9 @@ int main(int argc, char** argv) {
+   commands.emplace_back("vocab_tree_matcher", &colmap::RunVocabTreeMatcher);
+   commands.emplace_back("vocab_tree_retriever", &colmap::RunVocabTreeRetriever);
  
 +  // @kai
 +  commands.emplace_back("normalize", &RunNormalize);

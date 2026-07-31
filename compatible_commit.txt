@@ -1,2 +1,2 @@
-3c38248720e62efa8adeef94b156bddf48781a72   (2023-07-02 20:19:33 +0000)
-Move related code under new camera folder (#1996)
+5998ab31a8e90ea0dcae93300b1687eb3a31d396   (2023-07-08 18:43:03 +0000)
+Avoid const params in declarations (#2011)

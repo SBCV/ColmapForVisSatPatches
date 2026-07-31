@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.h b/src/colmap/mvs/image.h
-index 705881c0..0665628d 100644
+index 0e6f97ef..984718c2 100644
 --- a/src/colmap/mvs/image.h
 +++ b/src/colmap/mvs/image.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 705881c0..0665628d 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -44,91 +76,65 @@
+@@ -43,90 +75,64 @@
  namespace colmap {
  namespace mvs {
  
@@ -49,8 +49,8 @@ index 705881c0..0665628d 100644
 -  Image();
 +  // Image();
    Image(const std::string& path,
-         const size_t width,
-         const size_t height,
+         size_t width,
+         size_t height,
 -        const float* K,
 -        const float* R,
 -        const float* T);
@@ -81,9 +81,9 @@ index 705881c0..0665628d 100644
 -  inline const float* GetViewingDirection() const;
 +  const std::string& GetPath() const;
  
-   void Rescale(const float factor);
-   void Rescale(const float factor_x, const float factor_y);
-   void Downsize(const size_t max_width, const size_t max_height);
+   void Rescale(float factor);
+   void Rescale(float factor_x, float factor_y);
+   void Downsize(size_t max_width, size_t max_height);
  
 +    // high-precision output
 +  void GetCDouble(double C[3]) const;
@@ -167,4 +167,3 @@ index 705881c0..0665628d 100644
 -
  }  // namespace mvs
  }  // namespace colmap
- 
