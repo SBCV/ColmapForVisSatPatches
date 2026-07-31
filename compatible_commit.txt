@@ -1,2 +1,2 @@
-8af292cb096b9478703821aa2e84730145b203a1   (2023-07-12 19:22:38 +0300)
-Synthetics for E2E incremental mapper tests (#2025)
+67029ad21205fac3d149e06000c1e20bf4be1b80   (2023-07-20 11:13:00 +0200)
+CamFromWorld replaces qvec/tvec (#2039)

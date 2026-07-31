@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index e237768f..49bdc39f 100644
+index b3837800..07c0a1db 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -42,8 +42,8 @@ index e237768f..49bdc39f 100644
    for (const image_t image_id : reg_image_ids) {
      ba_config.AddImage(image_id);
    }
--  ba_config.SetConstantPose(reg_image_ids[0]);
--  ba_config.SetConstantTvec(reg_image_ids[1], {0});
+-  ba_config.SetConstantCamPose(reg_image_ids[0]);
+-  ba_config.SetConstantCamPositions(reg_image_ids[1], {0});
 +
 +  // check if we should put a constraint on the 3D points
 +  if (ba_options.constrain_points) {
@@ -52,9 +52,9 @@ index e237768f..49bdc39f 100644
 +      ba_config.AddConstrainedPoint(point3D_id);
 +    }
 +  } else {
-+    ba_config.SetConstantPose(reg_image_ids[0]);
++    ba_config.SetConstantCamPose(reg_image_ids[0]);
 +    // @kai commenting out this strange line
-+    ba_config.SetConstantTvec(reg_image_ids[1], {0});
++    ba_config.SetConstantCamPositions(reg_image_ids[1], {0});
 +  }
  
    // Run bundle adjustment.

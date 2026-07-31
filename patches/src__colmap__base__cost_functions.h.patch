@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/cost_functions.h b/src/colmap/base/cost_functions.h
-index fe578a4f..a93d3a35 100644
+index 21851e4b..9b85bb3e 100644
 --- a/src/colmap/base/cost_functions.h
 +++ b/src/colmap/base/cost_functions.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index fe578a4f..a93d3a35 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -327,4 +359,32 @@ inline void SetSphereManifold(ceres::Problem* problem, double* params) {
+@@ -283,4 +315,32 @@ inline void SetSphereManifold(ceres::Problem* problem, double* params) {
  #endif
  }
  
