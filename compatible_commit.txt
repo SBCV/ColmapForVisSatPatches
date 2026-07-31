@@ -1,2 +1,2 @@
-ff91388b16c2ac1e72a9613237fb0e1ee390770d   (2024-10-11 01:29:27 +0200)
-Make Image::cam_from_world_ optional (#2824)
+648856db85ee513cfd93ab3460ace7d071590528   (2024-10-26 09:47:47 +0000)
+Various improvements for pycolmap bindings (#2854)

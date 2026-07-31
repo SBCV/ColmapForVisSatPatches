@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 1662e373..7e5a4428 100644
+index f1417bf8..63238016 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 1662e373..7e5a4428 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -262,11 +294,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -289,11 +321,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
    reg_image_ids_.erase(image_id);
  }
  
@@ -59,7 +59,7 @@ index 1662e373..7e5a4428 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegImages() < 2) ||
-@@ -290,6 +330,20 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+@@ -317,6 +357,20 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
  
@@ -80,11 +80,10 @@ index 1662e373..7e5a4428 100644
    return tform;
  }
  
-@@ -726,4 +780,29 @@ void Reconstruction::CreateImageDirs(const std::string& path) const {
-   }
+@@ -762,4 +816,28 @@ std::ostream& operator<<(std::ostream& stream,
+   return stream;
  }
  
-+
 +
 +// @kai
 +void Reconstruction::UpdateReprojErr() {
