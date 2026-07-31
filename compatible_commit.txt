@@ -1,2 +1,2 @@
-d065cea09317b2c1cbb9fad66376464119a3ee07   (2024-11-17 15:57:25 +0100)
-Modernized bundle adjustment interface (#2896)
+d43f96adffdb0ff3462e3fe100ee59dcabca94bd   (2024-11-18 19:46:57 +0000)
+Custom macro for enum to string support (#2918)

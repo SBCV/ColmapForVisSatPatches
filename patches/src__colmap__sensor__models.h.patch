@@ -1,5 +1,5 @@
 diff --git a/src/colmap/sensor/models.h b/src/colmap/sensor/models.h
-index c8401916..1b5cddad 100644
+index 7fd71ce5..e58461ad 100644
 --- a/src/colmap/sensor/models.h
 +++ b/src/colmap/sensor/models.h
 @@ -1,3 +1,35 @@
@@ -38,15 +38,41 @@ index c8401916..1b5cddad 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -93,6 +125,7 @@ enum class CameraModelId {
-   kRadialFisheye = 9,
-   kThinPrismFisheye = 10,
-   kRadTanThinPrismFisheye = 11,
-+  kPerspective = 12,
- };
+@@ -82,19 +114,20 @@ namespace colmap {
+ 
+ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
+                                 -1,
+-                                kInvalid,                // = -1
+-                                kSimplePinhole,          // = 0
+-                                kPinhole,                // = 1
+-                                kSimpleRadial,           // = 2
+-                                kRadial,                 // = 3
+-                                kOpenCV,                 // = 4
+-                                kOpenCVFisheye,          // = 5
+-                                kFullOpenCV,             // = 6
+-                                kFOV,                    // = 7
+-                                kSimpleRadialFisheye,    // = 8
+-                                kRadialFisheye,          // = 9
+-                                kThinPrismFisheye,       // = 10
+-                                kRadTanThinPrismFisheye  // = 11
++                                kInvalid,                 // = -1
++                                kSimplePinhole,           // = 0
++                                kPinhole,                 // = 1
++                                kSimpleRadial,            // = 2
++                                kRadial,                  // = 3
++                                kOpenCV,                  // = 4
++                                kOpenCVFisheye,           // = 5
++                                kFullOpenCV,              // = 6
++                                kFOV,                     // = 7
++                                kSimpleRadialFisheye,     // = 8
++                                kRadialFisheye,           // = 9
++                                kThinPrismFisheye,        // = 10
++                                kRadTanThinPrismFisheye,  // = 11
++                                kPerspective              // = 12
+ );
  
  #ifndef CAMERA_MODEL_DEFINITIONS
-@@ -151,6 +184,7 @@ enum class CameraModelId {
+@@ -153,6 +186,7 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
    CAMERA_MODEL_CASE(FOVCameraModel)                 \
    CAMERA_MODEL_CASE(ThinPrismFisheyeCameraModel)    \
    CAMERA_MODEL_CASE(RadTanThinPrismFisheyeModel)
@@ -54,7 +80,7 @@ index c8401916..1b5cddad 100644
  #endif
  
  #ifndef CAMERA_MODEL_SWITCH_CASES
-@@ -453,6 +487,14 @@ struct RadTanThinPrismFisheyeModel
+@@ -455,6 +489,14 @@ struct RadTanThinPrismFisheyeModel
    FISHEYE_CAMERA_MODEL_DEFINITIONS
  };
  
@@ -69,7 +95,7 @@ index c8401916..1b5cddad 100644
  // Check whether camera model with given name or identifier exists.
  bool ExistsCameraModelWithName(const std::string& model_name);
  bool ExistsCameraModelWithId(CameraModelId model_id);
-@@ -588,13 +630,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
+@@ -590,13 +632,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
      const T min_focal_length_ratio,
      const T max_focal_length_ratio,
      const T max_extra_param) {
@@ -91,7 +117,7 @@ index c8401916..1b5cddad 100644
  }
  
  template <typename CameraModel>
-@@ -1825,4 +1868,66 @@ bool CameraModelIsFisheye(const CameraModelId model_id) {
+@@ -1827,4 +1870,66 @@ bool CameraModelIsFisheye(const CameraModelId model_id) {
    return false;
  }
  
