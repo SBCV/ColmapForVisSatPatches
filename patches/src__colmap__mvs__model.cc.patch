@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index c9ca08f8..d6c73c8b 100644
+index 19ca6452..4113effd 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -60,7 +60,7 @@ index c9ca08f8..d6c73c8b 100644
 +  // } else if (format_lower_case == "pmvs") {
 +  //   ReadFromPMVS(path);
    } else {
-     LOG(FATAL) << "Invalid input format";
+     LOG(FATAL_THROW) << "Invalid input format";
    }
 @@ -57,6 +95,19 @@ void Model::ReadFromCOLMAP(const std::string& path,
    Reconstruction reconstruction;
@@ -261,8 +261,8 @@ index c9ca08f8..d6c73c8b 100644
 -    float k1, k2;
 +    double k1, k2;
      file >> k1 >> k2;
-     CHECK_EQ(k1, 0.0f);
-     CHECK_EQ(k2, 0.0f);
+     THROW_CHECK_EQ(k1, 0.0f);
+     THROW_CHECK_EQ(k2, 0.0f);
  
 -    float R[9];
 +    double R[9];

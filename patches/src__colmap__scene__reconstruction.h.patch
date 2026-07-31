@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.h b/src/colmap/scene/reconstruction.h
-index 084e3878..21e0980a 100644
+index 88ab889d..6d0a32a7 100644
 --- a/src/colmap/scene/reconstruction.h
 +++ b/src/colmap/scene/reconstruction.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 084e3878..21e0980a 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -175,7 +207,9 @@ class Reconstruction {
+@@ -176,7 +208,9 @@ class Reconstruction {
    void Normalize(double extent = 10.0,
                   double p0 = 0.1,
                   double p1 = 0.9,
@@ -49,7 +49,7 @@ index 084e3878..21e0980a 100644
  
    // Compute the centroid of the 3D points
    Eigen::Vector3d ComputeCentroid(double p0 = 0.1, double p1 = 0.9) const;
-@@ -243,6 +277,10 @@ class Reconstruction {
+@@ -244,6 +278,10 @@ class Reconstruction {
    // Updates mean reprojection errors for all 3D points.
    void UpdatePoint3DErrors();
  

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match.cc b/src/colmap/mvs/patch_match.cc
-index 630fc44b..bcafc7fa 100644
+index 2e2bf81e..b67e609b 100644
 --- a/src/colmap/mvs/patch_match.cc
 +++ b/src/colmap/mvs/patch_match.cc
 @@ -1,3 +1,35 @@
@@ -69,21 +69,21 @@ index 630fc44b..bcafc7fa 100644
 +}
 +
  void PatchMatch::Check() const {
-   CHECK(options_.Check());
+   THROW_CHECK(options_.Check());
  
 @@ -127,13 +178,6 @@ void PatchMatch::Check() const {
-     CHECK_EQ(image.GetWidth(), image.GetBitmap().Width()) << image_idx;
-     CHECK_EQ(image.GetHeight(), image.GetBitmap().Height()) << image_idx;
+     THROW_CHECK_EQ(image.GetWidth(), image.GetBitmap().Width()) << image_idx;
+     THROW_CHECK_EQ(image.GetHeight(), image.GetBitmap().Height()) << image_idx;
  
 -    // Make sure, the calibration matrix only contains fx, fy, cx, cy.
--    CHECK_LT(std::abs(image.GetK()[1] - 0.0f), 1e-6f) << image_idx;
--    CHECK_LT(std::abs(image.GetK()[3] - 0.0f), 1e-6f) << image_idx;
--    CHECK_LT(std::abs(image.GetK()[6] - 0.0f), 1e-6f) << image_idx;
--    CHECK_LT(std::abs(image.GetK()[7] - 0.0f), 1e-6f) << image_idx;
--    CHECK_LT(std::abs(image.GetK()[8] - 1.0f), 1e-6f) << image_idx;
+-    THROW_CHECK_LT(std::abs(image.GetK()[1] - 0.0f), 1e-6f) << image_idx;
+-    THROW_CHECK_LT(std::abs(image.GetK()[3] - 0.0f), 1e-6f) << image_idx;
+-    THROW_CHECK_LT(std::abs(image.GetK()[6] - 0.0f), 1e-6f) << image_idx;
+-    THROW_CHECK_LT(std::abs(image.GetK()[7] - 0.0f), 1e-6f) << image_idx;
+-    THROW_CHECK_LT(std::abs(image.GetK()[8] - 1.0f), 1e-6f) << image_idx;
 -
      if (options_.geom_consistency) {
-       CHECK_LT(image_idx, problem_.depth_maps->size()) << image_idx;
+       THROW_CHECK_LT(image_idx, problem_.depth_maps->size()) << image_idx;
        const DepthMap& depth_map = problem_.depth_maps->at(image_idx);
 @@ -201,7 +245,7 @@ void PatchMatchController::Run() {
  

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 183e1c2f..c2a28d27 100644
+index 476ce83c..d13c2c14 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -48,7 +48,7 @@ index 183e1c2f..c2a28d27 100644
  
  namespace colmap {
  
-@@ -320,10 +355,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -321,10 +356,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -65,10 +65,10 @@ index 183e1c2f..c2a28d27 100644
 +                               double* scale_applied) {
 +  std::cout << "Reconstruction Normalization is called!!!!\n\n";
 +
-   CHECK_GT(extent, 0);
+   THROW_CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -346,6 +389,20 @@ void Reconstruction::Normalize(const double extent,
+@@ -347,6 +390,20 @@ void Reconstruction::Normalize(const double extent,
    Sim3d tform(
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
@@ -89,7 +89,7 @@ index 183e1c2f..c2a28d27 100644
  }
  
  Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -670,21 +727,29 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -671,22 +728,29 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
@@ -116,7 +116,8 @@ index 183e1c2f..c2a28d27 100644
               ExistsFile(JoinPaths(path, "points3D.txt"))) {
      ReadText(path);
 -  } else {
--    LOG(FATAL) << "cameras, images, points3D files do not exist at " << path;
+-    LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
+-                     << path;
    }
  }
  
@@ -127,7 +128,7 @@ index 183e1c2f..c2a28d27 100644
  
  void Reconstruction::ReadText(const std::string& path) {
    ReadCamerasText(JoinPaths(path, "cameras.txt"));
-@@ -1459,6 +1524,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
+@@ -1455,6 +1519,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
    return num_filtered;
  }
  
@@ -159,7 +160,7 @@ index 183e1c2f..c2a28d27 100644
  void Reconstruction::ReadCamerasText(const std::string& path) {
    cameras_.clear();
  
-@@ -1807,6 +1897,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
+@@ -1803,6 +1892,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -169,7 +170,7 @@ index 183e1c2f..c2a28d27 100644
    file << "# Camera list with one line of data per camera:" << std::endl;
    file << "#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]" << std::endl;
    file << "# Number of cameras: " << cameras_.size() << std::endl;
-@@ -1815,6 +1908,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
+@@ -1811,6 +1903,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  
@@ -179,7 +180,7 @@ index 183e1c2f..c2a28d27 100644
      line << camera.first << " ";
      line << camera.second.ModelName() << " ";
      line << camera.second.width << " ";
-@@ -1838,6 +1934,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
+@@ -1834,6 +1929,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -189,7 +190,7 @@ index 183e1c2f..c2a28d27 100644
    file << "# Image list with two lines of data per image:" << std::endl;
    file << "#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, "
            "NAME"
-@@ -1855,6 +1954,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
+@@ -1851,6 +1949,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  
@@ -199,7 +200,7 @@ index 183e1c2f..c2a28d27 100644
      std::string line_string;
  
      line << image.first << " ";
-@@ -1899,6 +2001,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
+@@ -1895,6 +1996,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -209,7 +210,7 @@ index 183e1c2f..c2a28d27 100644
    file << "# 3D point list with one line of data per point:" << std::endl;
    file << "#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, "
            "TRACK[] as (IMAGE_ID, POINT2D_IDX)"
-@@ -1919,6 +2024,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
+@@ -1915,6 +2019,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  
