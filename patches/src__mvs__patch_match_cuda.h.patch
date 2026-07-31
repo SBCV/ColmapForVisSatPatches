@@ -1,5 +1,5 @@
 diff --git a/src/mvs/patch_match_cuda.h b/src/mvs/patch_match_cuda.h
-index adbecdbd..a371d479 100644
+index 9e85e9b3..1ef27210 100644
 --- a/src/mvs/patch_match_cuda.h
 +++ b/src/mvs/patch_match_cuda.h
 @@ -1,3 +1,35 @@
@@ -38,9 +38,9 @@ index adbecdbd..a371d479 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -100,26 +132,36 @@ class PatchMatchCuda {
-   std::unique_ptr<CudaArrayWrapper<uint8_t>> src_images_device_;
-   std::unique_ptr<CudaArrayWrapper<float>> src_depth_maps_device_;
+@@ -101,26 +133,36 @@ class PatchMatchCuda {
+   std::unique_ptr<CudaArrayLayeredTexture<uint8_t>> src_images_texture_;
+   std::unique_ptr<CudaArrayLayeredTexture<float>> src_depth_maps_texture_;
  
 -  // Relative poses from rotated versions of reference image to source images
 -  // corresponding to _rotationInHalfPi:
@@ -58,7 +58,7 @@ index adbecdbd..a371d479 100644
 -  // R, T, C, P, P^-1 denote the relative rotation, translation, camera
 -  // center, projection, and inverse projection from there reference to the
 -  // i-th source image.
--  std::unique_ptr<CudaArrayWrapper<float>> poses_device_[4];
+-  std::unique_ptr<CudaArrayLayeredTexture<float>> poses_texture_[4];
 -
 -  // Calibration matrix for rotated versions of reference image
 -  // as {K[0, 0], K[0, 2], K[1, 1], K[1, 2]} corresponding to _rotationInHalfPi.
@@ -66,7 +66,7 @@ index adbecdbd..a371d479 100644
 -  float ref_inv_K_host_[4][4];
 +  // where i denotes the index of the source image; P, P^-1 denote its 4 by 4 projection, and inverse projection matrices;
 +  // C is its camera center
-+  std::unique_ptr<CudaArrayWrapper<float>> poses_device_;
++  std::unique_ptr<CudaArrayLayeredTexture<float>> poses_texture_;
 +
 +  // as {K[0, 0], K[0, 1], K[0, 2], K[1, 0], K[1, 1], K[1, 2]} corresponding to _rotationInHalfPi.
 +  float ref_K_host_[4][6];

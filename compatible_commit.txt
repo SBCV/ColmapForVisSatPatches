@@ -1,2 +1,2 @@
-95b72de2083115697c6c7207513c2d79feaabb4c   (2023-02-04 15:12:31 +0000)
-Increment version number to 3.9 (#1794)
+64916f856259d8386df96bc95e0eb28cd5fca86e   (2023-03-01 20:54:52 +0000)
+[WIP] Replace deprecated cuda texture references with texture objects (#1809)
