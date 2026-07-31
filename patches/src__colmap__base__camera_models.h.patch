@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/camera_models.h b/src/colmap/base/camera_models.h
-index d1f56cd8..fa22e2fb 100644
+index 49cecce0..d73c23ec 100644
 --- a/src/colmap/base/camera_models.h
 +++ b/src/colmap/base/camera_models.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index d1f56cd8..fa22e2fb 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -126,7 +158,8 @@ static const int kInvalidCameraModelId = -1;
+@@ -125,7 +157,8 @@ static const int kInvalidCameraModelId = -1;
    CAMERA_MODEL_CASE(OpenCVFisheyeCameraModel)       \
    CAMERA_MODEL_CASE(FullOpenCVCameraModel)          \
    CAMERA_MODEL_CASE(FOVCameraModel)                 \
@@ -63,36 +63,44 @@ index d1f56cd8..fa22e2fb 100644
  // Check whether camera model with given name or identifier exists.
  bool ExistsCameraModelWithName(const std::string& model_name);
  bool ExistsCameraModelWithId(const int model_id);
-@@ -474,18 +515,18 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
-     const std::vector<T>& params, const size_t width, const size_t height,
-     const T min_focal_length_ratio, const T max_focal_length_ratio,
+@@ -483,21 +524,21 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
+     const T min_focal_length_ratio,
+     const T max_focal_length_ratio,
      const T max_extra_param) {
 -  if (HasBogusPrincipalPoint(params, width, height)) {
+-    return true;
+-  }
+-
+-  if (HasBogusFocalLength(params,
+-                          width,
+-                          height,
+-                          min_focal_length_ratio,
+-                          max_focal_length_ratio)) {
+-    return true;
+-  }
+-
+-  if (HasBogusExtraParams(params, max_extra_param)) {
 -    return true;
 -  }
 +  // if (HasBogusPrincipalPoint(params, width, height)) {
 +  //   return true;
 +  // }
- 
--  if (HasBogusFocalLength(params, width, height, min_focal_length_ratio,
--                          max_focal_length_ratio)) {
--    return true;
--  }
-+  // if (HasBogusFocalLength(params, width, height, min_focal_length_ratio,
++
++  // if (HasBogusFocalLength(params,
++  //                         width,
++  //                         height,
++  //                         min_focal_length_ratio,
 +  //                         max_focal_length_ratio)) {
 +  //   return true;
 +  // }
- 
--  if (HasBogusExtraParams(params, max_extra_param)) {
--    return true;
--  }
++
 +  // if (HasBogusExtraParams(params, max_extra_param)) {
 +  //   return true;
 +  // }
  
    return false;
  }
-@@ -1479,6 +1520,84 @@ void ThinPrismFisheyeCameraModel::Distortion(const T* extra_params, const T u,
+@@ -1494,6 +1535,84 @@ void ThinPrismFisheyeCameraModel::Distortion(
    *dv = v * radial + T(2) * p2 * uv + p1 * (r2 + T(2) * v2) + sy1 * r2;
  }
  

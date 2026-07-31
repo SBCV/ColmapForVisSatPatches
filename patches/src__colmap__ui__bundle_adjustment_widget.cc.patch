@@ -1,13 +1,13 @@
 diff --git a/src/colmap/ui/bundle_adjustment_widget.cc b/src/colmap/ui/bundle_adjustment_widget.cc
-index c4505c2d..55c7a2ff 100644
+index 5d30d9e5..f09b112e 100644
 --- a/src/colmap/ui/bundle_adjustment_widget.cc
 +++ b/src/colmap/ui/bundle_adjustment_widget.cc
-@@ -98,7 +98,7 @@ void BundleAdjustmentWidget::Run() {
+@@ -107,7 +107,7 @@ void BundleAdjustmentWidget::Run() {
  
    // Normalize scene for numerical stability and
    // to avoid large scale changes in viewer.
 -  reconstruction_->Normalize();
 +  // reconstruction_->Normalize();
  
-   thread_control_widget_->StartThread("Bundle adjusting...", true,
-                                       std::move(thread));
+   thread_control_widget_->StartThread(
+       "Bundle adjusting...", true, std::move(thread));

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/reconstruction.cc b/src/colmap/base/reconstruction.cc
-index dd2a4faa..d23c4c56 100644
+index f6cad5bb..b34ffd29 100644
 --- a/src/colmap/base/reconstruction.cc
 +++ b/src/colmap/base/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,24 +38,17 @@ index dd2a4faa..d23c4c56 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -32,6 +64,7 @@
- #include "colmap/base/reconstruction.h"
+@@ -41,6 +73,9 @@
+ #include "colmap/util/ply.h"
  
  #include <fstream>
 +#include <iomanip>
- 
- #include "colmap/base/database_cache.h"
- #include "colmap/base/gps.h"
-@@ -42,6 +75,8 @@
- #include "colmap/util/misc.h"
- #include "colmap/util/ply.h"
- 
-+#define PRECISION 17
 +
++#define PRECISION 17
+ 
  namespace colmap {
  
- Reconstruction::Reconstruction()
-@@ -318,8 +353,15 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -319,10 +354,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -63,18 +56,21 @@ index dd2a4faa..d23c4c56 100644
 +// void Reconstruction::Normalize(const double extent, const double p0,
 +//                                const double p1, const bool use_images) {
 +// }
- void Reconstruction::Normalize(const double extent, const double p0,
--                               const double p1, const bool use_images) {
-+                               const double p1, const bool use_images, Eigen::Vector3d *translation_applied, double *scale_applied) {
-+
+ void Reconstruction::Normalize(const double extent,
+                                const double p0,
+                                const double p1,
+-                               const bool use_images) {
++                               const bool use_images,
++                               Eigen::Vector3d* translation_applied,
++                               double* scale_applied) {
 +  std::cout << "Reconstruction Normalization is called!!!!\n\n";
 +
    CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -342,6 +384,20 @@ void Reconstruction::Normalize(const double extent, const double p0,
-   SimilarityTransform3 tform(scale, ComposeIdentityQuaternion(),
-                              -scale * std::get<2>(bound));
+@@ -345,6 +388,20 @@ void Reconstruction::Normalize(const double extent,
+   SimilarityTransform3 tform(
+       scale, ComposeIdentityQuaternion(), -scale * std::get<2>(bound));
    Transform(tform);
 +
 +  // @Sebastian
@@ -93,7 +89,7 @@ index dd2a4faa..d23c4c56 100644
  }
  
  Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -730,21 +786,29 @@ double Reconstruction::ComputeMeanReprojectionError() const {
+@@ -741,21 +798,29 @@ double Reconstruction::ComputeMeanReprojectionError() const {
    }
  }
  
@@ -131,7 +127,7 @@ index dd2a4faa..d23c4c56 100644
  
  void Reconstruction::ReadText(const std::string& path) {
    ReadCamerasText(JoinPaths(path, "cameras.txt"));
-@@ -1522,6 +1586,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
+@@ -1536,6 +1601,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
    return num_filtered;
  }
  
@@ -163,7 +159,7 @@ index dd2a4faa..d23c4c56 100644
  void Reconstruction::ReadCamerasText(const std::string& path) {
    cameras_.clear();
  
-@@ -1868,6 +1957,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
+@@ -1882,6 +1972,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -173,7 +169,7 @@ index dd2a4faa..d23c4c56 100644
    file << "# Camera list with one line of data per camera:" << std::endl;
    file << "#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]" << std::endl;
    file << "# Number of cameras: " << cameras_.size() << std::endl;
-@@ -1876,6 +1968,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
+@@ -1890,6 +1983,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  
@@ -183,7 +179,7 @@ index dd2a4faa..d23c4c56 100644
      line << camera.first << " ";
      line << camera.second.ModelName() << " ";
      line << camera.second.Width() << " ";
-@@ -1899,6 +1994,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
+@@ -1913,6 +2009,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -193,7 +189,7 @@ index dd2a4faa..d23c4c56 100644
    file << "# Image list with two lines of data per image:" << std::endl;
    file << "#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, "
            "NAME"
-@@ -1916,6 +2014,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
+@@ -1930,6 +2029,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  
@@ -203,7 +199,7 @@ index dd2a4faa..d23c4c56 100644
      std::string line_string;
  
      line << image.first << " ";
-@@ -1964,6 +2065,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
+@@ -1978,6 +2080,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
    // Ensure that we don't loose any precision by storing in text.
    file.precision(17);
  
@@ -213,7 +209,7 @@ index dd2a4faa..d23c4c56 100644
    file << "# 3D point list with one line of data per point:" << std::endl;
    file << "#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, "
            "TRACK[] as (IMAGE_ID, POINT2D_IDX)"
-@@ -1984,6 +2088,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
+@@ -1998,6 +2103,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
      std::ostringstream line;
      line.precision(17);
  

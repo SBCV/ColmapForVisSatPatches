@@ -1,2 +1,2 @@
-3947f67243e4924683e14481b4dbb44593950c52   (2023-06-05 11:10:34 +0000)
-Prefix internal sources/includes with colmap (#1949)
+079b8adb45524caab881b912dc1d28a69df5ae10   (2023-06-05 12:05:46 +0000)
+Simplify clang-format config and sort includes (#1950)

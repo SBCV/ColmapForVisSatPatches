@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/reconstruction.h b/src/colmap/base/reconstruction.h
-index 92fbf00b..44719957 100644
+index d665afdc..f45886e8 100644
 --- a/src/colmap/base/reconstruction.h
 +++ b/src/colmap/base/reconstruction.h
 @@ -1,3 +1,35 @@
@@ -38,16 +38,18 @@ index 92fbf00b..44719957 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -178,7 +210,7 @@ class Reconstruction {
-   // given `extent`, whereas `p0` and `p1` determine the minimum and
-   // maximum percentiles of the camera centers considered.
-   void Normalize(const double extent = 10.0, const double p0 = 0.1,
--                 const double p1 = 0.9, const bool use_images = true);
-+                 const double p1 = 0.9, const bool use_images = true, Eigen::Vector3d* translation_applied=NULL, double *scale_applied=NULL);
+@@ -181,7 +213,9 @@ class Reconstruction {
+   void Normalize(const double extent = 10.0,
+                  const double p0 = 0.1,
+                  const double p1 = 0.9,
+-                 const bool use_images = true);
++                 const bool use_images = true,
++                 Eigen::Vector3d* translation_applied = NULL,
++                 double* scale_applied = NULL);
  
    // Compute the centroid of the 3D points
    Eigen::Vector3d ComputeCentroid(const double p0 = 0.1,
-@@ -269,6 +301,10 @@ class Reconstruction {
+@@ -272,6 +306,10 @@ class Reconstruction {
    double ComputeMeanObservationsPerRegImage() const;
    double ComputeMeanReprojectionError() const;
  
