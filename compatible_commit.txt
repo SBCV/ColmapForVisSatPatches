@@ -1,2 +1,2 @@
-d7951aad66572f3b80d6d4ec2b00e4d451eb4fe0   (2024-12-16 15:50:29 +0000)
-Improvements for reconstruction normalization / bbox / centroid (#3047)
+ad19cd17179deb0fa4974370c0f29b7e87336c10   (2024-12-26 07:04:08 +0100)
+Make it possible to build the MVS doc even when CUDA is not installed (#3078)

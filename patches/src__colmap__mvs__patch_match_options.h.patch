@@ -1,0 +1,14 @@
+diff --git a/src/colmap/mvs/patch_match_options.h b/src/colmap/mvs/patch_match_options.h
+index 546262c4..30c0b6a5 100644
+--- a/src/colmap/mvs/patch_match_options.h
++++ b/src/colmap/mvs/patch_match_options.h
+@@ -79,6 +79,9 @@ struct PatchMatchOptions {
+   // Whether to add a regularized geometric consistency term to the cost
+   // function. If true, the `depth_maps` and `normal_maps` must not be null.
+   bool geom_consistency = true;
++  bool use_exist_photom = false;
++  // whether to overwrite existing reconstruction
++  bool overwrite = false;
+ 
+   // The relative weight of the geometric consistency term w.r.t. to
+   // the photo-consistency term.
