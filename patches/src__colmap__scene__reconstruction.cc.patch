@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 476ce83c..d13c2c14 100644
+index 925d6aac..bbaa70c9 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,17 +38,7 @@ index 476ce83c..d13c2c14 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -39,6 +71,9 @@
- #include "colmap/util/ply.h"
- 
- #include <fstream>
-+#include <iomanip>
-+
-+#define PRECISION 17
- 
- namespace colmap {
- 
-@@ -321,10 +356,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -327,10 +359,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -68,7 +58,7 @@ index 476ce83c..d13c2c14 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -347,6 +390,20 @@ void Reconstruction::Normalize(const double extent,
+@@ -353,6 +393,20 @@ void Reconstruction::Normalize(const double extent,
    Sim3d tform(
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
@@ -89,46 +79,7 @@ index 476ce83c..d13c2c14 100644
  }
  
  Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -671,22 +728,29 @@ void Reconstruction::UpdatePoint3DErrors() {
-   }
- }
- 
-+// @kai never use the binary format that is not very intuitive
- void Reconstruction::Read(const std::string& path) {
--  if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
--      ExistsFile(JoinPaths(path, "images.bin")) &&
--      ExistsFile(JoinPaths(path, "points3D.bin"))) {
--    ReadBinary(path);
--  } else if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
-+  // if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "images.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "points3D.bin"))) {
-+  //   ReadBinary(path);
-+  // } else if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
-+  //            ExistsFile(JoinPaths(path, "images.txt")) &&
-+  //            ExistsFile(JoinPaths(path, "points3D.txt"))) {
-+  //   ReadText(path);
-+  // } else {
-+  //   LOG(FATAL) << "cameras, images, points3D files do not exist at " << path;
-+  // }
-+  if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
-              ExistsFile(JoinPaths(path, "images.txt")) &&
-              ExistsFile(JoinPaths(path, "points3D.txt"))) {
-     ReadText(path);
--  } else {
--    LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
--                     << path;
-   }
- }
- 
--void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
-+// @kai
-+void Reconstruction::Write(const std::string& path) const { WriteText(path); }
-+// void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
- 
- void Reconstruction::ReadText(const std::string& path) {
-   ReadCamerasText(JoinPaths(path, "cameras.txt"));
-@@ -1455,6 +1519,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
+@@ -983,6 +1037,31 @@ size_t Reconstruction::FilterPoints3DWithLargeReprojectionError(
    return num_filtered;
  }
  
@@ -157,66 +108,6 @@ index 476ce83c..d13c2c14 100644
 +}
 +
 +
- void Reconstruction::ReadCamerasText(const std::string& path) {
-   cameras_.clear();
- 
-@@ -1803,6 +1892,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
-   // Ensure that we don't loose any precision by storing in text.
-   file.precision(17);
- 
-+  // set fulll precision
-+  file << std::setprecision(PRECISION);
-+
-   file << "# Camera list with one line of data per camera:" << std::endl;
-   file << "#   CAMERA_ID, MODEL, WIDTH, HEIGHT, PARAMS[]" << std::endl;
-   file << "# Number of cameras: " << cameras_.size() << std::endl;
-@@ -1811,6 +1903,9 @@ void Reconstruction::WriteCamerasText(const std::string& path) const {
-     std::ostringstream line;
-     line.precision(17);
- 
-+    // set fulll precision
-+    file << std::setprecision(PRECISION);
-+
-     line << camera.first << " ";
-     line << camera.second.ModelName() << " ";
-     line << camera.second.width << " ";
-@@ -1834,6 +1929,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
-   // Ensure that we don't loose any precision by storing in text.
-   file.precision(17);
- 
-+  // set fulll precision
-+  file << std::setprecision(PRECISION);
-+
-   file << "# Image list with two lines of data per image:" << std::endl;
-   file << "#   IMAGE_ID, QW, QX, QY, QZ, TX, TY, TZ, CAMERA_ID, "
-           "NAME"
-@@ -1851,6 +1949,9 @@ void Reconstruction::WriteImagesText(const std::string& path) const {
-     std::ostringstream line;
-     line.precision(17);
- 
-+    // set fulll precision
-+    line << std::setprecision(PRECISION);
-+
-     std::string line_string;
- 
-     line << image.first << " ";
-@@ -1895,6 +1996,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
-   // Ensure that we don't loose any precision by storing in text.
-   file.precision(17);
- 
-+  // set fulll precision
-+  file << std::setprecision(PRECISION);
-+
-   file << "# 3D point list with one line of data per point:" << std::endl;
-   file << "#   POINT3D_ID, X, Y, Z, R, G, B, ERROR, "
-           "TRACK[] as (IMAGE_ID, POINT2D_IDX)"
-@@ -1915,6 +2019,9 @@ void Reconstruction::WritePoints3DText(const std::string& path) const {
-     std::ostringstream line;
-     line.precision(17);
- 
-+    // set fulll precision
-+    line << std::setprecision(PRECISION);
-+
-     for (const auto& track_el : point3D.second.track.Elements()) {
-       line << track_el.image_id << " ";
-       line << track_el.point2D_idx << " ";
+ void Reconstruction::SetObservationAsTriangulated(
+     const image_t image_id,
+     const point2D_t point2D_idx,
