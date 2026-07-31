@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/depth_map.h b/src/colmap/mvs/depth_map.h
-index 91de7d87..61c4d2a0 100644
+index 92399b29..8327bd81 100644
 --- a/src/colmap/mvs/depth_map.h
 +++ b/src/colmap/mvs/depth_map.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 91de7d87..61c4d2a0 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -57,8 +89,8 @@ class DepthMap : public Mat<float> {
+@@ -55,8 +87,8 @@ class DepthMap : public Mat<float> {
    Bitmap ToBitmap(float min_percentile, float max_percentile) const;
  
   private:

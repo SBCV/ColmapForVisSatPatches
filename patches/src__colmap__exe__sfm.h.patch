@@ -1,8 +1,8 @@
 diff --git a/src/colmap/exe/sfm.h b/src/colmap/exe/sfm.h
-index 56329055..914b5763 100644
+index 8c32e58c..ff12b2ae 100644
 --- a/src/colmap/exe/sfm.h
 +++ b/src/colmap/exe/sfm.h
-@@ -46,6 +46,8 @@ int RunPointTriangulatorImpl(
+@@ -45,6 +45,8 @@ int RunPointTriangulatorImpl(
  
  int RunAutomaticReconstructor(int argc, char** argv);
  int RunBundleAdjuster(int argc, char** argv);

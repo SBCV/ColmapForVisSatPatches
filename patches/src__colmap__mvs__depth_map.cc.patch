@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/depth_map.cc b/src/colmap/mvs/depth_map.cc
-index 21c7617f..aac713f4 100644
+index 282fd9e3..7432c9ba 100644
 --- a/src/colmap/mvs/depth_map.cc
 +++ b/src/colmap/mvs/depth_map.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 21c7617f..aac713f4 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -37,7 +69,10 @@
+@@ -35,7 +67,10 @@
  namespace colmap {
  namespace mvs {
  
@@ -50,7 +50,7 @@ index 21c7617f..aac713f4 100644
  
  DepthMap::DepthMap(const size_t width,
                     const size_t height,
-@@ -45,7 +80,10 @@ DepthMap::DepthMap(const size_t width,
+@@ -43,7 +78,10 @@ DepthMap::DepthMap(const size_t width,
                     const float depth_max)
      : Mat<float>(width, height, 1),
        depth_min_(depth_min),

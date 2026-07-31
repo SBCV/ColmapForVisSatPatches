@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.h b/src/colmap/mvs/image.h
-index 0e6f97ef..984718c2 100644
+index 17d1db5c..2838006a 100644
 --- a/src/colmap/mvs/image.h
 +++ b/src/colmap/mvs/image.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 0e6f97ef..984718c2 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -43,90 +75,64 @@
+@@ -41,90 +73,64 @@
  namespace colmap {
  namespace mvs {
  

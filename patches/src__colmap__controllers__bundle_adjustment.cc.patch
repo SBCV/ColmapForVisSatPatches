@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index b3837800..07c0a1db 100644
+index 1494f6b7..c635edd0 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index b3837800..07c0a1db 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -93,13 +125,27 @@ void BundleAdjustmentController::Run() {
+@@ -90,13 +122,27 @@ void BundleAdjustmentController::Run() {
    for (const image_t image_id : reg_image_ids) {
      ba_config.AddImage(image_id);
    }

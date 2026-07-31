@@ -1,8 +1,8 @@
 diff --git a/src/colmap/mvs/model.h b/src/colmap/mvs/model.h
-index 79529ed0..3e8bdb67 100644
+index 5f5b463d..a4067e28 100644
 --- a/src/colmap/mvs/model.h
 +++ b/src/colmap/mvs/model.h
-@@ -49,9 +49,9 @@ namespace mvs {
+@@ -47,9 +47,9 @@ namespace mvs {
  // Simple sparse model class.
  struct Model {
    struct Point {
@@ -15,7 +15,7 @@ index 79529ed0..3e8bdb67 100644
      std::vector<int> track;
    };
  
-@@ -76,8 +76,9 @@ struct Model {
+@@ -74,8 +74,9 @@ struct Model {
    const std::vector<std::vector<int>>& GetMaxOverlappingImagesFromPMVS() const;
  
    // Compute the robust minimum and maximum depths from the sparse point cloud.
@@ -27,7 +27,7 @@ index 79529ed0..3e8bdb67 100644
    // Compute the number of shared points between all overlapping images.
    std::vector<std::map<int, int>> ComputeSharedPoints() const;
  
-@@ -101,6 +102,7 @@ struct Model {
+@@ -99,6 +100,7 @@ struct Model {
    std::unordered_map<std::string, int> image_name_to_idx_;
  
    std::vector<std::vector<int>> pmvs_vis_dat_;
