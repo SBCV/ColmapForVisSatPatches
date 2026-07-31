@@ -1,2 +1,2 @@
-bf3e19140f491c3042bfd85b7192ef7d249808ec   (2023-01-08 17:18:50 +0000)
-Update copyright to 2023 (#1750)
+95b72de2083115697c6c7207513c2d79feaabb4c   (2023-02-04 15:12:31 +0000)
+Increment version number to 3.9 (#1794)

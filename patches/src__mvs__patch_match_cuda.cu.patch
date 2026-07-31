@@ -1,5 +1,5 @@
 diff --git a/src/mvs/patch_match_cuda.cu b/src/mvs/patch_match_cuda.cu
-index 1d5027a8..c3d5b16a 100644
+index 845fffa9..c66dc352 100644
 --- a/src/mvs/patch_match_cuda.cu
 +++ b/src/mvs/patch_match_cuda.cu
 @@ -1,3 +1,35 @@
@@ -702,7 +702,7 @@ index 1d5027a8..c3d5b16a 100644
      // Compute area of patches in reference and source image.
      const float ref_area = kWindowSize * kWindowSize;
 @@ -761,7 +939,6 @@ class LikelihoodComputer {
-   float ncc_norm_factor_;
+   const float ncc_norm_factor_;
  };
  
 -// Rotate normals by 90deg around z-axis in counter-clockwise direction.
