@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index f9143df5..ce565924 100644
+index 055d3e9e..aade211e 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -38,10 +38,11 @@ index f9143df5..ce565924 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -470,6 +502,15 @@ void OptionManager::AddBundleAdjustmentOptions() {
-                               &bundle_adjustment->refine_extra_params);
-   AddAndRegisterDefaultOption("BundleAdjustment.refine_extrinsics",
-                               &bundle_adjustment->refine_extrinsics);
+@@ -483,6 +515,16 @@ void OptionManager::AddBundleAdjustmentOptions() {
+   AddAndRegisterDefaultOption(
+       "BundleAdjustment.max_num_images_direct_sparse_solver",
+       &bundle_adjustment->max_num_images_direct_sparse_solver);
++
 +  // constrain points options
 +  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points",
 +                              &bundle_adjustment->constrain_points);
@@ -54,7 +55,7 @@ index f9143df5..ce565924 100644
  }
  
  void OptionManager::AddMapperOptions() {
-@@ -649,6 +690,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
+@@ -664,6 +706,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
                                &patch_match_stereo->allow_missing_files);
    AddAndRegisterDefaultOption("PatchMatchStereo.write_consistency_graph",
                                &patch_match_stereo->write_consistency_graph);

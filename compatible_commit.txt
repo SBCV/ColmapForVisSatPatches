@@ -1,2 +1,2 @@
-03556bb2cc941b58c3a4c244e5549e06c2f8117a   (2024-07-28 09:47:38 +0200)
-Add cost function for 3D alignment (with covariance) (#2621)
+d2ee055251ab2c8be369693452624eb77a47abef   (2024-08-19 10:01:16 +0200)
+Add support for CUDA sparse BA solver (#2717)
