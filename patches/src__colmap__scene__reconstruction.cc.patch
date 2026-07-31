@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 5641002b..e7637e62 100644
+index 5641002b..c05a33d3 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 5641002b..e7637e62 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -290,11 +322,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -290,11 +322,17 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
    reg_image_ids_.erase(image_id);
  }
  
@@ -54,32 +54,57 @@ index 5641002b..e7637e62 100644
 +                                const bool use_images,
 +                                Eigen::Vector3d* translation_applied,
 +                                double* scale_applied) {
-+  std::cout << "Reconstruction Normalization is called!!!!\n\n";
-+
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegImages() < 2) ||
-@@ -318,6 +358,19 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+@@ -318,6 +356,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
    Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
-+  // @Sebastian
-+  const Eigen::Vector3d mean_coord = centroid;
-+  const Eigen::Vector3d translation = mean_coord;
-+
-+  // save result
++  // Preserve the pre-upstream-patch normalization outputs used by VisSat.
 +  if (translation_applied && scale_applied) {
-+    //std::cout << "writing the result ...";
-+    (*translation_applied)(0) = translation(0);
-+    (*translation_applied)(1) = translation(1);
-+    (*translation_applied)(2) = translation(2);
++    *translation_applied = centroid;
 +    *scale_applied = scale;
 +  }
 +
    return tform;
  }
  
-@@ -738,4 +791,28 @@ std::ostream& operator<<(std::ostream& stream,
+@@ -538,14 +582,16 @@ void Reconstruction::UpdatePoint3DErrors() {
+   }
+ }
+ 
++// @kai never use the binary format that is not very intuitive
+ void Reconstruction::Read(const std::string& path) {
+-  if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
+-      ExistsFile(JoinPaths(path, "images.bin")) &&
+-      ExistsFile(JoinPaths(path, "points3D.bin"))) {
+-    ReadBinary(path);
+-  } else if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
+-             ExistsFile(JoinPaths(path, "images.txt")) &&
+-             ExistsFile(JoinPaths(path, "points3D.txt"))) {
++  // if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
++  //     ExistsFile(JoinPaths(path, "images.bin")) &&
++  //     ExistsFile(JoinPaths(path, "points3D.bin"))) {
++  //   ReadBinary(path);
++  // } else if (...) {
++  if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
++      ExistsFile(JoinPaths(path, "images.txt")) &&
++      ExistsFile(JoinPaths(path, "points3D.txt"))) {
+     ReadText(path);
+   } else {
+     LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
+@@ -553,7 +599,8 @@ void Reconstruction::Read(const std::string& path) {
+   }
+ }
+ 
+-void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
++void Reconstruction::Write(const std::string& path) const { WriteText(path); }
++// void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
+ 
+ void Reconstruction::ReadText(const std::string& path) {
+   cameras_.clear();
+@@ -738,4 +785,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  
