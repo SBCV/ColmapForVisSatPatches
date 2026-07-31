@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/camera.cc b/src/colmap/scene/camera.cc
-index 925377a9..7840a338 100644
+index 480e216c..76b5f502 100644
 --- a/src/colmap/scene/camera.cc
 +++ b/src/colmap/scene/camera.cc
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index 925377a9..7840a338 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -80,6 +112,12 @@ Eigen::Matrix3d Camera::CalibrationMatrix() const {

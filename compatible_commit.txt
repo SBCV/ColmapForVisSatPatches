@@ -1,2 +1,2 @@
-ad19cd17179deb0fa4974370c0f29b7e87336c10   (2024-12-26 07:04:08 +0100)
-Make it possible to build the MVS doc even when CUDA is not installed (#3078)
+d45dacc621163427fcc60f65b486332518964bde   (2025-01-25 16:34:43 +0000)
+Remove year from copyright (#3124)

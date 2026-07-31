@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index d358d93d..065c19ae 100644
+index d6d1865e..89f68d51 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index d358d93d..065c19ae 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -91,15 +123,29 @@ void BundleAdjustmentController::Run() {
