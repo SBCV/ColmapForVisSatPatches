@@ -1,5 +1,5 @@
 diff --git a/src/mvs/fusion.cc b/src/mvs/fusion.cc
-index 962947a..f2f8a58 100755
+index 7b3b94a5..74b94dca 100644
 --- a/src/mvs/fusion.cc
 +++ b/src/mvs/fusion.cc
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index 962947a..f2f8a58 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -151,10 +183,10 @@ void StereoFusion::Run() {

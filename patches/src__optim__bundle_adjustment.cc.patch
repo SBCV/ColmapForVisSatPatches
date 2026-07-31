@@ -1,5 +1,5 @@
 diff --git a/src/optim/bundle_adjustment.cc b/src/optim/bundle_adjustment.cc
-index 67390ec..212c901 100755
+index ace19142..0a9b192c 100644
 --- a/src/optim/bundle_adjustment.cc
 +++ b/src/optim/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index 67390ec..212c901 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -67,8 +99,29 @@ ceres::LossFunction* BundleAdjustmentOptions::CreateLossFunction() const {
@@ -126,7 +126,7 @@ index 67390ec..212c901 100755
    ParameterizeCameras(reconstruction);
    ParameterizePoints(reconstruction);
  }
-@@ -481,6 +557,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
+@@ -477,6 +553,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
    }
  }
  

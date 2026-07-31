@@ -1,5 +1,5 @@
 diff --git a/src/base/cost_functions.h b/src/base/cost_functions.h
-index 3be1e12d..37b23e75 100755
+index e7d0a5d3..c043e010 100644
 --- a/src/base/cost_functions.h
 +++ b/src/base/cost_functions.h
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index 3be1e12d..37b23e75 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -296,6 +328,34 @@ inline void SetSphereManifold(ceres::Problem* problem, double* params) {

@@ -1,5 +1,5 @@
 diff --git a/src/base/camera.cc b/src/base/camera.cc
-index b8b130e..571e11e 100755
+index 22c6901f..4888ce45 100644
 --- a/src/base/camera.cc
 +++ b/src/base/camera.cc
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index b8b130e..571e11e 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -90,6 +122,12 @@ Eigen::Matrix3d Camera::CalibrationMatrix() const {

@@ -1,5 +1,5 @@
 diff --git a/src/mvs/depth_map.h b/src/mvs/depth_map.h
-index b669ffc..73a3cc2 100755
+index fc5b0201..595accd7 100644
 --- a/src/mvs/depth_map.h
 +++ b/src/mvs/depth_map.h
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index b669ffc..73a3cc2 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -59,8 +91,8 @@ class DepthMap : public Mat<float> {

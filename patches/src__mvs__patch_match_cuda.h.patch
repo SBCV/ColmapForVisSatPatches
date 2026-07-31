@@ -1,5 +1,5 @@
 diff --git a/src/mvs/patch_match_cuda.h b/src/mvs/patch_match_cuda.h
-index 36a62ae..92d3f04 100755
+index adbecdbd..a371d479 100644
 --- a/src/mvs/patch_match_cuda.h
 +++ b/src/mvs/patch_match_cuda.h
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index 36a62ae..92d3f04 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -100,26 +132,36 @@ class PatchMatchCuda {

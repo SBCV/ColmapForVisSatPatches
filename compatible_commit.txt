@@ -1,2 +1,2 @@
-fdc225d96101d663fb1638bc1fc8829c03eda2e0   (2022-12-26 15:38:01 +0000)
-Modernize smart pointer initialization, fix alloc/dealloc mismatch (#1737)
+bf3e19140f491c3042bfd85b7192ef7d249808ec   (2023-01-08 17:18:50 +0000)
+Update copyright to 2023 (#1750)

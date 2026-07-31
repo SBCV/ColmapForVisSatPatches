@@ -1,10 +1,10 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4759a94..f225469 100755
+index 79bcc3b3..52f5ea72 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -33,6 +33,11 @@ cmake_minimum_required(VERSION 3.0)
+@@ -33,6 +33,11 @@ cmake_minimum_required(VERSION 3.1)
  
- project(COLMAP)
+ project(COLMAP LANGUAGES C CXX)
  
 +### added by Kai
 +set(CMAKE_CXX_STANDARD 14)

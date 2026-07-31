@@ -1,13 +1,13 @@
 diff --git a/src/ui/bundle_adjustment_widget.cc b/src/ui/bundle_adjustment_widget.cc
-index 70c0a08..5ea58aa 100644
+index d23e36c0..e86a5cbb 100644
 --- a/src/ui/bundle_adjustment_widget.cc
 +++ b/src/ui/bundle_adjustment_widget.cc
-@@ -97,7 +97,7 @@ void BundleAdjustmentWidget::Run() {
+@@ -98,7 +98,7 @@ void BundleAdjustmentWidget::Run() {
  
    // Normalize scene for numerical stability and
    // to avoid large scale changes in viewer.
 -  reconstruction_->Normalize();
 +  // reconstruction_->Normalize();
  
-   thread_control_widget_->StartThread("Bundle adjusting...", true, thread);
- }
+   thread_control_widget_->StartThread("Bundle adjusting...", true,
+                                       std::move(thread));

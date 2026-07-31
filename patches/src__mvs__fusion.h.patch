@@ -1,5 +1,5 @@
 diff --git a/src/mvs/fusion.h b/src/mvs/fusion.h
-index c65ad30..e633ffb 100755
+index 1203bea3..85c281e8 100644
 --- a/src/mvs/fusion.h
 +++ b/src/mvs/fusion.h
 @@ -1,3 +1,35 @@
@@ -35,7 +35,7 @@ index c65ad30..e633ffb 100755
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
+ // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
 @@ -141,9 +173,11 @@ class StereoFusion : public Thread {
