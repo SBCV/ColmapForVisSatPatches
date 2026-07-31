@@ -1,2 +1,2 @@
-d43f96adffdb0ff3462e3fe100ee59dcabca94bd   (2024-11-18 19:46:57 +0000)
-Custom macro for enum to string support (#2918)
+d7951aad66572f3b80d6d4ec2b00e4d451eb4fe0   (2024-12-16 15:50:29 +0000)
+Improvements for reconstruction normalization / bbox / centroid (#3047)

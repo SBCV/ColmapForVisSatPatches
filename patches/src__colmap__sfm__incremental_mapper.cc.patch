@@ -1,5 +1,5 @@
 diff --git a/src/colmap/sfm/incremental_mapper.cc b/src/colmap/sfm/incremental_mapper.cc
-index 1349f8fe..52e71edd 100644
+index 2a7fa626..787aab08 100644
 --- a/src/colmap/sfm/incremental_mapper.cc
 +++ b/src/colmap/sfm/incremental_mapper.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 1349f8fe..52e71edd 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -81,7 +113,8 @@ bool IncrementalMapper::Options::Check() const {
+@@ -46,7 +78,8 @@ bool IncrementalMapper::Options::Check() const {
    CHECK_OPTION_GT(init_min_num_inliers, 0);
    CHECK_OPTION_GT(init_max_error, 0.0);
    CHECK_OPTION_GE(init_max_forward_motion, 0.0);

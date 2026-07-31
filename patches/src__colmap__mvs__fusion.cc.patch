@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/fusion.cc b/src/colmap/mvs/fusion.cc
-index c37ebd3d..27dd9db1 100644
+index cb26bf0f..86eb3046 100644
 --- a/src/colmap/mvs/fusion.cc
 +++ b/src/colmap/mvs/fusion.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index c37ebd3d..27dd9db1 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -157,10 +189,10 @@ void StereoFusion::Run() {
+@@ -143,10 +175,10 @@ void StereoFusion::Run() {
  
    auto workspace_format_lower_case = workspace_format_;
    StringToLower(&workspace_format_lower_case);
@@ -53,7 +53,7 @@ index c37ebd3d..27dd9db1 100644
  
    workspace_options.num_threads = options_.num_threads;
    workspace_options.max_image_size = options_.max_image_size;
-@@ -191,12 +223,12 @@ void StereoFusion::Run() {
+@@ -177,12 +209,12 @@ void StereoFusion::Run() {
    const auto& model = workspace_->GetModel();
  
    const double kMinTriangulationAngle = 0;
@@ -70,7 +70,7 @@ index c37ebd3d..27dd9db1 100644
  
    task_fused_points_.resize(num_threads);
    task_fused_points_visibility_.resize(num_threads);
-@@ -208,7 +240,7 @@ void StereoFusion::Run() {
+@@ -194,7 +226,7 @@ void StereoFusion::Run() {
    bitmap_scales_.resize(model.images.size());
    P_.resize(model.images.size());
    inv_P_.resize(model.images.size());
@@ -79,7 +79,7 @@ index c37ebd3d..27dd9db1 100644
  
    for (const auto& image_name : image_names) {
      const int image_idx = model.GetImageIdx(image_name);
-@@ -236,22 +268,39 @@ void StereoFusion::Run() {
+@@ -222,22 +254,39 @@ void StereoFusion::Run() {
          static_cast<float>(depth_map.GetWidth()) / image.GetWidth(),
          static_cast<float>(depth_map.GetHeight()) / image.GetHeight());
  
@@ -135,7 +135,7 @@ index c37ebd3d..27dd9db1 100644
    }
  
    LOG(INFO) << StringPrintf("Starting fusion with %d threads", num_threads);
-@@ -416,7 +465,7 @@ void StereoFusion::Fuse(const int thread_id,
+@@ -402,7 +451,7 @@ void StereoFusion::Fuse(const int thread_id,
      const float depth = depth_map.Get(row, col);
  
      // Pixels with negative depth are filtered.
@@ -144,7 +144,7 @@ index c37ebd3d..27dd9db1 100644
        continue;
      }
  
-@@ -424,14 +473,35 @@ void StereoFusion::Fuse(const int thread_id,
+@@ -410,14 +459,35 @@ void StereoFusion::Fuse(const int thread_id,
      // pixel has already been added and we need to check for consistency.
      if (traversal_depth > 0) {
        // Project reference point into current view.
@@ -185,7 +185,7 @@ index c37ebd3d..27dd9db1 100644
        // Reprojection error reference point in the current view.
        const float col_diff = proj(0) / proj(2) - col;
        const float row_diff = proj(1) / proj(2) - row;
-@@ -443,11 +513,15 @@ void StereoFusion::Fuse(const int thread_id,
+@@ -429,11 +499,15 @@ void StereoFusion::Fuse(const int thread_id,
      }
  
      // Determine normal direction in global reference frame.
@@ -205,7 +205,7 @@ index c37ebd3d..27dd9db1 100644
  
      // Check for consistent normal direction with reference normal.
      if (traversal_depth > 0) {
-@@ -458,9 +532,13 @@ void StereoFusion::Fuse(const int thread_id,
+@@ -444,9 +518,13 @@ void StereoFusion::Fuse(const int thread_id,
      }
  
      // Determine 3D location of current depth value.
@@ -221,7 +221,7 @@ index c37ebd3d..27dd9db1 100644
  
      // Read the color of the pixel.
      BitmapColor<uint8_t> color;
-@@ -513,7 +591,7 @@ void StereoFusion::Fuse(const int thread_id,
+@@ -499,7 +577,7 @@ void StereoFusion::Fuse(const int thread_id,
          continue;
        }
  

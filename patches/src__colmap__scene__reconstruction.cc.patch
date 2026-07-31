@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index f1417bf8..63238016 100644
+index 9f12b567..d3da3d0e 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index f1417bf8..63238016 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -289,11 +321,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -290,11 +322,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
    reg_image_ids_.erase(image_id);
  }
  
@@ -48,8 +48,8 @@ index f1417bf8..63238016 100644
 +// }
  Sim3d Reconstruction::Normalize(const bool fixed_scale,
                                  const double extent,
-                                 const double p0,
-                                 const double p1,
+                                 const double min_percentile,
+                                 const double max_percentile,
 -                                const bool use_images) {
 +                                const bool use_images,
 +                                Eigen::Vector3d* translation_applied,
@@ -59,13 +59,12 @@ index f1417bf8..63238016 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegImages() < 2) ||
-@@ -317,6 +357,20 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
-       scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
+@@ -318,6 +358,19 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+   Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
 +  // @Sebastian
-+  // bound = bbox_min, bbox_max, mean_coord
-+  const Eigen::Vector3d mean_coord = std::get<2>(bound);
++  const Eigen::Vector3d mean_coord = centroid;
 +  const Eigen::Vector3d translation = mean_coord;
 +
 +  // save result
@@ -80,7 +79,7 @@ index f1417bf8..63238016 100644
    return tform;
  }
  
-@@ -762,4 +816,28 @@ std::ostream& operator<<(std::ostream& stream,
+@@ -738,4 +791,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  
