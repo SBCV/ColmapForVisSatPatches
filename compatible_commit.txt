@@ -1,2 +1,2 @@
-bd6a9b939542464cb476c3f7983aad92fb8eae36   (2022-11-02 15:28:53 +0000)
-Update freeimage links. (#1675)
+fdc225d96101d663fb1638bc1fc8829c03eda2e0   (2022-12-26 15:38:01 +0000)
+Modernize smart pointer initialization, fix alloc/dealloc mismatch (#1737)

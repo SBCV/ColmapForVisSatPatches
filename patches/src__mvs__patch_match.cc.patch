@@ -1,5 +1,5 @@
 diff --git a/src/mvs/patch_match.cc b/src/mvs/patch_match.cc
-index 11769d3..cd0af92 100644
+index edbfa409..a9bfb104 100644
 --- a/src/mvs/patch_match.cc
 +++ b/src/mvs/patch_match.cc
 @@ -1,3 +1,35 @@
@@ -38,16 +38,15 @@ index 11769d3..cd0af92 100644
  // Copyright (c) 2022, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -33,6 +65,8 @@
+@@ -33,6 +65,7 @@
  
  #include <numeric>
  #include <unordered_set>
 +#include <sstream>
-+#include <fstream>
  
  #include "mvs/consistency_graph.h"
  #include "mvs/patch_match_cuda.h"
-@@ -93,6 +127,24 @@ void PatchMatch::Problem::Print() const {
+@@ -93,6 +126,24 @@ void PatchMatch::Problem::Print() const {
    }
  }
  
@@ -72,7 +71,7 @@ index 11769d3..cd0af92 100644
  void PatchMatch::Check() const {
    CHECK(options_.Check());
  
-@@ -130,13 +182,6 @@ void PatchMatch::Check() const {
+@@ -130,13 +181,6 @@ void PatchMatch::Check() const {
      CHECK_EQ(image.GetWidth(), image.GetBitmap().Width()) << image_idx;
      CHECK_EQ(image.GetHeight(), image.GetBitmap().Height()) << image_idx;
  
@@ -86,12 +85,7 @@ index 11769d3..cd0af92 100644
      if (options_.geom_consistency) {
        CHECK_LT(image_idx, problem_.depth_maps->size()) << image_idx;
        const DepthMap& depth_map = problem_.depth_maps->at(image_idx);
-@@ -199,11 +244,12 @@ void PatchMatchController::Run() {
-   ReadProblems();
-   ReadGpuIndices();
- 
-+  // new thread pool
-   thread_pool_.reset(new ThreadPool(gpu_indices_.size()));
+@@ -203,7 +247,7 @@ void PatchMatchController::Run() {
  
    // If geometric consistency is enabled, then photometric output must be
    // computed first for all images without filtering.
@@ -100,7 +94,7 @@ index 11769d3..cd0af92 100644
      auto photometric_options = options_;
      photometric_options.geom_consistency = false;
      photometric_options.filter = false;
-@@ -222,6 +268,9 @@ void PatchMatchController::Run() {
+@@ -222,6 +266,9 @@ void PatchMatchController::Run() {
                            problem_idx);
    }
  
@@ -110,7 +104,7 @@ index 11769d3..cd0af92 100644
    thread_pool_->Wait();
  
    GetTimer().PrintMinutes();
-@@ -234,10 +283,6 @@ void PatchMatchController::ReadWorkspace() {
+@@ -234,10 +281,6 @@ void PatchMatchController::ReadWorkspace() {
  
    auto workspace_format_lower_case = workspace_format_;
    StringToLower(&workspace_format_lower_case);
@@ -121,9 +115,9 @@ index 11769d3..cd0af92 100644
  
    workspace_options.max_image_size = options_.max_image_size;
    workspace_options.image_as_rgb = false;
-@@ -248,14 +293,7 @@ void PatchMatchController::ReadWorkspace() {
+@@ -248,14 +291,7 @@ void PatchMatchController::ReadWorkspace() {
  
-   workspace_.reset(new CachedWorkspace(workspace_options));
+   workspace_ = std::make_unique<CachedWorkspace>(workspace_options);
  
 -  if (workspace_format_lower_case == "pmvs") {
 -    std::cout << StringPrintf("Importing PMVS workspace (option %s)...",
@@ -137,7 +131,7 @@ index 11769d3..cd0af92 100644
  }
  
  void PatchMatchController::ReadProblems() {
-@@ -287,6 +325,7 @@ void PatchMatchController::ReadProblems() {
+@@ -287,6 +323,7 @@ void PatchMatchController::ReadProblems() {
    };
    std::vector<ProblemConfig> problem_configs;
  
@@ -145,7 +139,7 @@ index 11769d3..cd0af92 100644
    for (size_t i = 0; i < config.size(); ++i) {
      std::string& config_line = config[i];
      StringTrim(&config_line);
-@@ -310,6 +349,7 @@ void PatchMatchController::ReadProblems() {
+@@ -310,6 +347,7 @@ void PatchMatchController::ReadProblems() {
      ref_image_name.clear();
    }
  
@@ -153,7 +147,7 @@ index 11769d3..cd0af92 100644
    for (const auto& problem_config : problem_configs) {
      PatchMatch::Problem problem;
  
-@@ -373,7 +413,7 @@ void PatchMatchController::ReadProblems() {
+@@ -373,7 +411,7 @@ void PatchMatchController::ReadProblems() {
        for (size_t i = 0; i < eff_max_num_src_images; ++i) {
          problem.src_image_idxs.push_back(src_images[i].first);
        }
@@ -162,7 +156,7 @@ index 11769d3..cd0af92 100644
        problem.src_image_idxs.reserve(problem_config.src_image_names.size());
        for (const auto& src_image_name : problem_config.src_image_names) {
          problem.src_image_idxs.push_back(model.GetImageIdx(src_image_name));
-@@ -392,6 +432,13 @@ void PatchMatchController::ReadProblems() {
+@@ -392,6 +430,13 @@ void PatchMatchController::ReadProblems() {
      }
    }
  
@@ -176,7 +170,7 @@ index 11769d3..cd0af92 100644
    std::cout << StringPrintf("Configuration has %d problems...",
                              problems_.size())
              << std::endl;
-@@ -432,9 +479,10 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
+@@ -432,9 +477,10 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
    const std::string consistency_graph_path = JoinPaths(
        workspace_path_, stereo_folder, "consistency_graphs", file_name);
  
@@ -188,7 +182,7 @@ index 11769d3..cd0af92 100644
      return;
    }
  
-@@ -443,7 +491,7 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
+@@ -443,7 +489,7 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
  
    auto patch_match_options = options;
  
