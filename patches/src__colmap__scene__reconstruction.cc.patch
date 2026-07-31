@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 3b051d3e..c18f3be8 100644
+index 46e77dcc..66c64252 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 3b051d3e..c18f3be8 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -269,10 +301,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -269,11 +301,19 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -46,23 +46,23 @@ index 3b051d3e..c18f3be8 100644
 +// void Reconstruction::Normalize(const double extent, const double p0,
 +//                                const double p1, const bool use_images) {
 +// }
- void Reconstruction::Normalize(const double extent,
-                                const double p0,
-                                const double p1,
--                               const bool use_images) {
-+                               const bool use_images,
-+                               Eigen::Vector3d* translation_applied,
-+                               double* scale_applied) {
+ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+                                 const double extent,
+                                 const double p0,
+                                 const double p1,
+-                                const bool use_images) {
++                                const bool use_images,
++                                Eigen::Vector3d* translation_applied,
++                                double* scale_applied) {
 +  std::cout << "Reconstruction Normalization is called!!!!\n\n";
 +
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -295,6 +335,20 @@ void Reconstruction::Normalize(const double extent,
-   Sim3d tform(
+@@ -297,6 +337,20 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
-+
+ 
 +  // @Sebastian
 +  // bound = bbox_min, bbox_max, mean_coord
 +  const Eigen::Vector3d mean_coord = std::get<2>(bound);
@@ -76,10 +76,11 @@ index 3b051d3e..c18f3be8 100644
 +    (*translation_applied)(2) = translation(2);
 +    *scale_applied = scale;
 +  }
++
+   return tform;
  }
  
- Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -726,4 +780,29 @@ void Reconstruction::CreateImageDirs(const std::string& path) const {
+@@ -729,4 +783,29 @@ void Reconstruction::CreateImageDirs(const std::string& path) const {
    }
  }
  

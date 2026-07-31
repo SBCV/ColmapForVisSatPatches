@@ -1,2 +1,2 @@
-45dfce7f89407b1a1aafd7b8cbe4d4c8010fd806   (2024-09-23 19:41:30 +0200)
-Implementation of Aria Fisheye camera model (#2786)
+17f9e6644183d714f22966d776d292943b482769   (2024-09-25 10:36:56 +0000)
+Pose Prior based Incremental Mapper (#2660)
