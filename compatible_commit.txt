@@ -1,2 +1,2 @@
-0fb46f4d5304168131f4d8e5bdf9efc6a62ffd50   (2023-12-02 12:12:23 +0000)
-Turn Point3D into simple data struct (#2285)
+c0355417328f3706a30a9265fd52bc7a5aa4cb8c   (2023-12-03 10:45:46 +0100)
+Camera becomes simple data struct (#2286)

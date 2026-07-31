@@ -1,5 +1,5 @@
 diff --git a/src/colmap/sensor/models.h b/src/colmap/sensor/models.h
-index 0dfd1aaa..520fc521 100644
+index 43dc8163..9193592a 100644
 --- a/src/colmap/sensor/models.h
 +++ b/src/colmap/sensor/models.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,15 @@ index 0dfd1aaa..520fc521 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -129,7 +161,8 @@ static const int kInvalidCameraModelId = -1;
+@@ -90,6 +122,7 @@ enum class CameraModelId {
+   kSimpleRadialFisheye = 8,
+   kRadialFisheye = 9,
+   kThinPrismFisheye = 10,
++  kPerspective = 11,
+ };
+ 
+ #ifndef CAMERA_MODEL_DEFINITIONS
+@@ -142,7 +175,8 @@ enum class CameraModelId {
    CAMERA_MODEL_CASE(OpenCVFisheyeCameraModel)       \
    CAMERA_MODEL_CASE(FullOpenCVCameraModel)          \
    CAMERA_MODEL_CASE(FOVCameraModel)                 \
@@ -48,8 +56,8 @@ index 0dfd1aaa..520fc521 100644
  #endif
  
  #ifndef CAMERA_MODEL_SWITCH_CASES
-@@ -352,6 +385,14 @@ struct ThinPrismFisheyeCameraModel
-   CAMERA_MODEL_DEFINITIONS(10, "THIN_PRISM_FISHEYE", 2, 2, 8)
+@@ -371,6 +405,14 @@ struct ThinPrismFisheyeCameraModel
+       CameraModelId::kThinPrismFisheye, "THIN_PRISM_FISHEYE", 2, 2, 8)
  };
  
 +// full perspective camera with skew parameter
@@ -57,13 +65,13 @@ index 0dfd1aaa..520fc521 100644
 +// fx, fy, cx, cy, s
 +struct PerspectiveCameraModel
 +  : public BaseCameraModel<PerspectiveCameraModel> {
-+  CAMERA_MODEL_DEFINITIONS(11, "PERSPECTIVE", 5)
++  CAMERA_MODEL_DEFINITIONS(CameraModelId::kPerspective, "PERSPECTIVE", 2, 2, 1)
 +};
 +
  // Check whether camera model with given name or identifier exists.
  bool ExistsCameraModelWithName(const std::string& model_name);
- bool ExistsCameraModelWithId(int model_id);
-@@ -479,13 +520,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
+ bool ExistsCameraModelWithId(CameraModelId model_id);
+@@ -499,13 +541,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
      const T min_focal_length_ratio,
      const T max_focal_length_ratio,
      const T max_extra_param) {
@@ -85,7 +93,7 @@ index 0dfd1aaa..520fc521 100644
  }
  
  template <typename CameraModel>
-@@ -1516,6 +1558,84 @@ void ThinPrismFisheyeCameraModel::Distortion(
+@@ -1536,6 +1579,85 @@ void ThinPrismFisheyeCameraModel::Distortion(
    *dv = v * radial + T(2) * p2 * uv + p1 * (r2 + T(2) * v2) + sy1 * r2;
  }
  
@@ -96,15 +104,15 @@ index 0dfd1aaa..520fc521 100644
 +  return "fx, fy, cx, cy, s";
 +}
 +
-+std::vector<size_t> PerspectiveCameraModel::InitializeFocalLengthIdxs() {
++std::array<size_t, 2> PerspectiveCameraModel::InitializeFocalLengthIdxs() {
 +  return {0, 1};
 +}
 +
-+std::vector<size_t> PerspectiveCameraModel::InitializePrincipalPointIdxs() {
++std::array<size_t, 2> PerspectiveCameraModel::InitializePrincipalPointIdxs() {
 +  return {2, 3};
 +}
 +
-+std::vector<size_t> PerspectiveCameraModel::InitializeExtraParamsIdxs() {
++std::array<size_t, 1> PerspectiveCameraModel::InitializeExtraParamsIdxs() {
 +  return {4};
 +}
 +
@@ -118,8 +126,8 @@ index 0dfd1aaa..520fc521 100644
 +}
 +
 +template <typename T>
-+void PerspectiveCameraModel::WorldToImage(const T* params, const T u, const T v,
-+                                         T* x, T* y) {
++void PerspectiveCameraModel::ImgFromCam(
++    const T* params, T u, T v, T w, T* x, T* y) {
 +  const T f1 = params[0];
 +  const T f2 = params[1];
 +  const T c1 = params[2];
@@ -129,13 +137,13 @@ index 0dfd1aaa..520fc521 100644
 +  // No Distortion
 +
 +  // Transform to image coordinates
-+  *x = f1 * u + s * v + c1;   // skew effect is added here
-+  *y = f2 * v + c2;
++  *x = f1 * u / w + s * v / w + c1;  // skew effect is added here
++  *y = f2 * v / w + c2;
 +}
 +
 +template <typename T>
-+void PerspectiveCameraModel::ImageToWorld(const T* params, const T x, const T y,
-+                                     T* u, T* v) {
++void PerspectiveCameraModel::CamFromImg(
++    const T* params, const T x, const T y, T* u, T* v, T* w) {
 +  const T f1 = params[0];
 +  const T f2 = params[1];
 +  const T c1 = params[2];
@@ -145,6 +153,7 @@ index 0dfd1aaa..520fc521 100644
 +  // Lift points to normalized plane
 +  *v = (y - c2) / f2;
 +  *u = (x - c1 - s * *v) / f1;  // skew effect is added here
++  *w = 1;
 +
 +  // IterativeUndistortion(&params[5], u, v);
 +}
@@ -169,4 +178,4 @@ index 0dfd1aaa..520fc521 100644
 +
  ////////////////////////////////////////////////////////////////////////////////
  
- Eigen::Vector2d CameraModelImgFromCam(const int model_id,
+ Eigen::Vector2d CameraModelImgFromCam(const CameraModelId model_id,

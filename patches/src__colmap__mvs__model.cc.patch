@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index 03ebb58a..f409b7df 100644
+index c9ca08f8..d6c73c8b 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -82,12 +82,12 @@ index 03ebb58a..f409b7df 100644
    images.reserve(reconstruction.NumRegImages());
    std::unordered_map<image_t, size_t> image_id_to_idx;
    for (size_t i = 0; i < reconstruction.NumRegImages(); ++i) {
-@@ -64,12 +115,15 @@ void Model::ReadFromCOLMAP(const std::string& path,
+@@ -64,20 +115,51 @@ void Model::ReadFromCOLMAP(const std::string& path,
      const auto& image = reconstruction.Image(image_id);
      const auto& camera = reconstruction.Camera(image.CameraId());
  
-+    CHECK(camera.ModelId() == PinholeCameraModel::model_id ||
-+     camera.ModelId() == PerspectiveCameraModel::model_id);
++    CHECK(camera.model_id == PinholeCameraModel::model_id ||
++          camera.model_id == PerspectiveCameraModel::model_id);
 +
 +    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> K = camera.CalibrationMatrix();
 +    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> R =
@@ -101,12 +101,8 @@ index 03ebb58a..f409b7df 100644
 -        image.CamFromWorld().rotation.toRotationMatrix().cast<float>();
 -    const Eigen::Vector3f T = image.CamFromWorld().translation.cast<float>();
  
-     images.emplace_back(image_path,
-                         camera.Width(),
-@@ -77,11 +131,39 @@ void Model::ReadFromCOLMAP(const std::string& path,
-                         K.data(),
-                         R.data(),
-                         T.data());
+     images.emplace_back(
+         image_path, camera.width, camera.height, K.data(), R.data(), T.data());
 +
 +    // set last row
 +    // check whether the image exists in last_rows
@@ -143,7 +139,7 @@ index 03ebb58a..f409b7df 100644
    points.reserve(reconstruction.NumPoints3D());
    for (const auto& point3D : reconstruction.Points3D()) {
      Point point;
-@@ -94,6 +176,44 @@ void Model::ReadFromCOLMAP(const std::string& path,
+@@ -90,6 +172,44 @@ void Model::ReadFromCOLMAP(const std::string& path,
      }
      points.push_back(point);
    }
@@ -188,7 +184,7 @@ index 03ebb58a..f409b7df 100644
  }
  
  void Model::ReadFromPMVS(const std::string& path) {
-@@ -174,47 +294,6 @@ const std::vector<std::vector<int>>& Model::GetMaxOverlappingImagesFromPMVS()
+@@ -170,47 +290,6 @@ const std::vector<std::vector<int>>& Model::GetMaxOverlappingImagesFromPMVS()
    return pmvs_vis_dat_;
  }
  
@@ -236,7 +232,7 @@ index 03ebb58a..f409b7df 100644
  
  std::vector<std::map<int, int>> Model::ComputeSharedPoints() const {
    std::vector<std::map<int, int>> shared_points(images.size());
-@@ -238,9 +317,9 @@ std::vector<std::map<int, float>> Model::ComputeTriangulationAngles(
+@@ -234,9 +313,9 @@ std::vector<std::map<int, float>> Model::ComputeTriangulationAngles(
    std::vector<Eigen::Vector3d> proj_centers(images.size());
    for (size_t image_idx = 0; image_idx < images.size(); ++image_idx) {
      const auto& image = images[image_idx];
@@ -249,7 +245,7 @@ index 03ebb58a..f409b7df 100644
    }
  
    std::vector<std::map<int, std::vector<float>>> all_triangulation_angles(
-@@ -297,7 +376,7 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
+@@ -293,7 +372,7 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
      const std::string image_name = StringPrintf("%08d.jpg", image_idx);
      const std::string image_path = JoinPaths(path, "visualize", image_name);
  
@@ -258,7 +254,7 @@ index 03ebb58a..f409b7df 100644
      file >> K[0];
      K[4] = K[0];
  
-@@ -306,12 +385,12 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
+@@ -302,12 +381,12 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
      K[2] = bitmap.Width() / 2.0f;
      K[5] = bitmap.Height() / 2.0f;
  
@@ -273,7 +269,7 @@ index 03ebb58a..f409b7df 100644
      for (size_t i = 0; i < 9; ++i) {
        file >> R[i];
      }
-@@ -319,7 +398,7 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
+@@ -315,7 +394,7 @@ bool Model::ReadFromBundlerPMVS(const std::string& path) {
        R[i] = -R[i];
      }
  
@@ -282,7 +278,7 @@ index 03ebb58a..f409b7df 100644
      file >> T[0] >> T[1] >> T[2];
      T[1] = -T[1];
      T[2] = -T[2];
-@@ -397,9 +476,9 @@ bool Model::ReadFromRawPMVS(const std::string& path) {
+@@ -393,9 +472,9 @@ bool Model::ReadFromRawPMVS(const std::string& path) {
      K(2, 1) = 0.0f;
      K(2, 2) = 1.0f;
  
