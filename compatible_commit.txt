@@ -1,2 +1,2 @@
-74e21c4d703d53e0799ac419063364636c917e7c   (2024-02-06 16:50:56 +0100)
-Disentangle the controller from threading and integrate the new logic into IncrementalMapperController (#2392)
+7730f30e90dd17c38af50433c6f1777ce18675c1   (2024-02-21 09:04:36 +0100)
+Perfrom triangulation in the IncrementalMapperController (#2429)
