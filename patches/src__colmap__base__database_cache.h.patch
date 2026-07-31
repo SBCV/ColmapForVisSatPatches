@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/database_cache.h b/src/colmap/base/database_cache.h
-index f5ff7a62..2cec88f8 100644
+index 6003790a..52229acc 100644
 --- a/src/colmap/base/database_cache.h
 +++ b/src/colmap/base/database_cache.h
 @@ -1,3 +1,35 @@
@@ -39,7 +39,7 @@ index f5ff7a62..2cec88f8 100644
  // All rights reserved.
  //
 @@ -39,6 +71,7 @@
- #include "colmap/base/image.h"
+ #include "colmap/camera/models.h"
  #include "colmap/util/types.h"
  
 +#include <sstream>

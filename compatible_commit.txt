@@ -1,2 +1,2 @@
-079b8adb45524caab881b912dc1d28a69df5ae10   (2023-06-05 12:05:46 +0000)
-Simplify clang-format config and sort includes (#1950)
+3c38248720e62efa8adeef94b156bddf48781a72   (2023-07-02 20:19:33 +0000)
+Move related code under new camera folder (#1996)
