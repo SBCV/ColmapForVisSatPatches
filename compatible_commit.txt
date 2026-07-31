@@ -1,2 +1,2 @@
-0a1ae653d1b0378f0e0de53942967c637b1f9213   (2024-06-26 17:30:55 +0200)
-Covariance estimation for bundle adjustment with Schur elimination (#2610)
+03556bb2cc941b58c3a4c244e5549e06c2f8117a   (2024-07-28 09:47:38 +0200)
+Add cost function for 3D alignment (with covariance) (#2621)
