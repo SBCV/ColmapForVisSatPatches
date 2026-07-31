@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 3b267d61..ccbcd4ea 100644
+index 3b051d3e..c18f3be8 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 3b267d61..ccbcd4ea 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -261,10 +293,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -269,10 +301,18 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
        reg_image_ids_.end());
  }
  
@@ -58,7 +58,7 @@ index 3b267d61..ccbcd4ea 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && reg_image_ids_.size() < 2) ||
-@@ -287,6 +327,20 @@ void Reconstruction::Normalize(const double extent,
+@@ -295,6 +335,20 @@ void Reconstruction::Normalize(const double extent,
    Sim3d tform(
        scale, Eigen::Quaterniond::Identity(), -scale * std::get<2>(bound));
    Transform(tform);
@@ -79,7 +79,7 @@ index 3b267d61..ccbcd4ea 100644
  }
  
  Eigen::Vector3d Reconstruction::ComputeCentroid(const double p0,
-@@ -717,4 +771,29 @@ void Reconstruction::CreateImageDirs(const std::string& path) const {
+@@ -726,4 +780,29 @@ void Reconstruction::CreateImageDirs(const std::string& path) const {
    }
  }
  

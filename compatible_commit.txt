@@ -1,2 +1,2 @@
-7a1201b245239944192325cc3a85d73129775df8   (2024-08-23 14:29:13 +0000)
-Add CUDA-based dense BA solver (#2732)
+45dfce7f89407b1a1aafd7b8cbe4d4c8010fd806   (2024-09-23 19:41:30 +0200)
+Implementation of Aria Fisheye camera model (#2786)
