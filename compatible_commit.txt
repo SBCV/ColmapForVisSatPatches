@@ -1,2 +1,2 @@
-595b6df9d27ceceb6eb2b29158a9cd31b115fb2a   (2023-07-23 09:26:45 +0000)
-Bundle adjuster is an estimator (#2054)
+d17290be707378c21f42385724c97c643f125e8f   (2023-07-23 10:56:17 +0000)
+Remaining base targets move to new scene module (#2055)

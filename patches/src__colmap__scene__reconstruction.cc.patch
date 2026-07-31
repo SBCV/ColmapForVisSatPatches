@@ -1,7 +1,7 @@
-diff --git a/src/colmap/base/reconstruction.cc b/src/colmap/base/reconstruction.cc
-index 94ef0159..9d63e81b 100644
---- a/src/colmap/base/reconstruction.cc
-+++ b/src/colmap/base/reconstruction.cc
+diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
+index c54711ef..0842b615 100644
+--- a/src/colmap/scene/reconstruction.cc
++++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
