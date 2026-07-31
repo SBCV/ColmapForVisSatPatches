@@ -1,2 +1,2 @@
-e180948665b03c4a12d45e2ca39a589f42fdbda6   (2022-01-30 20:22:58 +0100)
-Update copyright year
+30521f19de45c1cb2df8809728e780bf95fc8836   (2022-04-01 20:30:18 +0000)
+Upgrade deprecated ceres parameterizations to manifolds (#1477)
