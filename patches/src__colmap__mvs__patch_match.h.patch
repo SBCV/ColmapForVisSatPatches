@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match.h b/src/colmap/mvs/patch_match.h
-index c4600dc3..ee0c5b47 100644
+index bd87a657..d0a7353f 100644
 --- a/src/colmap/mvs/patch_match.h
 +++ b/src/colmap/mvs/patch_match.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index c4600dc3..ee0c5b47 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -63,8 +95,8 @@ struct PatchMatchOptions {
+@@ -64,8 +96,8 @@ struct PatchMatchOptions {
    std::string gpu_index = "-1";
  
    // Depth range in which to randomly sample depth hypotheses.
@@ -49,7 +49,7 @@ index c4600dc3..ee0c5b47 100644
  
    // Half window size to compute NCC photo-consistency cost.
    int window_radius = 5;
-@@ -99,6 +131,9 @@ struct PatchMatchOptions {
+@@ -100,6 +132,9 @@ struct PatchMatchOptions {
    // Whether to add a regularized geometric consistency term to the cost
    // function. If true, the `depth_maps` and `normal_maps` must not be null.
    bool geom_consistency = true;
@@ -59,7 +59,7 @@ index c4600dc3..ee0c5b47 100644
  
    // The relative weight of the geometric consistency term w.r.t. to
    // the photo-consistency term.
-@@ -140,9 +175,9 @@ struct PatchMatchOptions {
+@@ -141,9 +176,9 @@ struct PatchMatchOptions {
  
    void Print() const;
    bool Check() const {
@@ -71,7 +71,7 @@ index c4600dc3..ee0c5b47 100644
      }
      CHECK_OPTION_LE(window_radius,
                      static_cast<int>(kMaxPatchMatchWindowRadius));
-@@ -192,6 +227,9 @@ class PatchMatch {
+@@ -193,6 +228,9 @@ class PatchMatch {
  
      // Print the configuration to stdout.
      void Print() const;

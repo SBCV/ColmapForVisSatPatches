@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index c22a770d..df88fc57 100644
+index 289d6e72..b1d8fe11 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index c22a770d..df88fc57 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -491,6 +523,16 @@ void OptionManager::AddBundleAdjustmentOptions() {
+@@ -490,6 +522,16 @@ void OptionManager::AddBundleAdjustmentOptions() {
    AddAndRegisterDefaultOption(
        "BundleAdjustment.max_num_images_direct_sparse_gpu_solver",
        &bundle_adjustment->max_num_images_direct_sparse_gpu_solver);
@@ -55,7 +55,7 @@ index c22a770d..df88fc57 100644
  }
  
  void OptionManager::AddMapperOptions() {
-@@ -672,6 +714,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
+@@ -671,6 +713,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
                                &patch_match_stereo->allow_missing_files);
    AddAndRegisterDefaultOption("PatchMatchStereo.write_consistency_graph",
                                &patch_match_stereo->write_consistency_graph);

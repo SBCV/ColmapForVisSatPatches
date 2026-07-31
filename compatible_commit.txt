@@ -1,2 +1,2 @@
-17f9e6644183d714f22966d776d292943b482769   (2024-09-25 10:36:56 +0000)
-Pose Prior based Incremental Mapper (#2660)
+ff91388b16c2ac1e72a9613237fb0e1ee390770d   (2024-10-11 01:29:27 +0200)
+Make Image::cam_from_world_ optional (#2824)
