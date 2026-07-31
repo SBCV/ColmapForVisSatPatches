@@ -1,5 +1,5 @@
 diff --git a/src/colmap/base/reconstruction.h b/src/colmap/base/reconstruction.h
-index 122628ca..39e2778a 100644
+index b54cb546..1a5d20be 100644
 --- a/src/colmap/base/reconstruction.h
 +++ b/src/colmap/base/reconstruction.h
 @@ -1,3 +1,35 @@
@@ -49,9 +49,9 @@ index 122628ca..39e2778a 100644
  
    // Compute the centroid of the 3D points
    Eigen::Vector3d ComputeCentroid(double p0 = 0.1, double p1 = 0.9) const;
-@@ -267,6 +301,10 @@ class Reconstruction {
-   double ComputeMeanObservationsPerRegImage() const;
-   double ComputeMeanReprojectionError() const;
+@@ -270,6 +304,10 @@ class Reconstruction {
+   // Updates mean reprojection errors for all 3D points.
+   void UpdatePoint3DErrors();
  
 +  // @kai
 +  // update reproj. error for each 3D point
