@@ -1,5 +1,5 @@
 diff --git a/src/colmap/sensor/models.h b/src/colmap/sensor/models.h
-index ef18a526..04dbec8c 100644
+index c8401916..1b5cddad 100644
 --- a/src/colmap/sensor/models.h
 +++ b/src/colmap/sensor/models.h
 @@ -1,3 +1,35 @@
@@ -46,7 +46,7 @@ index ef18a526..04dbec8c 100644
  };
  
  #ifndef CAMERA_MODEL_DEFINITIONS
-@@ -147,6 +180,7 @@ enum class CameraModelId {
+@@ -151,6 +184,7 @@ enum class CameraModelId {
    CAMERA_MODEL_CASE(FOVCameraModel)                 \
    CAMERA_MODEL_CASE(ThinPrismFisheyeCameraModel)    \
    CAMERA_MODEL_CASE(RadTanThinPrismFisheyeModel)
@@ -54,7 +54,7 @@ index ef18a526..04dbec8c 100644
  #endif
  
  #ifndef CAMERA_MODEL_SWITCH_CASES
-@@ -448,6 +482,14 @@ struct RadTanThinPrismFisheyeModel
+@@ -453,6 +487,14 @@ struct RadTanThinPrismFisheyeModel
    FISHEYE_CAMERA_MODEL_DEFINITIONS
  };
  
@@ -69,7 +69,7 @@ index ef18a526..04dbec8c 100644
  // Check whether camera model with given name or identifier exists.
  bool ExistsCameraModelWithName(const std::string& model_name);
  bool ExistsCameraModelWithId(CameraModelId model_id);
-@@ -583,13 +625,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
+@@ -588,13 +630,14 @@ bool BaseCameraModel<CameraModel>::HasBogusParams(
      const T min_focal_length_ratio,
      const T max_focal_length_ratio,
      const T max_extra_param) {
@@ -91,7 +91,7 @@ index ef18a526..04dbec8c 100644
  }
  
  template <typename CameraModel>
-@@ -1823,4 +1866,66 @@ bool CameraModelIsFisheye(const CameraModelId model_id) {
+@@ -1825,4 +1868,66 @@ bool CameraModelIsFisheye(const CameraModelId model_id) {
    return false;
  }
  

@@ -1,2 +1,2 @@
-648856db85ee513cfd93ab3460ace7d071590528   (2024-10-26 09:47:47 +0000)
-Various improvements for pycolmap bindings (#2854)
+d065cea09317b2c1cbb9fad66376464119a3ee07   (2024-11-17 15:57:25 +0100)
+Modernized bundle adjustment interface (#2896)

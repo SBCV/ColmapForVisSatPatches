@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index 5be6ab44..15ed694e 100644
+index 4af4e605..ce4b59ab 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -38,41 +38,7 @@ index 5be6ab44..15ed694e 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -66,12 +98,33 @@ ceres::LossFunction* BundleAdjustmentOptions::CreateLossFunction() const {
-   return loss_function;
- }
- 
-+ceres::LossFunction* BundleAdjustmentOptions::CreateConstrainPointsLossFunction() const {
-+    ceres::LossFunction* loss_function = nullptr;
-+    switch (constrain_points_loss) {
-+      case LossFunctionType::TRIVIAL:
-+        loss_function = new ceres::ScaledLoss(new ceres::TrivialLoss(), constrain_points_loss_weight,
-+            ceres::TAKE_OWNERSHIP);
-+        break;
-+      case LossFunctionType::SOFT_L1:
-+        loss_function = new ceres::ScaledLoss(new ceres::SoftLOneLoss(constrain_points_loss_scale), constrain_points_loss_weight,
-+            ceres::TAKE_OWNERSHIP);
-+        break;
-+      case LossFunctionType::CAUCHY:
-+        loss_function = new ceres::ScaledLoss(new ceres::CauchyLoss(constrain_points_loss_scale), constrain_points_loss_weight,
-+            ceres::TAKE_OWNERSHIP);
-+        break;
-+    }
-+    CHECK_NOTNULL(loss_function);
-+    return loss_function;
-+}
-+
- bool BundleAdjustmentOptions::Check() const {
-   CHECK_OPTION_GE(loss_function_scale, 0);
-   CHECK_OPTION_LT(max_num_images_direct_dense_cpu_solver,
-                   max_num_images_direct_sparse_cpu_solver);
-   CHECK_OPTION_LT(max_num_images_direct_dense_gpu_solver,
-                   max_num_images_direct_sparse_gpu_solver);
-+  CHECK_OPTION_GE(constrain_points_loss_scale, 0);
-   return true;
- }
- 
-@@ -227,6 +280,10 @@ const std::unordered_set<image_t>& BundleAdjustmentConfig::ConstantCamPoses()
+@@ -195,6 +227,10 @@ const std::unordered_set<image_t>& BundleAdjustmentConfig::ConstantCamPoses()
    return constant_cam_poses_;
  }
  
@@ -83,7 +49,7 @@ index 5be6ab44..15ed694e 100644
  const std::vector<int>& BundleAdjustmentConfig::ConstantCamPositions(
      const image_t image_id) const {
    return constant_cam_positions_.at(image_id);
-@@ -242,6 +299,11 @@ void BundleAdjustmentConfig::AddConstantPoint(const point3D_t point3D_id) {
+@@ -210,6 +246,11 @@ void BundleAdjustmentConfig::AddConstantPoint(const point3D_t point3D_id) {
    constant_point3D_ids_.insert(point3D_id);
  }
  
@@ -95,7 +61,7 @@ index 5be6ab44..15ed694e 100644
  bool BundleAdjustmentConfig::HasPoint(const point3D_t point3D_id) const {
    return HasVariablePoint(point3D_id) || HasConstantPoint(point3D_id);
  }
-@@ -256,6 +318,10 @@ bool BundleAdjustmentConfig::HasConstantPoint(
+@@ -224,6 +265,10 @@ bool BundleAdjustmentConfig::HasConstantPoint(
    return constant_point3D_ids_.find(point3D_id) != constant_point3D_ids_.end();
  }
  
@@ -106,7 +72,7 @@ index 5be6ab44..15ed694e 100644
  void BundleAdjustmentConfig::RemoveVariablePoint(const point3D_t point3D_id) {
    variable_point3D_ids_.erase(point3D_id);
  }
-@@ -264,6 +330,10 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
+@@ -232,6 +277,14 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
    constant_point3D_ids_.erase(point3D_id);
  }
  
@@ -114,38 +80,88 @@ index 5be6ab44..15ed694e 100644
 +  constrained_point3D_ids_.erase(point3D_id);
 +}
 +
- ////////////////////////////////////////////////////////////////////////////////
- // BundleAdjuster
- ////////////////////////////////////////////////////////////////////////////////
-@@ -329,6 +399,14 @@ void BundleAdjuster::SetUpProblem(Reconstruction* reconstruction,
-     AddPointToProblem(point3D_id, reconstruction, loss_function);
-   }
++////////////////////////////////////////////////////////////////////////////////
++// BundleAdjuster
++////////////////////////////////////////////////////////////////////////////////
++
+ BundleAdjuster::BundleAdjuster(BundleAdjustmentOptions options,
+                                BundleAdjustmentConfig config)
+     : options_(std::move(options)), config_(std::move(config)) {
+@@ -265,6 +318,32 @@ ceres::LossFunction* BundleAdjustmentOptions::CreateLossFunction() const {
+   return loss_function;
+ }
  
-+  // add constrained points
-+  ceres::LossFunction* constrain_points_loss_function =
-+      options_.CreateConstrainPointsLossFunction();
-+  for (const auto point3D_id : config_.ConstrainedPoints()) {
-+    AddConstrainedPointToProblem(
-+        point3D_id, reconstruction, constrain_points_loss_function);
++ceres::LossFunction*
++BundleAdjustmentOptions::CreateConstrainPointsLossFunction() const {
++  ceres::LossFunction* loss_function = nullptr;
++  switch (constrain_points_loss) {
++    case LossFunctionType::TRIVIAL:
++      loss_function = new ceres::ScaledLoss(new ceres::TrivialLoss(),
++                                            constrain_points_loss_weight,
++                                            ceres::TAKE_OWNERSHIP);
++      break;
++    case LossFunctionType::SOFT_L1:
++      loss_function =
++          new ceres::ScaledLoss(new ceres::SoftLOneLoss(constrain_points_loss_scale),
++                                constrain_points_loss_weight,
++                                ceres::TAKE_OWNERSHIP);
++      break;
++    case LossFunctionType::CAUCHY:
++      loss_function =
++          new ceres::ScaledLoss(new ceres::CauchyLoss(constrain_points_loss_scale),
++                                constrain_points_loss_weight,
++                                ceres::TAKE_OWNERSHIP);
++      break;
 +  }
-+
-   ParameterizeCameras(reconstruction);
-   ParameterizePoints(reconstruction);
- }
-@@ -542,6 +620,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
-   }
- }
- 
-+void BundleAdjuster::AddConstrainedPointToProblem(const point3D_t point3D_id,
-+                                       Reconstruction* reconstruction,
-+                                       ceres::LossFunction* loss_function) {
-+  Point3D& point3D = reconstruction->Point3D(point3D_id);
-+
-+  ceres::CostFunction* cost_function = Point3DCostFunction::Create(point3D.xyz);
-+
-+  problem_->AddResidualBlock(cost_function, loss_function, point3D.xyz.data());
++  THROW_CHECK_NOTNULL(loss_function);
++  return loss_function;
 +}
 +
- void BundleAdjuster::ParameterizeCameras(Reconstruction* reconstruction) {
-   const bool constant_camera = !options_.refine_focal_length &&
-                                !options_.refine_principal_point &&
+ ceres::Solver::Options BundleAdjustmentOptions::CreateSolverOptions(
+     const BundleAdjustmentConfig& config, const ceres::Problem& problem) const {
+   ceres::Solver::Options custom_solver_options = solver_options;
+@@ -371,6 +450,7 @@ bool BundleAdjustmentOptions::Check() const {
+                   max_num_images_direct_sparse_cpu_solver);
+   CHECK_OPTION_LT(max_num_images_direct_dense_gpu_solver,
+                   max_num_images_direct_sparse_gpu_solver);
++  CHECK_OPTION_GE(constrain_points_loss_scale, 0);
+   return true;
+ }
+ 
+@@ -461,12 +541,28 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+       AddPointToProblem(point3D_id, reconstruction);
+     }
+ 
++    // add constrained points
++    constrain_points_loss_function_ = std::unique_ptr<ceres::LossFunction>(
++        options_.CreateConstrainPointsLossFunction());
++    for (const auto point3D_id : config_.ConstrainedPoints()) {
++      AddConstrainedPointToProblem(point3D_id, reconstruction);
++    }
++
+     ParameterizeCameras(
+         options_, config_, camera_ids_, reconstruction, *problem_);
+     ParameterizePoints(
+         config_, point3D_num_observations_, reconstruction, *problem_);
+   }
+ 
++  // add constrained point to problem
++  void AddConstrainedPointToProblem(const point3D_t point3D_id,
++                                    Reconstruction& reconstruction) {
++    Point3D& point3D = reconstruction.Point3D(point3D_id);
++    problem_->AddResidualBlock(Point3DCostFunction::Create(point3D.xyz),
++                               constrain_points_loss_function_.get(),
++                               point3D.xyz.data());
++  }
++
+   ceres::Solver::Summary Solve() override {
+     ceres::Solver::Summary summary;
+     if (problem_->NumResiduals() == 0) {
+@@ -599,6 +695,7 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+  private:
+   std::shared_ptr<ceres::Problem> problem_;
+   std::unique_ptr<ceres::LossFunction> loss_function_;
++  std::unique_ptr<ceres::LossFunction> constrain_points_loss_function_;
+ 
+   std::unordered_set<camera_t> camera_ids_;
+   std::unordered_map<point3D_t, size_t> point3D_num_observations_;
