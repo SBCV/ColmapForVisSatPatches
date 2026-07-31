@@ -1,2 +1,2 @@
-805a3ff2e6f77c95c5eab36b7a3d100bc3566b89   (2023-12-02 10:44:22 +0000)
-Migrate to glog logging (#2172)
+0fb46f4d5304168131f4d8e5bdf9efc6a62ffd50   (2023-12-02 12:12:23 +0000)
+Turn Point3D into simple data struct (#2285)

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index f195d6d1..582b8bcc 100644
+index b9eafb1a..fcf28013 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -126,7 +126,7 @@ index f195d6d1..582b8bcc 100644
    ParameterizeCameras(reconstruction);
    ParameterizePoints(reconstruction);
  }
-@@ -485,6 +561,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
+@@ -483,6 +559,16 @@ void BundleAdjuster::AddPointToProblem(const point3D_t point3D_id,
    }
  }
  
@@ -135,9 +135,9 @@ index f195d6d1..582b8bcc 100644
 +                                       ceres::LossFunction* loss_function) {
 +  Point3D& point3D = reconstruction->Point3D(point3D_id);
 +
-+  ceres::CostFunction* cost_function = Point3DCostFunction::Create(point3D.XYZ());
++  ceres::CostFunction* cost_function = Point3DCostFunction::Create(point3D.xyz);
 +
-+  problem_->AddResidualBlock(cost_function, loss_function, point3D.XYZ().data());
++  problem_->AddResidualBlock(cost_function, loss_function, point3D.xyz.data());
 +}
 +
  void BundleAdjuster::ParameterizeCameras(Reconstruction* reconstruction) {
