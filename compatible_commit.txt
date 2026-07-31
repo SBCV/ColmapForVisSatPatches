@@ -1,2 +1,2 @@
-7730f30e90dd17c38af50433c6f1777ce18675c1   (2024-02-21 09:04:36 +0100)
-Perfrom triangulation in the IncrementalMapperController (#2429)
+6fb02830b272a6a00caa132eebcd32f29e4bb11b   (2024-05-01 21:11:52 +0200)
+Customized python interface for bundle adjustment (#2509)
