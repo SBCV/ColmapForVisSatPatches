@@ -1,2 +1,2 @@
-6fb02830b272a6a00caa132eebcd32f29e4bb11b   (2024-05-01 21:11:52 +0200)
-Customized python interface for bundle adjustment (#2509)
+eaebe3c34b535e38d9101a5eba81cde994b9b279   (2024-05-27 09:27:52 +0200)
+Add ObservationManager (#2575)
