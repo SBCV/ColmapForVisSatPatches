@@ -1,2 +1,2 @@
-eaebe3c34b535e38d9101a5eba81cde994b9b279   (2024-05-27 09:27:52 +0200)
-Add ObservationManager (#2575)
+0a1ae653d1b0378f0e0de53942967c637b1f9213   (2024-06-26 17:30:55 +0200)
+Covariance estimation for bundle adjustment with Schur elimination (#2610)
