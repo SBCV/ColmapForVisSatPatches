@@ -1,5 +1,5 @@
 diff --git a/src/colmap/exe/sfm.cc b/src/colmap/exe/sfm.cc
-index bbe3f736..387fd899 100644
+index 1b20cf4d..51a3b07d 100644
 --- a/src/colmap/exe/sfm.cc
 +++ b/src/colmap/exe/sfm.cc
 @@ -1,3 +1,35 @@
@@ -55,32 +55,32 @@ index bbe3f736..387fd899 100644
  
  int RunAutomaticReconstructor(int argc, char** argv) {
 @@ -157,12 +195,70 @@ int RunBundleAdjuster(int argc, char** argv) {
-   Reconstruction reconstruction;
-   reconstruction.Read(input_path);
+   auto reconstruction = std::make_shared<Reconstruction>();
+   reconstruction->Read(input_path);
  
 +  // @kai print statistics before bundle adjustment
 +  std::stringstream buffer;
 +  buffer << "\nBefore Global Bundle Adjustment:";
-+  buffer << "\n# of 3D points: " << reconstruction.NumPoints3D();
-+  buffer << "\n# of Images Registered: " << reconstruction.NumRegImages() << "/" << reconstruction.NumImages();
-+  buffer << "\nAvg. Track Length: " << reconstruction.ComputeMeanTrackLength();
-+  buffer << "\nAvg. Per-view Triangulated Observations: " << reconstruction.ComputeMeanObservationsPerRegImage();
-+  buffer << "\nAvg. Reproj. Err (pixels): " << reconstruction.ComputeMeanReprojectionError() << "\n";
++  buffer << "\n# of 3D points: " << reconstruction->NumPoints3D();
++  buffer << "\n# of Images Registered: " << reconstruction->NumRegImages() << "/" << reconstruction->NumImages();
++  buffer << "\nAvg. Track Length: " << reconstruction->ComputeMeanTrackLength();
++  buffer << "\nAvg. Per-view Triangulated Observations: " << reconstruction->ComputeMeanObservationsPerRegImage();
++  buffer << "\nAvg. Reproj. Err (pixels): " << reconstruction->ComputeMeanReprojectionError() << "\n";
 +
-   BundleAdjustmentController ba_controller(options, &reconstruction);
+   BundleAdjustmentController ba_controller(options, reconstruction);
    ba_controller.Start();
    ba_controller.Wait();
  
-   reconstruction.Write(output_path);
+   reconstruction->Write(output_path);
  
 +  // @kai print statistics
 +  std::cout << buffer.str();
 +  std::cout << "\nAfter Global Bundle Adjustment:";
-+  std::cout << "\n# of 3D points: " << reconstruction.NumPoints3D();
-+  std::cout << "\n# of Images Registered: " << reconstruction.NumRegImages() << "/" << reconstruction.NumImages();
-+  std::cout << "\nAvg. Track Length: " << reconstruction.ComputeMeanTrackLength();
-+  std::cout << "\nAvg. Per-view Triangulated Observations: " << reconstruction.ComputeMeanObservationsPerRegImage();
-+  std::cout << "\nAvg. Reproj. Err (pixels): " << reconstruction.ComputeMeanReprojectionError() << "\n";
++  std::cout << "\n# of 3D points: " << reconstruction->NumPoints3D();
++  std::cout << "\n# of Images Registered: " << reconstruction->NumRegImages() << "/" << reconstruction->NumImages();
++  std::cout << "\nAvg. Track Length: " << reconstruction->ComputeMeanTrackLength();
++  std::cout << "\nAvg. Per-view Triangulated Observations: " << reconstruction->ComputeMeanObservationsPerRegImage();
++  std::cout << "\nAvg. Reproj. Err (pixels): " << reconstruction->ComputeMeanReprojectionError() << "\n";
 +
 +  return EXIT_SUCCESS;
 +}
@@ -125,7 +125,7 @@ index bbe3f736..387fd899 100644
    return EXIT_SUCCESS;
  }
  
-@@ -412,6 +508,9 @@ int RunPointTriangulatorImpl(Reconstruction& reconstruction,
+@@ -410,6 +506,9 @@ int RunPointTriangulatorImpl(
      timer.PrintMinutes();
    }
  
@@ -134,10 +134,10 @@ index bbe3f736..387fd899 100644
 +
    std::cout << std::endl;
  
-   CHECK_GE(reconstruction.NumRegImages(), 2)
-@@ -501,6 +600,18 @@ int RunPointTriangulatorImpl(Reconstruction& reconstruction,
+   CHECK_GE(reconstruction->NumRegImages(), 2)
+@@ -497,6 +596,18 @@ int RunPointTriangulatorImpl(
  
-   reconstruction.Write(output_path);
+   reconstruction->Write(output_path);
  
 +
 +  // @kai print statistics of the correspondence graph
@@ -145,12 +145,32 @@ index bbe3f736..387fd899 100644
 +  std::cout << "Before Point Triangulation:";
 +  std::cout << stats;
 +  std::cout << "\nAfter Point Triangulation:";
-+  std::cout << "\n# of 3D points: " << reconstruction.NumPoints3D();
-+  std::cout << "\n# of Images Registered: " << reconstruction.NumRegImages() << "/" << reconstruction.NumImages();
-+  std::cout << "\nAvg. Track Length: " << reconstruction.ComputeMeanTrackLength();
-+  std::cout << "\nAvg. Per-view Triangulated Observations: " << reconstruction.ComputeMeanObservationsPerRegImage();
-+  std::cout << "\nAvg. Reproj. Err (pixels): " << reconstruction.ComputeMeanReprojectionError() << "\n";
++  std::cout << "\n# of 3D points: " << reconstruction->NumPoints3D();
++  std::cout << "\n# of Images Registered: " << reconstruction->NumRegImages() << "/" << reconstruction->NumImages();
++  std::cout << "\nAvg. Track Length: " << reconstruction->ComputeMeanTrackLength();
++  std::cout << "\nAvg. Per-view Triangulated Observations: " << reconstruction->ComputeMeanObservationsPerRegImage();
++  std::cout << "\nAvg. Reproj. Err (pixels): " << reconstruction->ComputeMeanReprojectionError() << "\n";
 +
    return EXIT_SUCCESS;
  }
  
+@@ -622,8 +733,8 @@ std::vector<CameraRig> ReadCameraRigConfig(const std::string& rig_config_path,
+     camera_rig.SetRefCameraId(rig_config.second.get<int>("ref_camera_id"));
+ 
+     std::unordered_map<std::string, std::vector<image_t>> snapshots;
+-    for (const auto image_id : reconstruction.RegImageIds()) {
+-      const auto& image = reconstruction.Image(image_id);
++    for (const auto image_id : reconstruction->RegImageIds()) {
++      const auto& image = reconstruction->Image(image_id);
+       for (const auto& image_prefix : image_prefixes) {
+         if (StringContains(image.Name(), image_prefix)) {
+           const std::string image_suffix =
+@@ -636,7 +747,7 @@ std::vector<CameraRig> ReadCameraRigConfig(const std::string& rig_config_path,
+     for (const auto& snapshot : snapshots) {
+       bool has_ref_camera = false;
+       for (const auto image_id : snapshot.second) {
+-        const auto& image = reconstruction.Image(image_id);
++        const auto& image = reconstruction->Image(image_id);
+         if (image.CameraId() == camera_rig.RefCameraId()) {
+           has_ref_camera = true;
+           break;

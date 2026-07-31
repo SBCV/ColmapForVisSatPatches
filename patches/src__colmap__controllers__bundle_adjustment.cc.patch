@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index 82898df7..d919e9eb 100644
+index e237768f..49bdc39f 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 82898df7..d919e9eb 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -92,13 +124,27 @@ void BundleAdjustmentController::Run() {
+@@ -93,13 +125,27 @@ void BundleAdjustmentController::Run() {
    for (const image_t image_id : reg_image_ids) {
      ba_config.AddImage(image_id);
    }
@@ -59,7 +59,7 @@ index 82898df7..d919e9eb 100644
  
    // Run bundle adjustment.
    BundleAdjuster bundle_adjuster(ba_options, ba_config);
-   bundle_adjuster.Solve(reconstruction_);
+   bundle_adjuster.Solve(reconstruction_.get());
  
 +  //@kai
 +  // update reproj. error for the 3D points
