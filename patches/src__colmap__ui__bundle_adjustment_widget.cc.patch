@@ -1,7 +1,7 @@
-diff --git a/src/ui/bundle_adjustment_widget.cc b/src/ui/bundle_adjustment_widget.cc
-index d23e36c0..e86a5cbb 100644
---- a/src/ui/bundle_adjustment_widget.cc
-+++ b/src/ui/bundle_adjustment_widget.cc
+diff --git a/src/colmap/ui/bundle_adjustment_widget.cc b/src/colmap/ui/bundle_adjustment_widget.cc
+index c4505c2d..55c7a2ff 100644
+--- a/src/colmap/ui/bundle_adjustment_widget.cc
++++ b/src/colmap/ui/bundle_adjustment_widget.cc
 @@ -98,7 +98,7 @@ void BundleAdjustmentWidget::Run() {
  
    // Normalize scene for numerical stability and

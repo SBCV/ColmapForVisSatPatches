@@ -1,7 +1,7 @@
-diff --git a/src/mvs/model.h b/src/mvs/model.h
-index a6fcf940..1b47992b 100755
---- a/src/mvs/model.h
-+++ b/src/mvs/model.h
+diff --git a/src/colmap/mvs/model.h b/src/colmap/mvs/model.h
+index 41fad021..4405d5bc 100644
+--- a/src/colmap/mvs/model.h
++++ b/src/colmap/mvs/model.h
 @@ -50,9 +50,9 @@ namespace mvs {
  // Simple sparse model class.
  struct Model {

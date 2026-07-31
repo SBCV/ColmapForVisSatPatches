@@ -1,7 +1,7 @@
-diff --git a/src/base/camera.cc b/src/base/camera.cc
-index 22c6901f..4888ce45 100644
---- a/src/base/camera.cc
-+++ b/src/base/camera.cc
+diff --git a/src/colmap/sfm/incremental_mapper.cc b/src/colmap/sfm/incremental_mapper.cc
+index 9ddb2577..72c854ab 100644
+--- a/src/colmap/sfm/incremental_mapper.cc
++++ b/src/colmap/sfm/incremental_mapper.cc
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -38,16 +38,13 @@ index 22c6901f..4888ce45 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -90,6 +122,12 @@ Eigen::Matrix3d Camera::CalibrationMatrix() const {
-   K(0, 2) = PrincipalPointX();
-   K(1, 2) = PrincipalPointY();
- 
-+  // check if the camera model is perspective
-+  if (model_id_ == PerspectiveCameraModel::model_id) {
-+    const std::vector<size_t>& extra_params_idxs = ExtraParamsIdxs();
-+    K(0, 1) = params_[extra_params_idxs[0]];
-+  }
-+
-   return K;
- }
- 
+@@ -78,7 +110,8 @@ bool IncrementalMapper::Options::Check() const {
+   CHECK_OPTION_GT(init_min_num_inliers, 0);
+   CHECK_OPTION_GT(init_max_error, 0.0);
+   CHECK_OPTION_GE(init_max_forward_motion, 0.0);
+-  CHECK_OPTION_LE(init_max_forward_motion, 1.0);
++  // @kai seems not to work with satellite images
++  // CHECK_OPTION_LE(init_max_forward_motion, 1.0);
+   CHECK_OPTION_GE(init_min_tri_angle, 0.0);
+   CHECK_OPTION_GE(init_max_reg_trials, 1);
+   CHECK_OPTION_GT(abs_pose_max_error, 0.0);

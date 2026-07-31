@@ -1,7 +1,7 @@
-diff --git a/src/mvs/depth_map.cc b/src/mvs/depth_map.cc
-index 3a52a9ef..2fa75b7f 100644
---- a/src/mvs/depth_map.cc
-+++ b/src/mvs/depth_map.cc
+diff --git a/src/colmap/mvs/depth_map.cc b/src/colmap/mvs/depth_map.cc
+index 500d3a45..2edece58 100644
+--- a/src/colmap/mvs/depth_map.cc
++++ b/src/colmap/mvs/depth_map.cc
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.

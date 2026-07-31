@@ -1,7 +1,7 @@
-diff --git a/src/feature/sift.cc b/src/feature/sift.cc
-index 78e8bdd3..c6e15eac 100644
---- a/src/feature/sift.cc
-+++ b/src/feature/sift.cc
+diff --git a/src/colmap/mvs/patch_match.h b/src/colmap/mvs/patch_match.h
+index 3b87541a..a32e6fd7 100644
+--- a/src/colmap/mvs/patch_match.h
++++ b/src/colmap/mvs/patch_match.h
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -38,24 +38,46 @@ index 78e8bdd3..c6e15eac 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -353,13 +385,13 @@ void FindBestMatchesFLANN(
+@@ -65,8 +97,8 @@ struct PatchMatchOptions {
+   std::string gpu_index = "-1";
  
- void WarnIfMaxNumMatchesReachedGPU(const SiftMatchGPU& sift_match_gpu,
-                                    const FeatureDescriptors& descriptors) {
--  if (sift_match_gpu.GetMaxSift() < descriptors.rows()) {
--    std::cout << StringPrintf(
--                     "WARNING: Clamping features from %d to %d - consider "
--                     "increasing the maximum number of matches.",
--                     descriptors.rows(), sift_match_gpu.GetMaxSift())
--              << std::endl;
--  }
-+  // if (sift_match_gpu.GetMaxSift() < descriptors.rows()) {
-+  //   std::cout << StringPrintf(
-+  //                    "WARNING: Clamping features from %d to %d - consider "
-+  //                    "increasing the maximum number of matches.",
-+  //                    descriptors.rows(), sift_match_gpu.GetMaxSift())
-+  //             << std::endl;
-+  // }
- }
+   // Depth range in which to randomly sample depth hypotheses.
+-  double depth_min = -1.0f;
+-  double depth_max = -1.0f;
++  double depth_min = -1e20;
++  double depth_max = -1e20;
  
- void WarnDarknessAdaptivityNotAvailable() {
+   // Half window size to compute NCC photo-consistency cost.
+   int window_radius = 5;
+@@ -101,6 +133,9 @@ struct PatchMatchOptions {
+   // Whether to add a regularized geometric consistency term to the cost
+   // function. If true, the `depth_maps` and `normal_maps` must not be null.
+   bool geom_consistency = true;
++  bool use_exist_photom = false;
++  // whether to overwrite existing reconstruction
++  bool overwrite = false;
+ 
+   // The relative weight of the geometric consistency term w.r.t. to
+   // the photo-consistency term.
+@@ -142,9 +177,9 @@ struct PatchMatchOptions {
+ 
+   void Print() const;
+   bool Check() const {
+-    if (depth_min != -1.0f || depth_max != -1.0f) {
++    if (depth_min > -1e19f || depth_max > -1e19f) {
+       CHECK_OPTION_LE(depth_min, depth_max);
+-      CHECK_OPTION_GE(depth_min, 0.0f);
++      // CHECK_OPTION_GE(depth_min, 0.0f);
+     }
+     CHECK_OPTION_LE(window_radius,
+                     static_cast<int>(kMaxPatchMatchWindowRadius));
+@@ -194,6 +229,9 @@ class PatchMatch {
+ 
+     // Print the configuration to stdout.
+     void Print() const;
++
++    // Print the configuration to string
++    std::string PrintToString() const;
+   };
+ 
+   PatchMatch(const PatchMatchOptions& options, const Problem& problem);

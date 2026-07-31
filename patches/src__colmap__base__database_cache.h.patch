@@ -1,7 +1,7 @@
-diff --git a/src/base/database_cache.h b/src/base/database_cache.h
-index db50150c..a994ad30 100644
---- a/src/base/database_cache.h
-+++ b/src/base/database_cache.h
+diff --git a/src/colmap/base/database_cache.h b/src/colmap/base/database_cache.h
+index 8c4fd30f..19d836ff 100644
+--- a/src/colmap/base/database_cache.h
++++ b/src/colmap/base/database_cache.h
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -46,8 +46,8 @@ index db50150c..a994ad30 100644
 +#include <sstream>
  #include <Eigen/Core>
  
- #include "base/camera.h"
-@@ -92,6 +124,57 @@ class DatabaseCache {
+ #include "colmap/base/camera.h"
+@@ -91,6 +123,57 @@ class DatabaseCache {
              const bool ignore_watermarks,
              const std::unordered_set<std::string>& image_names);
  

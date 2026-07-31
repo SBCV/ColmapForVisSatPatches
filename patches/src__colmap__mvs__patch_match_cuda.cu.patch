@@ -1,7 +1,7 @@
-diff --git a/src/mvs/patch_match_cuda.cu b/src/mvs/patch_match_cuda.cu
-index 772f341a..18cd950c 100644
---- a/src/mvs/patch_match_cuda.cu
-+++ b/src/mvs/patch_match_cuda.cu
+diff --git a/src/colmap/mvs/patch_match_cuda.cu b/src/colmap/mvs/patch_match_cuda.cu
+index 6d323fad..d68f05a8 100644
+--- a/src/colmap/mvs/patch_match_cuda.cu
++++ b/src/colmap/mvs/patch_match_cuda.cu
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -44,8 +44,8 @@ index 772f341a..18cd950c 100644
  #include <sstream>
 +#include <cstdio>
  
- #include "util/cuda.h"
- #include "util/cudacc.h"
+ #include "colmap/util/cuda.h"
+ #include "colmap/util/cudacc.h"
 @@ -56,10 +89,83 @@
  namespace colmap {
  namespace mvs {

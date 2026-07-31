@@ -1,7 +1,7 @@
-diff --git a/src/mvs/fusion.cc b/src/mvs/fusion.cc
-index 7b3b94a5..74b94dca 100644
---- a/src/mvs/fusion.cc
-+++ b/src/mvs/fusion.cc
+diff --git a/src/colmap/mvs/fusion.cc b/src/colmap/mvs/fusion.cc
+index 6be25a57..f4c13f5f 100644
+--- a/src/colmap/mvs/fusion.cc
++++ b/src/colmap/mvs/fusion.cc
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -38,7 +38,7 @@ index 7b3b94a5..74b94dca 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -151,10 +183,10 @@ void StereoFusion::Run() {
+@@ -153,10 +185,10 @@ void StereoFusion::Run() {
  
    auto workspace_format_lower_case = workspace_format_;
    StringToLower(&workspace_format_lower_case);
@@ -53,7 +53,7 @@ index 7b3b94a5..74b94dca 100644
  
    workspace_options.num_threads = options_.num_threads;
    workspace_options.max_image_size = options_.max_image_size;
-@@ -185,12 +217,12 @@ void StereoFusion::Run() {
+@@ -187,12 +219,12 @@ void StereoFusion::Run() {
    const auto& model = workspace_->GetModel();
  
    const double kMinTriangulationAngle = 0;
@@ -70,7 +70,7 @@ index 7b3b94a5..74b94dca 100644
  
    task_fused_points_.resize(num_threads);
    task_fused_points_visibility_.resize(num_threads);
-@@ -202,7 +234,7 @@ void StereoFusion::Run() {
+@@ -204,7 +236,7 @@ void StereoFusion::Run() {
    bitmap_scales_.resize(model.images.size());
    P_.resize(model.images.size());
    inv_P_.resize(model.images.size());
@@ -79,7 +79,7 @@ index 7b3b94a5..74b94dca 100644
  
    for (const auto& image_name : image_names) {
      const int image_idx = model.GetImageIdx(image_name);
-@@ -232,22 +264,39 @@ void StereoFusion::Run() {
+@@ -234,22 +266,39 @@ void StereoFusion::Run() {
          static_cast<float>(depth_map.GetWidth()) / image.GetWidth(),
          static_cast<float>(depth_map.GetHeight()) / image.GetHeight());
  
@@ -135,7 +135,7 @@ index 7b3b94a5..74b94dca 100644
    }
  
    std::cout << StringPrintf("Starting fusion with %d threads", num_threads)
-@@ -402,7 +451,7 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
+@@ -404,7 +453,7 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
      const float depth = depth_map.Get(row, col);
  
      // Pixels with negative depth are filtered.
@@ -144,7 +144,7 @@ index 7b3b94a5..74b94dca 100644
        continue;
      }
  
-@@ -410,14 +459,35 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
+@@ -412,14 +461,35 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
      // pixel has already been added and we need to check for consistency.
      if (traversal_depth > 0) {
        // Project reference point into current view.
@@ -185,7 +185,7 @@ index 7b3b94a5..74b94dca 100644
        // Reprojection error reference point in the current view.
        const float col_diff = proj(0) / proj(2) - col;
        const float row_diff = proj(1) / proj(2) - row;
-@@ -429,11 +499,15 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
+@@ -431,11 +501,15 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
      }
  
      // Determine normal direction in global reference frame.
@@ -205,7 +205,7 @@ index 7b3b94a5..74b94dca 100644
  
      // Check for consistent normal direction with reference normal.
      if (traversal_depth > 0) {
-@@ -444,9 +518,13 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
+@@ -446,9 +520,13 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
      }
  
      // Determine 3D location of current depth value.
@@ -221,7 +221,7 @@ index 7b3b94a5..74b94dca 100644
  
      // Read the color of the pixel.
      BitmapColor<uint8_t> color;
-@@ -499,7 +577,7 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
+@@ -501,7 +579,7 @@ void StereoFusion::Fuse(const int thread_id, const int image_idx, const int row,
          continue;
        }
  

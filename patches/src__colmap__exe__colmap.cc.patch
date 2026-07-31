@@ -1,7 +1,7 @@
-diff --git a/src/exe/colmap.cc b/src/exe/colmap.cc
-index 57ea81d..071aa9f 100644
---- a/src/exe/colmap.cc
-+++ b/src/exe/colmap.cc
+diff --git a/src/colmap/exe/colmap.cc b/src/colmap/exe/colmap.cc
+index a45c9e31..1c013966 100644
+--- a/src/colmap/exe/colmap.cc
++++ b/src/colmap/exe/colmap.cc
 @@ -144,6 +144,9 @@ int main(int argc, char** argv) {
    commands.emplace_back("vocab_tree_matcher", &RunVocabTreeMatcher);
    commands.emplace_back("vocab_tree_retriever", &RunVocabTreeRetriever);

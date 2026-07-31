@@ -1,2 +1,2 @@
-64916f856259d8386df96bc95e0eb28cd5fca86e   (2023-03-01 20:54:52 +0000)
-[WIP] Replace deprecated cuda texture references with texture objects (#1809)
+3947f67243e4924683e14481b4dbb44593950c52   (2023-06-05 11:10:34 +0000)
+Prefix internal sources/includes with colmap (#1949)

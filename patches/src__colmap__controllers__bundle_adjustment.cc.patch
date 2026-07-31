@@ -1,7 +1,7 @@
-diff --git a/src/util/option_manager.cc b/src/util/option_manager.cc
-index e3110549..560d77d9 100644
---- a/src/util/option_manager.cc
-+++ b/src/util/option_manager.cc
+diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
+index 82898df7..d919e9eb 100644
+--- a/src/colmap/controllers/bundle_adjustment.cc
++++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -38,31 +38,33 @@ index e3110549..560d77d9 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -469,6 +501,15 @@ void OptionManager::AddBundleAdjustmentOptions() {
-                               &bundle_adjustment->refine_extra_params);
-   AddAndRegisterDefaultOption("BundleAdjustment.refine_extrinsics",
-                               &bundle_adjustment->refine_extrinsics);
-+  // constrain points options
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points",
-+                              &bundle_adjustment->constrain_points);
-+  //  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss",
-+  //                              &bundle_adjustment->constrain_points_loss);
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss_scale",
-+                              &bundle_adjustment->constrain_points_loss_scale);
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss_weight",
-+                              &bundle_adjustment->constrain_points_loss_weight);
+@@ -92,13 +124,27 @@ void BundleAdjustmentController::Run() {
+   for (const image_t image_id : reg_image_ids) {
+     ba_config.AddImage(image_id);
+   }
+-  ba_config.SetConstantPose(reg_image_ids[0]);
+-  ba_config.SetConstantTvec(reg_image_ids[1], {0});
++
++  // check if we should put a constraint on the 3D points
++  if (ba_options.constrain_points) {
++    const std::unordered_set<point3D_t>& point3D_ids = reconstruction_->Point3DIds();
++    for (const point3D_t point3D_id : point3D_ids) {
++      ba_config.AddConstrainedPoint(point3D_id);
++    }
++  } else {
++    ba_config.SetConstantPose(reg_image_ids[0]);
++    // @kai commenting out this strange line
++    ba_config.SetConstantTvec(reg_image_ids[1], {0});
++  }
+ 
+   // Run bundle adjustment.
+   BundleAdjuster bundle_adjuster(ba_options, ba_config);
+   bundle_adjuster.Solve(reconstruction_);
+ 
++  //@kai
++  // update reproj. error for the 3D points
++  reconstruction_->UpdateReprojErr();
++
+   GetTimer().PrintMinutes();
  }
  
- void OptionManager::AddMapperOptions() {
-@@ -652,6 +693,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
-                               &patch_match_stereo->allow_missing_files);
-   AddAndRegisterDefaultOption("PatchMatchStereo.write_consistency_graph",
-                               &patch_match_stereo->write_consistency_graph);
-+  // whether to overwrite existing reconstruction
-+  AddAndRegisterDefaultOption("PatchMatchStereo.overwrite",
-+                              &patch_match_stereo->overwrite);
-+  AddAndRegisterDefaultOption("PatchMatchStereo.use_exist_photom",
-+                              &patch_match_stereo->use_exist_photom);
- }
- 
- void OptionManager::AddStereoFusionOptions() {

@@ -1,7 +1,7 @@
-diff --git a/src/optim/bundle_adjustment.h b/src/optim/bundle_adjustment.h
-index 8d6282ea..b40ef96d 100644
---- a/src/optim/bundle_adjustment.h
-+++ b/src/optim/bundle_adjustment.h
+diff --git a/src/colmap/optim/bundle_adjustment.h b/src/colmap/optim/bundle_adjustment.h
+index d60552b6..c3b5b263 100644
+--- a/src/colmap/optim/bundle_adjustment.h
++++ b/src/colmap/optim/bundle_adjustment.h
 @@ -1,3 +1,35 @@
 +// ===============================================================================================================
 +// Copyright (c) 2019, Cornell University. All rights reserved.
@@ -38,7 +38,7 @@ index 8d6282ea..b40ef96d 100644
  // Copyright (c) 2023, ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -69,6 +101,12 @@ struct BundleAdjustmentOptions {
+@@ -67,6 +99,12 @@ struct BundleAdjustmentOptions {
    // Whether to print a final summary.
    bool print_summary = true;
  
@@ -51,7 +51,7 @@ index 8d6282ea..b40ef96d 100644
    // Minimum number of residuals to enable multi-threading. Note that
    // single-threaded is typically better for small bundle adjustment problems
    // due to the overhead of threading.
-@@ -95,6 +133,7 @@ struct BundleAdjustmentOptions {
+@@ -93,6 +131,7 @@ struct BundleAdjustmentOptions {
    // Create a new loss function based on the specified options. The caller
    // takes ownership of the loss function.
    ceres::LossFunction* CreateLossFunction() const;
@@ -59,7 +59,7 @@ index 8d6282ea..b40ef96d 100644
  
    bool Check() const;
  };
-@@ -145,16 +184,21 @@ class BundleAdjustmentConfig {
+@@ -143,16 +182,21 @@ class BundleAdjustmentConfig {
    // be variable or constant but not both at the same time.
    void AddVariablePoint(const point3D_t point3D_id);
    void AddConstantPoint(const point3D_t point3D_id);
@@ -81,7 +81,7 @@ index 8d6282ea..b40ef96d 100644
    const std::vector<int>& ConstantTvec(const image_t image_id) const;
  
   private:
-@@ -162,6 +206,8 @@ class BundleAdjustmentConfig {
+@@ -160,6 +204,8 @@ class BundleAdjustmentConfig {
    std::unordered_set<image_t> image_ids_;
    std::unordered_set<point3D_t> variable_point3D_ids_;
    std::unordered_set<point3D_t> constant_point3D_ids_;
@@ -90,7 +90,7 @@ index 8d6282ea..b40ef96d 100644
    std::unordered_set<image_t> constant_poses_;
    std::unordered_map<image_t, std::vector<int>> constant_tvecs_;
  };
-@@ -189,10 +235,15 @@ class BundleAdjuster {
+@@ -187,10 +233,15 @@ class BundleAdjuster {
    void AddPointToProblem(const point3D_t point3D_id,
                           Reconstruction* reconstruction,
                           ceres::LossFunction* loss_function);
