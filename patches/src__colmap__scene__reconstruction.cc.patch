@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 5641002b..c05a33d3 100644
+index 5641002b..d6ae43f6 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -125,7 +125,7 @@ index 5641002b..c05a33d3 100644
 +        const class Camera& camera = this->Camera(image.CameraId());
 +        const Point2D& point2D = image.Point2D(track_el.point2D_idx);
 +        const double squared_reproj_error = CalculateSquaredReprojectionError(
-+            point2D.XY(), point3D.xyz, image.CamFromWorld(), camera);
++            point2D.xy, point3D.xyz, image.CamFromWorld(), camera);
 +        reproj_error_sum += std::sqrt(squared_reproj_error);
 +      }
 +      point3D.error = reproj_error_sum / point3D.track.Length();

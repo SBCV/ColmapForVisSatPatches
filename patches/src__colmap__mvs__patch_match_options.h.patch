@@ -1,7 +1,18 @@
 diff --git a/src/colmap/mvs/patch_match_options.h b/src/colmap/mvs/patch_match_options.h
-index 546262c4..30c0b6a5 100644
+index 819b7016..cc401ca7 100644
 --- a/src/colmap/mvs/patch_match_options.h
 +++ b/src/colmap/mvs/patch_match_options.h
+@@ -43,8 +43,8 @@ struct PatchMatchOptions {
+   std::string gpu_index = "-1";
+ 
+   // Depth range in which to randomly sample depth hypotheses.
+-  double depth_min = -1.0f;
+-  double depth_max = -1.0f;
++  double depth_min = -1e20;
++  double depth_max = -1e20;
+ 
+   // Half window size to compute NCC photo-consistency cost.
+   int window_radius = 5;
 @@ -79,6 +79,9 @@ struct PatchMatchOptions {
    // Whether to add a regularized geometric consistency term to the cost
    // function. If true, the `depth_maps` and `normal_maps` must not be null.
