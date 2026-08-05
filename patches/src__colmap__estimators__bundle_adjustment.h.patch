@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index 14f9a346..54b34ed7 100644
+index 8b997ffe..454f34a3 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 14f9a346..54b34ed7 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -87,18 +119,23 @@ class BundleAdjustmentConfig {
+@@ -95,12 +127,16 @@ class BundleAdjustmentConfig {
    // be variable or constant but not both at the same time.
    void AddVariablePoint(point3D_t point3D_id);
    void AddConstantPoint(point3D_t point3D_id);
@@ -53,25 +53,26 @@ index 14f9a346..54b34ed7 100644
 +  void RemoveConstrainedPoint(const point3D_t point3D_id);
 +
    // Access configuration data.
-   const std::unordered_set<camera_t> ConstantIntrinsics() const;
    const std::unordered_set<image_t>& Images() const;
    const std::unordered_set<point3D_t>& VariablePoints() const;
-   const std::unordered_set<point3D_t>& ConstantPoints() const;
-   const std::unordered_set<image_t>& ConstantCamPoses() const;
+@@ -108,6 +144,7 @@ class BundleAdjustmentConfig {
+   const std::unordered_set<camera_t> ConstantCamIntrinsics() const;
+   const std::unordered_set<sensor_t>& ConstantSensorFromRigPoses() const;
+   const std::unordered_set<frame_t>& ConstantFrameFromWorldPoses() const;
 +  const std::unordered_set<point3D_t>& ConstrainedPoints() const;
-   const std::vector<int>& ConstantCamPositions(image_t image_id) const;
  
   private:
-@@ -106,6 +143,8 @@ class BundleAdjustmentConfig {
-   std::unordered_set<image_t> image_ids_;
-   std::unordered_set<point3D_t> variable_point3D_ids_;
+   BundleAdjustmentGauge fixed_gauge_ = BundleAdjustmentGauge::UNSPECIFIED;
+@@ -117,6 +154,8 @@ class BundleAdjustmentConfig {
    std::unordered_set<point3D_t> constant_point3D_ids_;
+   std::unordered_set<sensor_t> constant_sensor_from_rig_poses_;
+   std::unordered_set<frame_t> constant_frame_from_world_poses_;
 +  // add constrained 3D points
 +  std::unordered_set<point3D_t> constrained_point3D_ids_;
-   std::unordered_set<image_t> constant_cam_poses_;
-   std::unordered_map<image_t, std::vector<int>> constant_cam_positions_;
  };
-@@ -148,6 +187,12 @@ struct BundleAdjustmentOptions {
+ 
+ struct BundleAdjustmentOptions {
+@@ -158,6 +197,12 @@ struct BundleAdjustmentOptions {
    // bundle adjustment problems due to the overhead of threading.
    int min_num_residuals_for_cpu_multi_threading = 50000;
  
@@ -84,7 +85,7 @@ index 14f9a346..54b34ed7 100644
    // Heuristic thresholds to switch between direct, sparse, and iterative
    // solvers. These thresholds may not be optimal for all types of problems.
    int max_num_images_direct_dense_cpu_solver = 50;
-@@ -176,6 +221,7 @@ struct BundleAdjustmentOptions {
+@@ -186,6 +231,7 @@ struct BundleAdjustmentOptions {
    // Create a new loss function based on the specified options. The caller
    // takes ownership of the loss function.
    ceres::LossFunction* CreateLossFunction() const;

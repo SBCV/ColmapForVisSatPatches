@@ -1,2 +1,2 @@
-d45dacc621163427fcc60f65b486332518964bde   (2025-01-25 16:34:43 +0000)
-Remove year from copyright (#3124)
+34305bdb792cd65684b3ab7002550a395dc1ea5d   (2025-03-18 12:15:31 +0100)
+Handle non-trivial frames in bundle adjustment (#3214)

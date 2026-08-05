@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index d6d1865e..89f68d51 100644
+index 16ddb1ac..be3ce88e 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -38,25 +38,22 @@ index d6d1865e..89f68d51 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -91,15 +123,29 @@ void BundleAdjustmentController::Run() {
+@@ -91,13 +123,28 @@ void BundleAdjustmentController::Run() {
    for (const image_t image_id : reconstruction_->RegImageIds()) {
      ba_config.AddImage(image_id);
    }
--  auto reg_image_ids_it = reconstruction_->RegImageIds().begin();
--  ba_config.SetConstantCamPose(*reg_image_ids_it);                // 1st image
--  ba_config.SetConstantCamPositions(*(++reg_image_ids_it), {0});  // 2nd image
+-  ba_config.FixGauge(BundleAdjustmentGauge::TWO_CAMS_FROM_WORLD);
 +
 +  // check if we should put a constraint on the 3D points
 +  if (ba_options.constrain_points) {
++    // The constrained 3D points anchor the datum - leave the gauge
++    // unspecified (no camera poses are fixed).
 +    const std::unordered_set<point3D_t>& point3D_ids = reconstruction_->Point3DIds();
 +    for (const point3D_t point3D_id : point3D_ids) {
 +      ba_config.AddConstrainedPoint(point3D_id);
 +    }
 +  } else {
-+    auto reg_image_ids_it = reconstruction_->RegImageIds().begin();
-+    ba_config.SetConstantCamPose(*reg_image_ids_it);                // 1st image
-+    // @kai commenting out this strange line
-+    ba_config.SetConstantCamPositions(*(++reg_image_ids_it), {0});  // 2nd image
++    ba_config.FixGauge(BundleAdjustmentGauge::TWO_CAMS_FROM_WORLD);
 +  }
  
    // Run bundle adjustment.

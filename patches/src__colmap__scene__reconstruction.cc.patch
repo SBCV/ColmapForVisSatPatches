@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 5641002b..d6ae43f6 100644
+index 0ee338dc..5fb0fd3a 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 5641002b..d6ae43f6 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -290,11 +322,17 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
+@@ -337,11 +369,17 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
    reg_image_ids_.erase(image_id);
  }
  
@@ -57,7 +57,7 @@ index 5641002b..d6ae43f6 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegImages() < 2) ||
-@@ -318,6 +356,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+@@ -365,6 +403,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
    Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
@@ -70,7 +70,7 @@ index 5641002b..d6ae43f6 100644
    return tform;
  }
  
-@@ -538,14 +582,16 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -593,14 +637,16 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
@@ -94,7 +94,7 @@ index 5641002b..d6ae43f6 100644
      ReadText(path);
    } else {
      LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
-@@ -553,7 +599,8 @@ void Reconstruction::Read(const std::string& path) {
+@@ -608,7 +654,8 @@ void Reconstruction::Read(const std::string& path) {
    }
  }
  
@@ -104,7 +104,7 @@ index 5641002b..d6ae43f6 100644
  
  void Reconstruction::ReadText(const std::string& path) {
    cameras_.clear();
-@@ -738,4 +785,28 @@ std::ostream& operator<<(std::ostream& stream,
+@@ -794,4 +841,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  
