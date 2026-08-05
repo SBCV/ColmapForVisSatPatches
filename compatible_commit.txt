@@ -1,2 +1,2 @@
-43233c16726e231d040de4602eb597a4949b9603   (2025-04-16 11:05:17 +0000)
-Rename FrameFromWorld to RigFromWorld pose (#3263)
+9a184b54e7edcd9edac36b099a149c6f34bfa48c   (2025-08-04 13:19:55 +0000)
+Fix bundle adjustment performance regression due to changed Gauge (#3527)
