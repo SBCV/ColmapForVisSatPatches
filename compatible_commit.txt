@@ -1,2 +1,2 @@
-34305bdb792cd65684b3ab7002550a395dc1ea5d   (2025-03-18 12:15:31 +0100)
-Handle non-trivial frames in bundle adjustment (#3214)
+43233c16726e231d040de4602eb597a4949b9603   (2025-04-16 11:05:17 +0000)
+Rename FrameFromWorld to RigFromWorld pose (#3263)

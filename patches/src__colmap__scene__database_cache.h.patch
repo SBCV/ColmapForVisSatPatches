@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/database_cache.h b/src/colmap/scene/database_cache.h
-index 24c08e93..1846df76 100644
+index af55cce7..e11efde1 100644
 --- a/src/colmap/scene/database_cache.h
 +++ b/src/colmap/scene/database_cache.h
 @@ -1,3 +1,35 @@
@@ -46,7 +46,7 @@ index 24c08e93..1846df76 100644
  #include <string>
  #include <unordered_map>
  #include <unordered_set>
-@@ -113,6 +146,57 @@ class DatabaseCache {
+@@ -116,6 +149,57 @@ class DatabaseCache {
    inline std::shared_ptr<const class CorrespondenceGraph> CorrespondenceGraph()
        const;
  

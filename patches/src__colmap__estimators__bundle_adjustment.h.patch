@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index 8b997ffe..454f34a3 100644
+index 63c2744a..b50f0522 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -58,7 +58,7 @@ index 8b997ffe..454f34a3 100644
 @@ -108,6 +144,7 @@ class BundleAdjustmentConfig {
    const std::unordered_set<camera_t> ConstantCamIntrinsics() const;
    const std::unordered_set<sensor_t>& ConstantSensorFromRigPoses() const;
-   const std::unordered_set<frame_t>& ConstantFrameFromWorldPoses() const;
+   const std::unordered_set<frame_t>& ConstantRigFromWorldPoses() const;
 +  const std::unordered_set<point3D_t>& ConstrainedPoints() const;
  
   private:
@@ -66,7 +66,7 @@ index 8b997ffe..454f34a3 100644
 @@ -117,6 +154,8 @@ class BundleAdjustmentConfig {
    std::unordered_set<point3D_t> constant_point3D_ids_;
    std::unordered_set<sensor_t> constant_sensor_from_rig_poses_;
-   std::unordered_set<frame_t> constant_frame_from_world_poses_;
+   std::unordered_set<frame_t> constant_rig_from_world_poses_;
 +  // add constrained 3D points
 +  std::unordered_set<point3D_t> constrained_point3D_ids_;
  };
