@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/cost_functions.h b/src/colmap/estimators/cost_functions.h
-index 2627c2d9..4aa05551 100644
+index 2627c2d9..b46986e6 100644
 --- a/src/colmap/estimators/cost_functions.h
 +++ b/src/colmap/estimators/cost_functions.h
 @@ -1,3 +1,35 @@
@@ -38,31 +38,36 @@ index 2627c2d9..4aa05551 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -538,3 +570,27 @@ ceres::CostFunction* CreateCameraCostFunction(
+@@ -537,4 +569,32 @@ ceres::CostFunction* CreateCameraCostFunction(
+   }
  }
  
- }  // namespace colmap
-+
 +// cost function that put a soft constraint on the 3D points
 +// so that it does not deviate too much from the specified coordinates
 +class Point3DCostFunction {
 + public:
 +  explicit Point3DCostFunction(const Eigen::Vector3d& point3D)
 +      : x_(point3D(0)), y_(point3D(1)), z_(point3D(2)) {}
++
 +  static ceres::CostFunction* Create(const Eigen::Vector3d& point3D) {
 +    return (new ceres::AutoDiffCostFunction<Point3DCostFunction, 3, 3>(
 +            new Point3DCostFunction(point3D)));
 +  }
++
 +  template <typename T>
 +  bool operator()(const T* const point3D, T* residuals) const {
 +    // deviation error
 +    residuals[0] = point3D[0] - T(x_);
 +    residuals[1] = point3D[1] - T(y_);
 +    residuals[2] = point3D[2] - T(z_);
++
 +    return true;
 +  }
++
 + private:
 +  const double x_;
 +  const double y_;
 +  const double z_;
 +};
++
+ }  // namespace colmap
