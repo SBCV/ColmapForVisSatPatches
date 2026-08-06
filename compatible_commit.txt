@@ -1,2 +1,2 @@
-5b546da7a0a8e3f11f3ed88646a929fa2765b7c6   (2026-02-06 08:59:19 +0000)
-Associate feature descriptors with type and propagate through pipeline and storage (#4080)
+8ce44e9b5fa75c98598570afc358e2937c3f79ff   (2026-02-19 19:20:06 +0100)
+Fix triangulation angle computation in patch match sampling (#4110)

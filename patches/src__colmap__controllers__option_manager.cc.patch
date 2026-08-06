@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index 01027682..e8d5b931 100644
+index fddc239d..3af84741 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 01027682..e8d5b931 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -493,6 +525,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
+@@ -520,6 +552,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
    AddDefaultOption(
        "BundleAdjustmentCeres.max_num_images_direct_sparse_gpu_solver",
        &bundle_adjustment->ceres->max_num_images_direct_sparse_gpu_solver);

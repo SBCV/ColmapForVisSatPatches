@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match_cuda.cu b/src/colmap/mvs/patch_match_cuda.cu
-index 12ca4b83..99480018 100644
+index 3500d65e..b52cd27a 100644
 --- a/src/colmap/mvs/patch_match_cuda.cu
 +++ b/src/colmap/mvs/patch_match_cuda.cu
 @@ -1,3 +1,35 @@
@@ -455,7 +455,7 @@ index 12ca4b83..99480018 100644
  __device__ inline void ComputeViewingAngles(
      const cudaTextureObject_t poses_texture,
      const float point[3],
-@@ -242,24 +444,27 @@ __device__ inline void ComputeViewingAngles(
+@@ -242,16 +444,18 @@ __device__ inline void ComputeViewingAngles(
    *cos_incident_angle = 0.0f;
  
    // Projection center of source image.
@@ -477,19 +477,17 @@ index 12ca4b83..99480018 100644
 -  const float RX_inv_norm = rsqrt(DotProduct3(point, point));
 +  const float RX_inv_norm = rsqrt(DotProduct3(RX, RX));
  
-   // Length of ray from source image to point.
+   // Length of ray from point to source image.
    const float SX_inv_norm = rsqrt(DotProduct3(SX, SX));
- 
-   *cos_incident_angle = DotProduct3(SX, normal) * SX_inv_norm;
--  *cos_triangulation_angle = DotProduct3(SX, point) * RX_inv_norm * SX_inv_norm;
-+  *cos_triangulation_angle = DotProduct3(RX, SX) * RX_inv_norm * SX_inv_norm;
+@@ -261,6 +465,7 @@ __device__ inline void ComputeViewingAngles(
+       -DotProduct3(SX, point) * RX_inv_norm * SX_inv_norm;
  }
  
 +// a more numerically stable way to compose homography
  __device__ inline void ComposeHomography(
      const cudaTextureObject_t poses_texture,
      const int image_idx,
-@@ -268,59 +473,45 @@ __device__ inline void ComposeHomography(
+@@ -269,59 +474,45 @@ __device__ inline void ComposeHomography(
      const float depth,
      const float normal[3],
      float H[9]) {
@@ -584,7 +582,7 @@ index 12ca4b83..99480018 100644
  }
  
  // Each thread in the current warp / thread block reads in 3 columns of the
-@@ -441,7 +632,7 @@ struct PhotoConsistencyCostComputer {
+@@ -442,7 +633,7 @@ struct PhotoConsistencyCostComputer {
    int col = -1;
  
    // Depth and normal for which to warp patch.
@@ -593,7 +591,7 @@ index 12ca4b83..99480018 100644
    const float* normal = nullptr;
  
    __device__ inline void Read(const int row) {
-@@ -487,7 +678,7 @@ struct PhotoConsistencyCostComputer {
+@@ -488,7 +679,7 @@ struct PhotoConsistencyCostComputer {
      for (int row = -kWindowRadius; row <= kWindowRadius; row += kWindowStep) {
        for (int col = -kWindowRadius; col <= kWindowRadius; col += kWindowStep) {
          const float inv_z = 1.0f / z;
@@ -602,7 +600,7 @@ index 12ca4b83..99480018 100644
          const float norm_row_src = inv_z * row_src + 0.5f;
          const float ref_color = local_ref_image.data[ref_image_idx];
          const float src_color = tex2DLayered<float>(
-@@ -556,6 +747,7 @@ struct PhotoConsistencyCostComputer {
+@@ -557,6 +748,7 @@ struct PhotoConsistencyCostComputer {
    const BilateralWeightComputer bilateral_weight_computer_;
  };
  
@@ -610,7 +608,7 @@ index 12ca4b83..99480018 100644
  __device__ inline float ComputeGeomConsistencyCost(
      const cudaTextureObject_t poses_texture,
      const cudaTextureObject_t src_depth_maps_texture,
-@@ -565,13 +757,13 @@ __device__ inline float ComputeGeomConsistencyCost(
+@@ -566,13 +758,13 @@ __device__ inline float ComputeGeomConsistencyCost(
      const int image_idx,
      const float max_cost) {
    // Extract projection matrices for source image.
@@ -630,7 +628,7 @@ index 12ca4b83..99480018 100644
    }
  
    // Project point in reference image to world.
-@@ -579,48 +771,33 @@ __device__ inline float ComputeGeomConsistencyCost(
+@@ -580,48 +772,33 @@ __device__ inline float ComputeGeomConsistencyCost(
    ComputePointAtDepth(row, col, depth, forward_point);
  
    // Project world point to source image.
