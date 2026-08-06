@@ -1,2 +1,2 @@
-decb1e2d95318d25bda32e1c7e3eb37c9dd5cc7e   (2026-01-22 13:00:47 +0000)
-Add fisheye (equidistant) camera model (#4039)
+12dbe8a5cb41f167343a4136c950aa535636cce8   (2026-01-23 08:10:03 +0100)
+Store Rigid3/Sim3 params as single vector (#4041)
