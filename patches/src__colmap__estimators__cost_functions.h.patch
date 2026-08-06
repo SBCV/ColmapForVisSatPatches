@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/cost_functions.h b/src/colmap/estimators/cost_functions.h
-index 52ad9165..af73d3a9 100644
+index b3b4f55f..f2b66724 100644
 --- a/src/colmap/estimators/cost_functions.h
 +++ b/src/colmap/estimators/cost_functions.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 52ad9165..af73d3a9 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -555,4 +587,32 @@ ceres::CostFunction* CreateCameraCostFunction(
+@@ -596,4 +628,32 @@ ceres::CostFunction* CreateCameraCostFunction(
    }
  }
  
