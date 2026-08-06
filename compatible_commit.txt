@@ -1,2 +1,2 @@
-e165728d5801b131ccb7771caf3417cb76c25645   (2026-01-26 15:05:04 +0000)
-Modularize cost functions (#4054)
+5b546da7a0a8e3f11f3ed88646a929fa2765b7c6   (2026-02-06 08:59:19 +0000)
+Associate feature descriptors with type and propagate through pipeline and storage (#4080)

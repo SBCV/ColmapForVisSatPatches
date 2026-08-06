@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index b5285a3e..21616b91 100644
+index b16c93d2..659673b3 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -139,7 +139,7 @@ index b5285a3e..21616b91 100644
 +
 +  // parse sparse points
    points.reserve(reconstruction.NumPoints3D());
-   for (const auto& point3D : reconstruction.Points3D()) {
+   for (const auto& [_, point3D] : reconstruction.Points3D()) {
      Point point;
 @@ -91,6 +172,44 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
      }

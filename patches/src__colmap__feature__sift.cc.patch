@@ -1,5 +1,5 @@
 diff --git a/src/colmap/feature/sift.cc b/src/colmap/feature/sift.cc
-index 64d13287..90188030 100644
+index dd2d1a24..7c36951f 100644
 --- a/src/colmap/feature/sift.cc
 +++ b/src/colmap/feature/sift.cc
 @@ -1,3 +1,35 @@
@@ -38,10 +38,10 @@ index 64d13287..90188030 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -1508,13 +1540,13 @@ class SiftGPUFeatureMatcher : public FeatureMatcher {
- 
+@@ -1515,13 +1547,14 @@ class SiftGPUFeatureMatcher : public FeatureMatcher {
   private:
-   void WarnIfMaxNumMatchesReachedGPU(const FeatureDescriptors& descriptors) {
+   void WarnIfMaxNumMatchesReachedGPU(
+       const FeatureDescriptorsData& descriptors) {
 -    if (sift_match_gpu_.GetMaxSift() < descriptors.rows()) {
 -      LOG(WARNING) << StringPrintf(
 -          "Clamping features from %d to %d - consider "
@@ -49,6 +49,7 @@ index 64d13287..90188030 100644
 -          descriptors.rows(),
 -          sift_match_gpu_.GetMaxSift());
 -    }
++    // @kai suppressed for satellite matching (very high feature counts)
 +    // if (sift_match_gpu_.GetMaxSift() < descriptors.rows()) {
 +    //   LOG(WARNING) << StringPrintf(
 +    //       "Clamping features from %d to %d - consider "
