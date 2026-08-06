@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index 745e3712..3b1fafe3 100644
+index 670bd4bd..82cdd09e 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -38,32 +38,19 @@ index 745e3712..3b1fafe3 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -498,6 +530,16 @@ void OptionManager::AddBundleAdjustmentOptions() {
-   AddAndRegisterDefaultOption(
-       "BundleAdjustment.max_num_images_direct_sparse_gpu_solver",
-       &bundle_adjustment->max_num_images_direct_sparse_gpu_solver);
-+
+@@ -472,6 +504,15 @@ void OptionManager::AddBundleAdjustmentOptions() {
+                    &bundle_adjustment->max_num_images_direct_dense_gpu_solver);
+   AddDefaultOption("BundleAdjustment.max_num_images_direct_sparse_gpu_solver",
+                    &bundle_adjustment->max_num_images_direct_sparse_gpu_solver);
 +  // constrain points options
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points",
++  AddDefaultOption("BundleAdjustment.constrain_points",
 +                              &bundle_adjustment->constrain_points);
-+  //  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss",
++  //  AddDefaultOption("BundleAdjustment.constrain_points_loss",
 +  //                              &bundle_adjustment->constrain_points_loss);
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss_scale",
++  AddDefaultOption("BundleAdjustment.constrain_points_loss_scale",
 +                              &bundle_adjustment->constrain_points_loss_scale);
-+  AddAndRegisterDefaultOption("BundleAdjustment.constrain_points_loss_weight",
++  AddDefaultOption("BundleAdjustment.constrain_points_loss_weight",
 +                              &bundle_adjustment->constrain_points_loss_weight);
  }
  
  void OptionManager::AddMapperOptions() {
-@@ -872,6 +914,11 @@ void OptionManager::AddPatchMatchStereoOptions() {
-                               &patch_match_stereo->allow_missing_files);
-   AddAndRegisterDefaultOption("PatchMatchStereo.write_consistency_graph",
-                               &patch_match_stereo->write_consistency_graph);
-+  // whether to overwrite existing reconstruction
-+  AddAndRegisterDefaultOption("PatchMatchStereo.overwrite",
-+                              &patch_match_stereo->overwrite);
-+  AddAndRegisterDefaultOption("PatchMatchStereo.use_exist_photom",
-+                              &patch_match_stereo->use_exist_photom);
- }
- 
- void OptionManager::AddStereoFusionOptions() {
