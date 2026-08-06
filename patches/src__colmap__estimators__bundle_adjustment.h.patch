@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index 70e14f79..147d4d0b 100644
+index 16aed3ab..9a2a0170 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 70e14f79..147d4d0b 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -96,13 +128,17 @@ class BundleAdjustmentConfig {
+@@ -97,13 +129,17 @@ class BundleAdjustmentConfig {
    void AddVariablePoint(point3D_t point3D_id);
    void AddConstantPoint(point3D_t point3D_id);
    void IgnorePoint(point3D_t point3D_id);
@@ -56,7 +56,7 @@ index 70e14f79..147d4d0b 100644
    // Access configuration data.
    const std::unordered_set<image_t>& Images() const;
    const std::unordered_set<point3D_t>& VariablePoints() const;
-@@ -110,6 +146,7 @@ class BundleAdjustmentConfig {
+@@ -111,6 +147,7 @@ class BundleAdjustmentConfig {
    const std::unordered_set<camera_t> ConstantCamIntrinsics() const;
    const std::unordered_set<sensor_t>& ConstantSensorFromRigPoses() const;
    const std::unordered_set<frame_t>& ConstantRigFromWorldPoses() const;
@@ -64,7 +64,7 @@ index 70e14f79..147d4d0b 100644
  
   private:
    BundleAdjustmentGauge fixed_gauge_ = BundleAdjustmentGauge::UNSPECIFIED;
-@@ -120,6 +157,8 @@ class BundleAdjustmentConfig {
+@@ -121,6 +158,8 @@ class BundleAdjustmentConfig {
    std::unordered_set<point3D_t> ignored_point3D_ids_;
    std::unordered_set<sensor_t> constant_sensor_from_rig_poses_;
    std::unordered_set<frame_t> constant_rig_from_world_poses_;
@@ -73,7 +73,7 @@ index 70e14f79..147d4d0b 100644
  };
  
  struct BundleAdjustmentOptions {
-@@ -166,6 +205,12 @@ struct BundleAdjustmentOptions {
+@@ -173,6 +212,12 @@ struct BundleAdjustmentOptions {
    // bundle adjustment problems due to the overhead of threading.
    int min_num_residuals_for_cpu_multi_threading = 50000;
  
@@ -86,7 +86,7 @@ index 70e14f79..147d4d0b 100644
    // Heuristic thresholds to switch between direct, sparse, and iterative
    // solvers. These thresholds may not be optimal for all types of problems.
    int max_num_images_direct_dense_cpu_solver = 50;
-@@ -198,6 +243,7 @@ struct BundleAdjustmentOptions {
+@@ -205,6 +250,7 @@ struct BundleAdjustmentOptions {
  
    // Create loss function for given options.
    std::unique_ptr<ceres::LossFunction> CreateLossFunction() const;
