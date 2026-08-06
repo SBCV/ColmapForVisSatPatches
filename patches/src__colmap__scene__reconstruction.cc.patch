@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index ea7a4245..79616895 100644
+index 56f097c3..5f60db0e 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index ea7a4245..79616895 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -690,11 +722,17 @@ void Reconstruction::DeRegisterFrame(const frame_t frame_id) {
+@@ -692,11 +724,17 @@ void Reconstruction::DeRegisterFrame(const frame_t frame_id) {
        reg_frame_ids_.end());
  }
  
@@ -57,7 +57,7 @@ index ea7a4245..79616895 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegFrames() < 2) ||
-@@ -718,6 +756,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+@@ -720,6 +758,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
    Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
@@ -70,41 +70,42 @@ index ea7a4245..79616895 100644
    return tform;
  }
  
-@@ -966,14 +1010,16 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -968,13 +1012,15 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
 +// @kai never use the binary format that is not very intuitive
- void Reconstruction::Read(const std::string& path) {
--  if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
--      ExistsFile(JoinPaths(path, "images.bin")) &&
--      ExistsFile(JoinPaths(path, "points3D.bin"))) {
+ void Reconstruction::Read(const std::filesystem::path& path) {
+-  if (ExistsFile(path / "cameras.bin") && ExistsFile(path / "images.bin") &&
+-      ExistsFile(path / "points3D.bin")) {
 -    ReadBinary(path);
--  } else if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
--             ExistsFile(JoinPaths(path, "images.txt")) &&
--             ExistsFile(JoinPaths(path, "points3D.txt"))) {
-+  // if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "images.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "points3D.bin"))) {
+-  } else if (ExistsFile(path / "cameras.txt") &&
+-             ExistsFile(path / "images.txt") &&
+-             ExistsFile(path / "points3D.txt")) {
++  // if (ExistsFile(path / "cameras.bin") && ExistsFile(path / "images.bin") &&
++  //     ExistsFile(path / "points3D.bin")) {
 +  //   ReadBinary(path);
 +  // } else if (...) {
-+  if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
-+      ExistsFile(JoinPaths(path, "images.txt")) &&
-+      ExistsFile(JoinPaths(path, "points3D.txt"))) {
++  if (ExistsFile(path / "cameras.txt") &&
++      ExistsFile(path / "images.txt") &&
++      ExistsFile(path / "points3D.txt")) {
      ReadText(path);
    } else {
      LOG(FATAL_THROW)
-@@ -982,7 +1028,8 @@ void Reconstruction::Read(const std::string& path) {
-   }
+@@ -984,8 +1030,11 @@ void Reconstruction::Read(const std::filesystem::path& path) {
  }
  
--void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
-+void Reconstruction::Write(const std::string& path) const { WriteText(path); }
-+// void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
+ void Reconstruction::Write(const std::filesystem::path& path) const {
+-  WriteBinary(path);
++  WriteText(path);
+ }
++// void Reconstruction::Write(const std::filesystem::path& path) const {
++//   WriteBinary(path);
++// }
  
- void Reconstruction::ReadText(const std::string& path) {
+ void Reconstruction::ReadText(const std::filesystem::path& path) {
    cameras_.clear();
-@@ -1193,4 +1240,28 @@ std::ostream& operator<<(std::ostream& stream,
+@@ -1197,4 +1246,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  

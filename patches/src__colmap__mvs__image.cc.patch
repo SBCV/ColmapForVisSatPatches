@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.cc b/src/colmap/mvs/image.cc
-index efb6fb3f..9363440d 100644
+index 7184744c..7d77bba1 100644
 --- a/src/colmap/mvs/image.cc
 +++ b/src/colmap/mvs/image.cc
 @@ -1,3 +1,35 @@
@@ -93,7 +93,7 @@ index efb6fb3f..9363440d 100644
 +  }
 +}
  
- Image::Image(const std::string& path,
+ Image::Image(const std::filesystem::path& path,
               const size_t width,
               const size_t height,
 -             const float* K,
@@ -128,7 +128,7 @@ index efb6fb3f..9363440d 100644
 +
 +const Bitmap& Image::GetBitmap() const { return bitmap_; }
 +
-+const std::string& Image::GetPath() const { return path_; }
++const std::filesystem::path& Image::GetPath() const { return path_; }
 +
 +
 +void Image::SetLastRow(const double last_row[4]) {

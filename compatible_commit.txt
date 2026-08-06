@@ -1,2 +1,2 @@
-7b47036a4da5db69f9482de9cfb6be0405449d3b   (2026-01-07 21:32:33 +0100)
-Add relative poses to DatabaseCache and update the signature of global mapper.  (#3960)
+9830d258d1e3f046545ea51f2259ad672d472475   (2026-01-08 22:50:59 +0000)
+Switch paths from std::string to std::filesystem::path (#3901)
