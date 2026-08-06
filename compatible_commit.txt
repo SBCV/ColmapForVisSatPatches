@@ -1,2 +1,2 @@
-12dbe8a5cb41f167343a4136c950aa535636cce8   (2026-01-23 08:10:03 +0100)
-Store Rigid3/Sim3 params as single vector (#4041)
+872ad9ae30937a4706007035757b7524e525fed5   (2026-01-26 11:06:51 +0100)
+Abstract general bundle adjuster and solver summary. (#4042)

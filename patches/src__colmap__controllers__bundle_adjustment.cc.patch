@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/bundle_adjustment.cc b/src/colmap/controllers/bundle_adjustment.cc
-index 45d8330d..6bf674f0 100644
+index bd91edc5..8fd6d522 100644
 --- a/src/colmap/controllers/bundle_adjustment.cc
 +++ b/src/colmap/controllers/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -65,7 +65,7 @@ index 45d8330d..6bf674f0 100644
 +  }
  
    // Run bundle adjustment.
-   std::unique_ptr<BundleAdjuster> bundle_adjuster = CreateDefaultBundleAdjuster(
+   std::unique_ptr<BundleAdjuster> bundle_adjuster =
 @@ -103,6 +146,10 @@ void BundleAdjustmentController::Run() {
    bundle_adjuster->Solve();
    reconstruction_->UpdatePoint3DErrors();
