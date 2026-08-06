@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index b5b167ac..a90da391 100644
+index 70e14f79..147d4d0b 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -73,7 +73,7 @@ index b5b167ac..a90da391 100644
  };
  
  struct BundleAdjustmentOptions {
-@@ -161,6 +200,12 @@ struct BundleAdjustmentOptions {
+@@ -166,6 +205,12 @@ struct BundleAdjustmentOptions {
    // bundle adjustment problems due to the overhead of threading.
    int min_num_residuals_for_cpu_multi_threading = 50000;
  
@@ -86,7 +86,7 @@ index b5b167ac..a90da391 100644
    // Heuristic thresholds to switch between direct, sparse, and iterative
    // solvers. These thresholds may not be optimal for all types of problems.
    int max_num_images_direct_dense_cpu_solver = 50;
-@@ -188,6 +233,7 @@ struct BundleAdjustmentOptions {
+@@ -198,6 +243,7 @@ struct BundleAdjustmentOptions {
  
    // Create loss function for given options.
    std::unique_ptr<ceres::LossFunction> CreateLossFunction() const;

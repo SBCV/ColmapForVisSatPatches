@@ -1,8 +1,8 @@
 diff --git a/src/colmap/exe/sfm.h b/src/colmap/exe/sfm.h
-index 75d6c37e..c940706c 100644
+index 6d0f0620..ed82a8c8 100644
 --- a/src/colmap/exe/sfm.h
 +++ b/src/colmap/exe/sfm.h
-@@ -54,6 +54,8 @@ bool RunMapperImpl(
+@@ -54,6 +54,8 @@ bool RunIncrementalMapperImpl(
  
  int RunAutomaticReconstructor(int argc, char** argv);
  int RunBundleAdjuster(int argc, char** argv);
@@ -10,4 +10,4 @@ index 75d6c37e..c940706c 100644
 +int RunNormalize(int argc, char** argv);
  int RunColorExtractor(int argc, char** argv);
  int RunMapper(int argc, char** argv);
- int RunHierarchicalMapper(int argc, char** argv);
+ int RunGlobalMapper(int argc, char** argv);

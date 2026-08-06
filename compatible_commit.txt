@@ -1,2 +1,2 @@
-70358de550ab47b0b83c3e5812d42ec8e2d41b22   (2025-12-12 12:15:10 +0000)
-Fix copying behaviors of empty bitmap. (#3823)
+3162ec08be6b41b29e8ea72f5155aeb974917861   (2026-01-05 20:35:13 +0000)
+Migrate glomap exe into colmap. (#3952)
