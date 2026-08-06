@@ -1,2 +1,2 @@
-9a184b54e7edcd9edac36b099a149c6f34bfa48c   (2025-08-04 13:19:55 +0000)
-Fix bundle adjustment performance regression due to changed Gauge (#3527)
+eee1d07e59680192a38788e15fd99ca113a31db9   (2025-10-20 19:04:17 +0200)
+Feature sub-selection for global BA (#3650)

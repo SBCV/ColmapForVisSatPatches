@@ -1,5 +1,5 @@
 diff --git a/src/colmap/feature/sift.cc b/src/colmap/feature/sift.cc
-index 9c8b083b..17d0c0aa 100644
+index 22c921d2..47272b03 100644
 --- a/src/colmap/feature/sift.cc
 +++ b/src/colmap/feature/sift.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 9c8b083b..17d0c0aa 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -1402,13 +1434,13 @@ class SiftGPUFeatureMatcher : public FeatureMatcher {
+@@ -1418,13 +1450,13 @@ class SiftGPUFeatureMatcher : public FeatureMatcher {
  
   private:
    void WarnIfMaxNumMatchesReachedGPU(const FeatureDescriptors& descriptors) {

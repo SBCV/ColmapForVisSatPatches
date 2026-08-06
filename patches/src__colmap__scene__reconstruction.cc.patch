@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 71cdb911..3834b083 100644
+index 788bb982..5d774659 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 71cdb911..3834b083 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -415,11 +447,17 @@ void Reconstruction::DeRegisterFrame(const frame_t frame_id) {
+@@ -458,11 +490,17 @@ void Reconstruction::DeRegisterFrame(const frame_t frame_id) {
        reg_frame_ids_.end());
  }
  
@@ -57,7 +57,7 @@ index 71cdb911..3834b083 100644
    THROW_CHECK_GT(extent, 0);
  
    if ((use_images && NumRegFrames() < 2) ||
-@@ -443,6 +481,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+@@ -486,6 +524,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
    Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
@@ -70,7 +70,7 @@ index 71cdb911..3834b083 100644
    return tform;
  }
  
-@@ -678,14 +722,16 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -721,14 +765,16 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
@@ -94,7 +94,7 @@ index 71cdb911..3834b083 100644
      ReadText(path);
    } else {
      LOG(FATAL_THROW)
-@@ -694,7 +740,8 @@ void Reconstruction::Read(const std::string& path) {
+@@ -737,7 +783,8 @@ void Reconstruction::Read(const std::string& path) {
    }
  }
  
@@ -103,8 +103,8 @@ index 71cdb911..3834b083 100644
 +// void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
  
  void Reconstruction::ReadText(const std::string& path) {
-   rigs_.clear();
-@@ -903,4 +950,28 @@ std::ostream& operator<<(std::ostream& stream,
+   cameras_.clear();
+@@ -946,4 +993,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  

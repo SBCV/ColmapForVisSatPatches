@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index 55811be2..89cd2b1d 100644
+index 9f054f2d..4ae904ff 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -38,14 +38,15 @@ index 55811be2..89cd2b1d 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -94,12 +126,16 @@ class BundleAdjustmentConfig {
-   // be variable or constant but not both at the same time.
+@@ -96,13 +128,17 @@ class BundleAdjustmentConfig {
    void AddVariablePoint(point3D_t point3D_id);
    void AddConstantPoint(point3D_t point3D_id);
+   void IgnorePoint(point3D_t point3D_id);
 +  void AddConstrainedPoint(point3D_t point3D_id);
    bool HasPoint(point3D_t point3D_id) const;
    bool HasVariablePoint(point3D_t point3D_id) const;
    bool HasConstantPoint(point3D_t point3D_id) const;
+   bool IsIgnoredPoint(point3D_t point3D_id) const;
 +  bool HasConstrainedPoint(point3D_t point3D_id) const;
    void RemoveVariablePoint(point3D_t point3D_id);
    void RemoveConstantPoint(point3D_t point3D_id);
@@ -55,7 +56,7 @@ index 55811be2..89cd2b1d 100644
    // Access configuration data.
    const std::unordered_set<image_t>& Images() const;
    const std::unordered_set<point3D_t>& VariablePoints() const;
-@@ -107,6 +143,7 @@ class BundleAdjustmentConfig {
+@@ -110,6 +146,7 @@ class BundleAdjustmentConfig {
    const std::unordered_set<camera_t> ConstantCamIntrinsics() const;
    const std::unordered_set<sensor_t>& ConstantSensorFromRigPoses() const;
    const std::unordered_set<frame_t>& ConstantRigFromWorldPoses() const;
@@ -63,8 +64,8 @@ index 55811be2..89cd2b1d 100644
  
   private:
    BundleAdjustmentGauge fixed_gauge_ = BundleAdjustmentGauge::UNSPECIFIED;
-@@ -116,6 +153,8 @@ class BundleAdjustmentConfig {
-   std::unordered_set<point3D_t> constant_point3D_ids_;
+@@ -120,6 +157,8 @@ class BundleAdjustmentConfig {
+   std::unordered_set<point3D_t> ignored_point3D_ids_;
    std::unordered_set<sensor_t> constant_sensor_from_rig_poses_;
    std::unordered_set<frame_t> constant_rig_from_world_poses_;
 +  // add constrained 3D points
@@ -72,7 +73,7 @@ index 55811be2..89cd2b1d 100644
  };
  
  struct BundleAdjustmentOptions {
-@@ -157,6 +196,12 @@ struct BundleAdjustmentOptions {
+@@ -161,6 +200,12 @@ struct BundleAdjustmentOptions {
    // bundle adjustment problems due to the overhead of threading.
    int min_num_residuals_for_cpu_multi_threading = 50000;
  
@@ -85,7 +86,7 @@ index 55811be2..89cd2b1d 100644
    // Heuristic thresholds to switch between direct, sparse, and iterative
    // solvers. These thresholds may not be optimal for all types of problems.
    int max_num_images_direct_dense_cpu_solver = 50;
-@@ -185,6 +230,7 @@ struct BundleAdjustmentOptions {
+@@ -189,6 +234,7 @@ struct BundleAdjustmentOptions {
    // Create a new loss function based on the specified options. The caller
    // takes ownership of the loss function.
    ceres::LossFunction* CreateLossFunction() const;
