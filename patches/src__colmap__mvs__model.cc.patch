@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index 6a05f7e3..03ce0754 100644
+index cd6f528c..3702a7da 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -217,12 +217,12 @@ index 6a05f7e3..03ce0754 100644
 -
 -    std::sort(image_depths.begin(), image_depths.end());
 -
--    const float kMinPercentile = 0.01f;
--    const float kMaxPercentile = 0.99f;
+-    constexpr float kMinPercentile = 0.01f;
+-    constexpr float kMaxPercentile = 0.99f;
 -    depth_range.first = image_depths[image_depths.size() * kMinPercentile];
 -    depth_range.second = image_depths[image_depths.size() * kMaxPercentile];
 -
--    const float kStretchRatio = 0.25f;
+-    constexpr float kStretchRatio = 0.25f;
 -    depth_range.first *= (1.0f - kStretchRatio);
 -    depth_range.second *= (1.0f + kStretchRatio);
 -  }
