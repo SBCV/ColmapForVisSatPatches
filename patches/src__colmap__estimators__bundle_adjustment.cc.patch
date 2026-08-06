@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index 19825ba4..854dcb3a 100644
+index 54c49a2c..3339a9d4 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -150,7 +150,7 @@ index 19825ba4..854dcb3a 100644
    ceres::Solver::Summary Solve() override {
      ceres::Solver::Summary summary;
      if (problem_->NumResiduals() == 0) {
-@@ -984,6 +1072,7 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+@@ -1004,6 +1092,7 @@ class DefaultBundleAdjuster : public BundleAdjuster {
   private:
    std::shared_ptr<ceres::Problem> problem_;
    std::unique_ptr<ceres::LossFunction> loss_function_;

@@ -1,2 +1,2 @@
-d821dc020476b308c31a7437b5a58c43c943f4af   (2026-01-16 10:18:23 +0000)
-Add support for division camera models (#4013)
+decb1e2d95318d25bda32e1c7e3eb37c9dd5cc7e   (2026-01-22 13:00:47 +0000)
+Add fisheye (equidistant) camera model (#4039)
