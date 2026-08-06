@@ -1,2 +1,2 @@
-1e820a3ceb30f622c8af88c579cd184dff9f8d2a   (2026-01-07 16:57:05 +0100)
-Add test for reading/writing options from ini (#3963)
+7b47036a4da5db69f9482de9cfb6be0405449d3b   (2026-01-07 21:32:33 +0100)
+Add relative poses to DatabaseCache and update the signature of global mapper.  (#3960)
