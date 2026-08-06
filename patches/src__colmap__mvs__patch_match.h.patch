@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match.h b/src/colmap/mvs/patch_match.h
-index 27d033ae..8b7cb17d 100644
+index d1d87607..7a8e218c 100644
 --- a/src/colmap/mvs/patch_match.h
 +++ b/src/colmap/mvs/patch_match.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 27d033ae..8b7cb17d 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -75,6 +107,9 @@ class PatchMatch {
+@@ -72,6 +104,9 @@ class PatchMatch {
  
      // Print the configuration to stdout.
      void Print() const;

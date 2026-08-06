@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/workspace.h b/src/colmap/mvs/workspace.h
-index e8499e98..febece8f 100644
+index d41f3b43..36f46905 100644
 --- a/src/colmap/mvs/workspace.h
 +++ b/src/colmap/mvs/workspace.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index e8499e98..febece8f 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -42,6 +74,17 @@
+@@ -43,6 +75,17 @@
  namespace colmap {
  namespace mvs {
  
