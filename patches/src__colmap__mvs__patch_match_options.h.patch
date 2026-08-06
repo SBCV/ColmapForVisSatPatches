@@ -1,19 +1,19 @@
 diff --git a/src/colmap/mvs/patch_match_options.h b/src/colmap/mvs/patch_match_options.h
-index 819b7016..cc401ca7 100644
+index bc6c1f29..c69a9928 100644
 --- a/src/colmap/mvs/patch_match_options.h
 +++ b/src/colmap/mvs/patch_match_options.h
-@@ -43,8 +43,8 @@ struct PatchMatchOptions {
-   std::string gpu_index = "-1";
+@@ -36,8 +36,8 @@ namespace mvs {
  
+ struct PatchMatchOptions {
    // Depth range in which to randomly sample depth hypotheses.
 -  double depth_min = -1.0f;
 -  double depth_max = -1.0f;
 +  double depth_min = -1e20;
 +  double depth_max = -1e20;
  
-   // Half window size to compute NCC photo-consistency cost.
-   int window_radius = 5;
-@@ -79,6 +79,9 @@ struct PatchMatchOptions {
+   // Parameters for bilaterally weighted NCC.
+   double sigma_spatial = -1;
+@@ -111,6 +111,9 @@ struct PatchMatchOptions {
    // Whether to add a regularized geometric consistency term to the cost
    // function. If true, the `depth_maps` and `normal_maps` must not be null.
    bool geom_consistency = true;
@@ -21,5 +21,5 @@ index 819b7016..cc401ca7 100644
 +  // whether to overwrite existing reconstruction
 +  bool overwrite = false;
  
-   // The relative weight of the geometric consistency term w.r.t. to
-   // the photo-consistency term.
+   // Whether to enable filtering.
+   bool filter = true;

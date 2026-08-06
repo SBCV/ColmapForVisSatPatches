@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/database_cache.h b/src/colmap/scene/database_cache.h
-index 39ffae50..355c8ad5 100644
+index 0afa4a17..2f46ea1c 100644
 --- a/src/colmap/scene/database_cache.h
 +++ b/src/colmap/scene/database_cache.h
 @@ -1,3 +1,35 @@
@@ -46,10 +46,112 @@ index 39ffae50..355c8ad5 100644
  #include <string>
  #include <unordered_map>
  #include <unordered_set>
-@@ -119,6 +152,57 @@ class DatabaseCache {
-   inline std::shared_ptr<const class CorrespondenceGraph> CorrespondenceGraph()
+@@ -125,6 +158,159 @@ class DatabaseCache {
        const;
+   inline std::shared_ptr<class CorrespondenceGraph> CorrespondenceGraph();
  
++  // // @kai print statistics
++  // std::string GetStatsString() const {
++  //   std::stringstream buffer;
++
++  //   std::vector<int> num_observations;
++  //   std::vector<int> image_ids;
++  //   // per-view observations
++  //   for (const auto& image: images_) {
++  //     image_ids.push_back(image.first);
++  //     int cnt = image.second.NumObservations();
++  //     std::cout << image.second.Name() << ", " << cnt << std::endl;
++  //     num_observations.push_back(cnt);
++  //   }
++  //   std::sort(num_observations.begin(), num_observations.end());
++  //   int min_val = num_observations[0];
++  //   int max_val = num_observations.back();
++
++  //   double avg_val = 0.0;
++  //   for(size_t i=0; i<num_observations.size(); ++i) {
++  //     avg_val += num_observations[i];
++  //   }
++  //   avg_val /= num_observations.size();
++  //   buffer << "\nAvg. Per-view Observations: " << avg_val;
++  //   buffer << "\nMin. Per-view Observations: " << min_val;
++  //   buffer << "\nMax. Per-view Observations: " << max_val;
++
++  //   // pair-wise matches
++  //   std::vector<int> num_pairwise_matches;
++  //   for (size_t i=0; i<image_ids.size(); ++i) {
++  //     for (size_t j=i+1; j<image_ids.size(); ++j) {
++  //       int cnt = correspondence_graph_.NumCorrespondencesBetweenImages(image_ids[i], image_ids[j]);
++  //       num_pairwise_matches.push_back(cnt);
++  //     }
++  //   }
++
++  //   std::sort(num_pairwise_matches.begin(), num_pairwise_matches.end());
++  //   min_val = num_pairwise_matches[0];
++  //   max_val = num_pairwise_matches.back();
++
++  //   avg_val = 0.0;
++  //   for(size_t i=0; i<num_pairwise_matches.size(); ++i) {
++  //     avg_val += num_pairwise_matches[i];
++  //   }
++  //   avg_val /= num_pairwise_matches.size();
++  //   buffer << "\nAvg. Pair-wise Matches: " << avg_val;
++  //   buffer << "\nMin. Pair-wise Matches: " << min_val;
++  //   buffer << "\nMax. Pair-wise Matches: " << max_val << std::endl;
++
++  //   return buffer.str();
++  // }
++
++  // // @kai print statistics
++  // std::string GetStatsString() const {
++  //   std::stringstream buffer;
++
++  //   std::vector<int> num_observations;
++  //   std::vector<int> image_ids;
++  //   // per-view observations
++  //   for (const auto& image: images_) {
++  //     image_ids.push_back(image.first);
++  //     int cnt = image.second.NumObservations();
++  //     std::cout << image.second.Name() << ", " << cnt << std::endl;
++  //     num_observations.push_back(cnt);
++  //   }
++  //   std::sort(num_observations.begin(), num_observations.end());
++  //   int min_val = num_observations[0];
++  //   int max_val = num_observations.back();
++
++  //   double avg_val = 0.0;
++  //   for(size_t i=0; i<num_observations.size(); ++i) {
++  //     avg_val += num_observations[i];
++  //   }
++  //   avg_val /= num_observations.size();
++  //   buffer << "\nAvg. Per-view Observations: " << avg_val;
++  //   buffer << "\nMin. Per-view Observations: " << min_val;
++  //   buffer << "\nMax. Per-view Observations: " << max_val;
++
++  //   // pair-wise matches
++  //   std::vector<int> num_pairwise_matches;
++  //   for (size_t i=0; i<image_ids.size(); ++i) {
++  //     for (size_t j=i+1; j<image_ids.size(); ++j) {
++  //       int cnt = correspondence_graph_.NumCorrespondencesBetweenImages(image_ids[i], image_ids[j]);
++  //       num_pairwise_matches.push_back(cnt);
++  //     }
++  //   }
++
++  //   std::sort(num_pairwise_matches.begin(), num_pairwise_matches.end());
++  //   min_val = num_pairwise_matches[0];
++  //   max_val = num_pairwise_matches.back();
++
++  //   avg_val = 0.0;
++  //   for(size_t i=0; i<num_pairwise_matches.size(); ++i) {
++  //     avg_val += num_pairwise_matches[i];
++  //   }
++  //   avg_val /= num_pairwise_matches.size();
++  //   buffer << "\nAvg. Pair-wise Matches: " << avg_val;
++  //   buffer << "\nMin. Pair-wise Matches: " << min_val;
++  //   buffer << "\nMax. Pair-wise Matches: " << max_val << std::endl;
++
++  //   return buffer.str();
++  // }
++
 +  // // @kai print statistics
 +  // std::string GetStatsString() const {
 +  //   std::stringstream buffer;
