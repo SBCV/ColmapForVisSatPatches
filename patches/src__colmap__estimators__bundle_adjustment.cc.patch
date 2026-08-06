@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index c3579b87..1134f698 100644
+index 4fda710e..7d4a0445 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -115,7 +115,7 @@ index c3579b87..1134f698 100644
    return true;
  }
  
-@@ -724,6 +791,18 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+@@ -730,6 +797,18 @@ class DefaultBundleAdjuster : public BundleAdjuster {
        AddPointToProblem(point3D_id, reconstruction);
      }
  
@@ -134,7 +134,7 @@ index c3579b87..1134f698 100644
      ParameterizeCameras(options_,
                          config_,
                          parameterized_camera_ids_,
-@@ -754,6 +833,15 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+@@ -760,6 +839,15 @@ class DefaultBundleAdjuster : public BundleAdjuster {
      }
    }
  
@@ -150,7 +150,7 @@ index c3579b87..1134f698 100644
    ceres::Solver::Summary Solve() override {
      ceres::Solver::Summary summary;
      if (problem_->NumResiduals() == 0) {
-@@ -964,6 +1052,7 @@ class DefaultBundleAdjuster : public BundleAdjuster {
+@@ -970,6 +1058,7 @@ class DefaultBundleAdjuster : public BundleAdjuster {
   private:
    std::shared_ptr<ceres::Problem> problem_;
    std::unique_ptr<ceres::LossFunction> loss_function_;

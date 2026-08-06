@@ -1,2 +1,2 @@
-87a82ebe2fd3f857daf94025cb8b0f26cbd7e006   (2025-12-02 12:28:22 +0000)
-Associate pose priors to generic sensor measurement data (#3777)
+70358de550ab47b0b83c3e5812d42ec8e2d41b22   (2025-12-12 12:15:10 +0000)
+Fix copying behaviors of empty bitmap. (#3823)
