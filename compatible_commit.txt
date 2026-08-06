@@ -1,2 +1,2 @@
-3162ec08be6b41b29e8ea72f5155aeb974917861   (2026-01-05 20:35:13 +0000)
-Migrate glomap exe into colmap. (#3952)
+372d3a9195743a65430b4697d447f9f682b66319   (2026-01-06 16:40:59 +0100)
+Make view graph calibration a stand-alone estimator module on colmap::Database and add CLI.  (#3951)
