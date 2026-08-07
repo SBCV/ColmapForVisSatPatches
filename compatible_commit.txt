@@ -1,2 +1,2 @@
-c4ea0dd8fc2fa73ddb9969c6aa011956e0d44e98   (2026-05-05 19:22:59 +0200)
-GPU Accelerated Bundle Adjustment with Caspar (#4018)
+412cbc6536d5d641dcdce4f690c9fdc0b67a462a   (2026-05-18 13:10:35 +0200)
+Avoid forced copy in mvs::Image::SetBitmap (#4409)

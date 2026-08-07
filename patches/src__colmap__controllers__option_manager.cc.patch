@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index 4a3c11f0..5d541f80 100644
+index 01a8ea57..7a3f02ea 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -38,9 +38,9 @@ index 4a3c11f0..5d541f80 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -580,6 +612,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
-   AddDefaultOption("BundleAdjustmentCaspar.solver_rel_decrease_min",
-                    &bundle_adjustment->caspar->solver_rel_decrease_min);
+@@ -582,6 +614,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
+   AddDefaultOption("BundleAdjustmentCaspar.gpu_index",
+                    &bundle_adjustment->caspar->gpu_index);
  #endif  // CASPAR_ENABLED
 +
 +  // constrain points options (option names kept under BundleAdjustment.* for

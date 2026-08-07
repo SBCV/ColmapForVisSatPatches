@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.cc b/src/colmap/mvs/image.cc
-index 2c847ec1..3b89c349 100644
+index 5c4adb42..f46b6f91 100644
 --- a/src/colmap/mvs/image.cc
 +++ b/src/colmap/mvs/image.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 2c847ec1..3b89c349 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -38,28 +70,434 @@
+@@ -40,20 +72,67 @@
  namespace colmap {
  namespace mvs {
  
@@ -114,6 +114,11 @@ index 2c847ec1..3b89c349 100644
 +  UpdateFloatMirrors();
  }
  
+ void Image::SetBitmap(Bitmap bitmap) {
+@@ -62,6 +141,365 @@ void Image::SetBitmap(Bitmap bitmap) {
+   bitmap_ = std::move(bitmap);
+ }
+ 
 +void Image::UpdateFloatMirrors() {
 +  float K_float[9];
 +  for (int i = 0; i < 9; ++i) {
@@ -137,12 +142,6 @@ index 2c847ec1..3b89c349 100644
 +
 +const float* Image::GetViewingDirection() const { return &R_float_[6]; }
 +
- void Image::SetBitmap(const Bitmap& bitmap) {
-   bitmap_ = bitmap;
-   THROW_CHECK_EQ(width_, bitmap_.Width());
-   THROW_CHECK_EQ(height_, bitmap_.Height());
- }
- 
 +void Image::SetK(const double K[9]) const {
 +  memcpy(K_, K, 9 * sizeof(double));
 +  // NOTE: K_ is mutable and SetK is const in the satellite design; the float
@@ -482,7 +481,7 @@ index 2c847ec1..3b89c349 100644
  void Image::Rescale(const float factor) { Rescale(factor, factor); }
  
  void Image::Rescale(const float factor_x, const float factor_y) {
-@@ -70,17 +508,18 @@ void Image::Rescale(const float factor_x, const float factor_y) {
+@@ -72,17 +510,18 @@ void Image::Rescale(const float factor_x, const float factor_y) {
      bitmap_.Rescale(new_width, new_height);
    }
  
