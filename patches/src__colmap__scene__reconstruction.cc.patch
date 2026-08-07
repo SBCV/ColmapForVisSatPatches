@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 8032d707..b260046a 100644
+index 8032d707..990e5f28 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -112,7 +112,7 @@ index 8032d707..b260046a 100644
 +
 +// @kai
 +void Reconstruction::UpdateReprojErr() {
-+  const std::unordered_set<point3D_t>& point3D_ids = this->Point3DIds();
++  const FlatHashSet<point3D_t> point3D_ids = this->Point3DIds();
 +  for (const auto point3D_id : point3D_ids) {
 +    if (!ExistsPoint3D(point3D_id)) {
 +      continue;

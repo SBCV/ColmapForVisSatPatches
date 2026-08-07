@@ -1,0 +1,132 @@
+diff --git a/src/colmap/mvs/image_test.cc b/src/colmap/mvs/image_test.cc
+index 43b35122..09cbcac8 100644
+--- a/src/colmap/mvs/image_test.cc
++++ b/src/colmap/mvs/image_test.cc
+@@ -35,17 +35,13 @@ namespace colmap {
+ namespace mvs {
+ namespace {
+ 
+-TEST(Image, DefaultConstructor) {
+-  Image image;
+-  EXPECT_EQ(image.GetWidth(), 0);
+-  EXPECT_EQ(image.GetHeight(), 0);
+-  EXPECT_TRUE(image.GetPath().empty());
+-}
++// NOTE (satellite fork): no default-constructor test — the satellite Image
++// requires the double-precision K/R/T at construction.
+ 
+ TEST(Image, ParameterizedConstructor) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+ 
+@@ -53,7 +49,8 @@ TEST(Image, ParameterizedConstructor) {
+   EXPECT_EQ(image.GetHeight(), 100);
+   EXPECT_EQ(image.GetPath(), "test.jpg");
+ 
+-  const float* image_K = image.GetK();
++  float image_K[9];
++  image.GetK(image_K);
+   const float* image_R = image.GetR();
+   const float* image_T = image.GetT();
+ 
+@@ -68,9 +65,9 @@ TEST(Image, ParameterizedConstructor) {
+ }
+ 
+ TEST(Image, Rescale) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+   image.Rescale(0.5);
+@@ -78,7 +75,8 @@ TEST(Image, Rescale) {
+   EXPECT_EQ(image.GetWidth(), 50);
+   EXPECT_EQ(image.GetHeight(), 50);
+ 
+-  const float* image_K = image.GetK();
++  float image_K[9];
++  image.GetK(image_K);
+   EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
+   EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
+   EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
+@@ -86,9 +84,9 @@ TEST(Image, Rescale) {
+ }
+ 
+ TEST(Image, RescaleNonUniform) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+   image.Rescale(0.5, 0.25);
+@@ -96,7 +94,8 @@ TEST(Image, RescaleNonUniform) {
+   EXPECT_EQ(image.GetWidth(), 50);
+   EXPECT_EQ(image.GetHeight(), 25);
+ 
+-  const float* image_K = image.GetK();
++  float image_K[9];
++  image.GetK(image_K);
+   EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled by factor_x
+   EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled by factor_x
+   EXPECT_FLOAT_EQ(image_K[4], 25.0f);  // fy scaled by factor_y
+@@ -104,9 +103,9 @@ TEST(Image, RescaleNonUniform) {
+ }
+ 
+ TEST(Image, Downsize) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+   image.Downsize(50, 50);
+@@ -114,7 +113,8 @@ TEST(Image, Downsize) {
+   EXPECT_EQ(image.GetWidth(), 50);
+   EXPECT_EQ(image.GetHeight(), 50);
+ 
+-  const float* image_K = image.GetK();
++  float image_K[9];
++  image.GetK(image_K);
+   EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
+   EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
+   EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
+@@ -122,9 +122,9 @@ TEST(Image, Downsize) {
+ }
+ 
+ TEST(Image, DownsizeNoChange) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+   image.Downsize(200, 200);
+@@ -134,9 +134,9 @@ TEST(Image, DownsizeNoChange) {
+ }
+ 
+ TEST(Image, GetViewingDirection) {
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {0, 0, 0};
+ 
+   Image image("test.jpg", 100, 100, K, R, T);
+   const float* viewing_dir = image.GetViewingDirection();

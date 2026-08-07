@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match_cuda.cu b/src/colmap/mvs/patch_match_cuda.cu
-index d585f16e..c08e786d 100644
+index 535a07f3..1d19c5af 100644
 --- a/src/colmap/mvs/patch_match_cuda.cu
 +++ b/src/colmap/mvs/patch_match_cuda.cu
 @@ -1,3 +1,35 @@
@@ -434,7 +434,9 @@ index d585f16e..c08e786d 100644
 +  // make sure depth2 is not nan
 +  if (depth2 != depth2) {
 +    depth2 = depth1;
-+  }
+   }
+-  const float nom = y1 * x2 - x1 * y2;
+-  return nom / denom;
 +
 +  // double check the correctness
 +  float point2[3];
@@ -442,9 +444,7 @@ index d585f16e..c08e786d 100644
 +  // if we deviate too much from point1, then there's some problem
 +  if (EuclidDist(point1, point2) > abs(row2 - row1) * max_dist_per_pixel[0]) {
 +    depth2 = depth1;
-   }
--  const float nom = y1 * x2 - x1 * y2;
--  return nom / denom;
++  }
 +  return depth2;
  }
  
@@ -455,7 +455,7 @@ index d585f16e..c08e786d 100644
  __device__ inline void ComputeViewingAngles(
      const cudaTextureObject_t poses_texture,
      const float point[3],
-@@ -249,16 +451,18 @@ __device__ inline void ComputeViewingAngles(
+@@ -249,25 +451,30 @@ __device__ inline void ComputeViewingAngles(
    *cos_incident_angle = 0.0f;
  
    // Projection center of source image.
@@ -479,15 +479,21 @@ index d585f16e..c08e786d 100644
  
    // Length of ray from point to source image.
    const float SX_inv_norm = rsqrt(DotProduct3(SX, SX));
-@@ -268,6 +472,7 @@ __device__ inline void ComputeViewingAngles(
-       -DotProduct3(SX, point) * RX_inv_norm * SX_inv_norm;
+ 
+   *cos_incident_angle = DotProduct3(SX, normal) * SX_inv_norm;
+-  *cos_triangulation_angle =
+-      -DotProduct3(SX, point) * RX_inv_norm * SX_inv_norm;
++  // Both rays are in the scene coordinate frame with an explicit reference
++  // camera center (vanilla's -dot(SX, point) shortcut is only valid in the
++  // reference-camera frame where the reference center is the origin).
++  *cos_triangulation_angle = DotProduct3(RX, SX) * RX_inv_norm * SX_inv_norm;
  }
  
 +// a more numerically stable way to compose homography
  __device__ inline void ComposeHomography(
      const cudaTextureObject_t poses_texture,
      const int image_idx,
-@@ -276,59 +481,45 @@ __device__ inline void ComposeHomography(
+@@ -276,59 +483,45 @@ __device__ inline void ComposeHomography(
      const float depth,
      const float normal[3],
      float H[9]) {
@@ -582,7 +588,7 @@ index d585f16e..c08e786d 100644
  }
  
  // Each thread in the current warp / thread block reads in 3 columns of the
-@@ -449,7 +640,7 @@ struct PhotoConsistencyCostComputer {
+@@ -478,7 +671,7 @@ struct PhotoConsistencyCostComputer {
    int col = -1;
  
    // Depth and normal for which to warp patch.
@@ -591,7 +597,7 @@ index d585f16e..c08e786d 100644
    const float* normal = nullptr;
  
    __device__ inline void Read(const int row) {
-@@ -495,7 +686,7 @@ struct PhotoConsistencyCostComputer {
+@@ -524,7 +717,7 @@ struct PhotoConsistencyCostComputer {
      for (int row = -kWindowRadius; row <= kWindowRadius; row += kWindowStep) {
        for (int col = -kWindowRadius; col <= kWindowRadius; col += kWindowStep) {
          const float inv_z = 1.0f / z;
@@ -599,8 +605,8 @@ index d585f16e..c08e786d 100644
 +        const float norm_col_src = inv_z * col_src + 0.5f;  // half pixel is due to GPU's texture memory
          const float norm_row_src = inv_z * row_src + 0.5f;
          const float ref_color = local_ref_image.data[ref_image_idx];
-         const float src_color = tex2DLayered<float>(
-@@ -564,6 +755,7 @@ struct PhotoConsistencyCostComputer {
+ #if defined(__GFX9__)
+@@ -598,6 +791,7 @@ struct PhotoConsistencyCostComputer {
    const BilateralWeightComputer bilateral_weight_computer_;
  };
  
@@ -608,7 +614,7 @@ index d585f16e..c08e786d 100644
  __device__ inline float ComputeGeomConsistencyCost(
      const cudaTextureObject_t poses_texture,
      const cudaTextureObject_t src_depth_maps_texture,
-@@ -573,13 +765,13 @@ __device__ inline float ComputeGeomConsistencyCost(
+@@ -607,13 +801,13 @@ __device__ inline float ComputeGeomConsistencyCost(
      const int image_idx,
      const float max_cost) {
    // Extract projection matrices for source image.
@@ -628,7 +634,7 @@ index d585f16e..c08e786d 100644
    }
  
    // Project point in reference image to world.
-@@ -587,48 +779,33 @@ __device__ inline float ComputeGeomConsistencyCost(
+@@ -621,48 +815,33 @@ __device__ inline float ComputeGeomConsistencyCost(
    ComputePointAtDepth(row, col, depth, forward_point);
  
    // Project world point to source image.
@@ -690,7 +696,21 @@ index d585f16e..c08e786d 100644
    return min(max_cost, sqrt(diff_col * diff_col + diff_row * diff_row));
  }
  
-@@ -731,16 +908,16 @@ class LikelihoodComputer {
+@@ -739,8 +918,11 @@ class LikelihoodComputer {
+   // Compute the triangulation angle probability.
+   __device__ inline float ComputeTriProb(
+       const float cos_triangulation_angle) const {
+-    if (cos_triangulation_angle > cos_min_triangulation_angle_) {
+-      const float scaled = 1.0f - (1.0f - cos_triangulation_angle) /
++    // Scene-frame rays can yield a negative cosine for valid satellite
++    // geometry; the magnitude carries the triangulation angle.
++    const float abs_cos_triangulation_angle = abs(cos_triangulation_angle);
++    if (abs_cos_triangulation_angle > cos_min_triangulation_angle_) {
++      const float scaled = 1.0f - (1.0f - abs_cos_triangulation_angle) /
+                                       (1.0f - cos_min_triangulation_angle_);
+       const float likelihood = 1.0f - scaled * scaled;
+       return min(1.0f, max(0.0f, likelihood));
+@@ -765,16 +947,16 @@ class LikelihoodComputer {
      // Warp corners of patch in reference image to source image.
      float src1[2];
      const float ref1[2] = {col - kWindowRadius, row - kWindowRadius};
@@ -711,7 +731,7 @@ index d585f16e..c08e786d 100644
  
      // Compute area of patches in reference and source image.
      const float ref_area = kWindowSize * kWindowSize;
-@@ -972,7 +1149,7 @@ __global__ void SweepFromTopToBottom(
+@@ -1006,7 +1188,7 @@ __global__ void SweepFromTopToBottom(
    pcc_computer.local_ref_image.data = &local_ref_image_data[0];
  
    struct ParamState {
@@ -720,7 +740,7 @@ index d585f16e..c08e786d 100644
      float normal[3] = {0};
    };
  
-@@ -1011,7 +1188,7 @@ __global__ void SweepFromTopToBottom(
+@@ -1045,7 +1227,7 @@ __global__ void SweepFromTopToBottom(
      // the depth of very oblique structures, i.e. pixels whose normal direction
      // is significantly different from their viewing direction.
      prev_param_state.depth = PropagateDepth(
@@ -729,7 +749,7 @@ index d585f16e..c08e786d 100644
  
      // Read parameters for current pixel from previous sweep.
      curr_param_state.depth = depth_map.Get(row, col);
-@@ -1019,7 +1196,11 @@ __global__ void SweepFromTopToBottom(
+@@ -1053,7 +1235,11 @@ __global__ void SweepFromTopToBottom(
  
      // Generate random parameters.
      rand_param_state.depth =
@@ -742,7 +762,7 @@ index d585f16e..c08e786d 100644
      PerturbNormal(row,
                    col,
                    options.perturbation * M_PI,
-@@ -1192,7 +1373,9 @@ __global__ void SweepFromTopToBottom(
+@@ -1226,7 +1412,9 @@ __global__ void SweepFromTopToBottom(
                               image_idx,
                               &cos_triangulation_angle,
                               &cos_incident_angle);
@@ -753,7 +773,7 @@ index d585f16e..c08e786d 100644
              cos_incident_angle <= 0.0f) {
            continue;
          }
-@@ -1231,10 +1414,11 @@ __global__ void SweepFromTopToBottom(
+@@ -1265,10 +1453,11 @@ __global__ void SweepFromTopToBottom(
        }
  
        if (num_consistent < options.filter_min_num_consistent) {
@@ -769,7 +789,7 @@ index d585f16e..c08e786d 100644
          for (int image_idx = 0; image_idx < cost_map.GetDepth(); ++image_idx) {
            consistency_mask.Set(row, col, image_idx, 0);
          }
-@@ -1374,7 +1558,7 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
+@@ -1408,7 +1597,7 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
            ref_image_->sum_image->View(),
            ref_image_->squared_sum_image->View(),
            src_images_texture_->GetObj(),
@@ -778,7 +798,7 @@ index d585f16e..c08e786d 100644
            options_.sigma_spatial,
            options_.sigma_color);
    CUDA_SYNC_AND_CHECK();
-@@ -1418,6 +1602,11 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
+@@ -1452,6 +1641,11 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
  
        const bool last_sweep = iter == options_.num_iterations - 1 && sweep == 3;
  
@@ -790,7 +810,7 @@ index d585f16e..c08e786d 100644
  #define CALL_SWEEP_FUNC                                   \
    SweepFromTopToBottom<kWindowSize,                       \
                         kWindowStep,                       \
-@@ -1440,7 +1629,7 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
+@@ -1474,7 +1668,7 @@ void PatchMatchCuda::RunWithWindowSizeAndStep() {
            src_depth_maps_texture_ == nullptr              \
                ? 0                                         \
                : src_depth_maps_texture_->GetObj(),        \
@@ -799,7 +819,25 @@ index d585f16e..c08e786d 100644
            sweep_options);
  
        if (last_sweep) {
-@@ -1606,7 +1795,8 @@ void PatchMatchCuda::InitSourceImages() {
+@@ -1618,7 +1812,16 @@ void PatchMatchCuda::InitSourceImages() {
+       const Image& image = problem_.images->at(problem_.src_image_idxs[i]);
+       const Bitmap& bitmap = image.GetBitmap();
+       uint8_t* dest = src_images_host_data.data() + max_width * max_height * i;
+-      memcpy(dest, bitmap.RowMajorData().data(), bitmap.NumBytes());
++      // Copy row by row: the destination pitch is max_width, so a contiguous
++      // copy would shear every image narrower than the widest source (all
++      // satellite crops have different sizes). The source depth-map upload
++      // below does the same.
++      const uint8_t* src = bitmap.RowMajorData().data();
++      const size_t src_width = bitmap.Width();
++      for (size_t r = 0; r < static_cast<size_t>(bitmap.Height()); ++r) {
++        memcpy(dest, src + r * src_width, src_width);
++        dest += max_width;
++      }
+     }
+ 
+     // Create source images texture.
+@@ -1655,7 +1858,8 @@ void PatchMatchCuda::InitSourceImages() {
  
    // Upload source depth maps to device.
    if (options_.geom_consistency) {
@@ -809,7 +847,7 @@ index d585f16e..c08e786d 100644
      std::vector<float> src_depth_maps_host_data(
          static_cast<size_t>(max_width * max_height *
                              problem_.src_image_idxs.size()),
-@@ -1649,56 +1839,51 @@ void PatchMatchCuda::InitTransforms() {
+@@ -1698,56 +1902,51 @@ void PatchMatchCuda::InitTransforms() {
    // Generate rotated versions (counter-clockwise) of calibration matrix.
    //////////////////////////////////////////////////////////////////////////////
  
@@ -903,7 +941,7 @@ index d585f16e..c08e786d 100644
  
    cudaTextureDesc texture_desc;
    memset(&texture_desc, 0, sizeof(texture_desc));
-@@ -1709,53 +1894,33 @@ void PatchMatchCuda::InitTransforms() {
+@@ -1758,53 +1957,33 @@ void PatchMatchCuda::InitTransforms() {
    texture_desc.readMode = cudaReadModeElementType;
    texture_desc.normalizedCoords = false;
  
@@ -982,7 +1020,22 @@ index d585f16e..c08e786d 100644
  }
  
  void PatchMatchCuda::InitWorkspaceMemory() {
-@@ -1874,16 +2039,30 @@ void PatchMatchCuda::Rotate() {
+@@ -1885,10 +2064,11 @@ void PatchMatchCuda::Rotate() {
+     depth_map_.swap(rotated_depth_map);
+   }
+ 
+-  // Rotate normal map.
++  // Rotate normal map. NOTE: only the BUFFER is rotated — the normal VECTORS
++  // stay untouched because they live in the scene coordinate frame, which
++  // does not rotate with the working image frame (vanilla stores normals in
++  // the reference-camera frame and must additionally run RotateNormalMap).
+   {
+-    RotateNormalMap<<<elem_wise_grid_size_, elem_wise_block_size_>>>(
+-        normal_map_->View());
+     std::unique_ptr<GpuMat<float>> rotated_normal_map(
+         new GpuMat<float>(width, height, 3));
+     normal_map_->Rotate(rotated_normal_map.get());
+@@ -1923,16 +2103,30 @@ void PatchMatchCuda::Rotate() {
    }
  
    // Rotate calibration.

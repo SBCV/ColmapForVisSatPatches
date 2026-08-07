@@ -1,0 +1,17 @@
+diff --git a/src/pycolmap/mvs/model.cc b/src/pycolmap/mvs/model.cc
+index bc3f9a19..833f43da 100644
+--- a/src/pycolmap/mvs/model.cc
++++ b/src/pycolmap/mvs/model.cc
+@@ -52,9 +52,9 @@ void BindMVSModel(py::module& m) {
+            py::return_value_policy::reference_internal,
+            "Get overlapping images defined in the PMVS vis.dat file.")
+       .def("compute_depth_ranges",
+-           &mvs::Model::ComputeDepthRanges,
+-           "Compute robust minimum and maximum depths from the sparse point "
+-           "cloud.")
++           &mvs::Model::GetDepthRanges,
++           "Per-view depth ranges loaded from depth_ranges.txt during Read "
++           "(empty when the workspace provides none).")
+       .def(
+           "compute_shared_points",
+           &mvs::Model::ComputeSharedPoints,

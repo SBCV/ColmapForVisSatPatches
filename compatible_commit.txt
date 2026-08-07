@@ -1,2 +1,2 @@
-b1beb8825daae7aa3700638606c8b65e307093ea   (2026-07-06 10:35:10 +0000)
-Add swappable hash map backend (std, boost) (#4510)
+b0af55be2808366609ee2023c5b9a980fdabd1ea   (2026-08-05 16:20:14 +0000)
+Minor: Expose optional cheirality check in ImgFromCam (#4616)
