@@ -1,8 +1,8 @@
 diff --git a/src/colmap/exe/colmap.cc b/src/colmap/exe/colmap.cc
-index a02353a2..81a42b4e 100644
+index 8726c105..c7baab6c 100644
 --- a/src/colmap/exe/colmap.cc
 +++ b/src/colmap/exe/colmap.cc
-@@ -141,6 +141,9 @@ int main(int argc, char** argv) {
+@@ -142,6 +142,9 @@ int main(int argc, char** argv) {
    commands.emplace_back("vocab_tree_matcher", &colmap::RunVocabTreeMatcher);
    commands.emplace_back("vocab_tree_retriever", &colmap::RunVocabTreeRetriever);
  

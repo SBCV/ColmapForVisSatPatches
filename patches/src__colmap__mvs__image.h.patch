@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.h b/src/colmap/mvs/image.h
-index c3abf8dd..89dd5570 100644
+index c3abf8dd..5682088c 100644
 --- a/src/colmap/mvs/image.h
 +++ b/src/colmap/mvs/image.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index c3abf8dd..89dd5570 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -36,90 +68,64 @@
+@@ -36,43 +68,78 @@
  namespace colmap {
  namespace mvs {
  
@@ -69,8 +69,6 @@ index c3abf8dd..89dd5570 100644
 +
 +  void SetLastRow(const double last_row[4]);
 +  const double *GetLastRow() const;
-+
-+  void SetK(const double K[9]) const;
  
 -  inline const std::filesystem::path& GetPath() const;
 -  inline const float* GetR() const;
@@ -79,7 +77,18 @@ index c3abf8dd..89dd5570 100644
 -  inline const float* GetP() const;
 -  inline const float* GetInvP() const;
 -  inline const float* GetViewingDirection() const;
++  void SetK(const double K[9]) const;
++
 +  const std::filesystem::path& GetPath() const;
++
++  // Float mirrors of the (double-precision) satellite pose data, kept for
++  // vanilla mvs consumers (e.g. texture mapping) that the satellite
++  // pipeline does not use. The satellite MVS path reads the doubles.
++  const float* GetR() const;
++  const float* GetT() const;
++  const float* GetP() const;
++  const float* GetInvP() const;
++  const float* GetViewingDirection() const;
  
    void Rescale(float factor);
    void Rescale(float factor_x, float factor_y);
@@ -105,6 +114,8 @@ index c3abf8dd..89dd5570 100644
 +  void Rotate270(float K[9], float inv_K[9], float R[9], float T[3], float P[16], float inv_P[16], float C[3]) const;
 +
   private:
++  void UpdateFloatMirrors();
++
    std::filesystem::path path_;
    size_t width_ = 0;
    size_t height_ = 0;
@@ -117,30 +128,18 @@ index c3abf8dd..89dd5570 100644
 +  double R_[9];
 +  double T_[3];
 +  double last_row_[4];  // last row of the 4 by 4 projection matrix
++  // Float mirrors for vanilla consumers (see accessors above).
++  float R_float_[9];
++  float T_float_[3];
++  float P_float_[12];
++  float inv_P_float_[12];
    Bitmap bitmap_;
  };
  
--void ComputeRelativePose(const float R1[9],
--                         const float T1[3],
--                         const float R2[9],
--                         const float T2[3],
--                         float R[9],
--                         float T[3]);
--
--void ComposeProjectionMatrix(const float K[9],
--                             const float R[9],
--                             const float T[3],
--                             float P[12]);
--
--void ComposeInverseProjectionMatrix(const float K[9],
--                                    const float R[9],
--                                    const float T[3],
--                                    float inv_P[12]);
--
--void ComputeProjectionCenter(const float R[9], const float T[3], float C[3]);
--
--void RotatePose(const float RR[9], float R[9], float T[3]);
--
+@@ -97,29 +164,5 @@ void ComputeProjectionCenter(const float R[9], const float T[3], float C[3]);
+ 
+ void RotatePose(const float RR[9], float R[9], float T[3]);
+ 
 -////////////////////////////////////////////////////////////////////////////////
 -// Implementation
 -////////////////////////////////////////////////////////////////////////////////
