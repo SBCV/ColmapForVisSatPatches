@@ -1,2 +1,2 @@
-f51765449cc8736f4c0888ad2cb9ca1e1ef88efb   (2026-04-01 14:10:34 +0000)
-Fix locale-dependent float parsing/formatting (#4317)
+c4ea0dd8fc2fa73ddb9969c6aa011956e0d44e98   (2026-05-05 19:22:59 +0200)
+GPU Accelerated Bundle Adjustment with Caspar (#4018)
