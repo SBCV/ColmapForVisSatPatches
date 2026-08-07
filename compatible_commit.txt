@@ -1,2 +1,2 @@
-412cbc6536d5d641dcdce4f690c9fdc0b67a462a   (2026-05-18 13:10:35 +0200)
-Avoid forced copy in mvs::Image::SetBitmap (#4409)
+92cc0123ad892415722d7e871d2613106ebf39ad   (2026-05-29 04:54:13 +0000)
+Implement EUCM camera model (#4416)
