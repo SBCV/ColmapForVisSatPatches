@@ -1,2 +1,2 @@
-27fc292c5a6154453a79e5a1dea7f94e65df1ba8   (2026-03-04 11:15:37 +0000)
-Add tests for MVS model (#4177)
+4d4c10067269b6bdccffa92b92c5bb75e41900a5   (2026-03-05 12:35:21 +0100)
+Fix empty patch match results on CUDA compute >= 100 (Blackwell GPUs) (#4161)
