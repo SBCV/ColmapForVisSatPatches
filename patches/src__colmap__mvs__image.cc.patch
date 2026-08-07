@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.cc b/src/colmap/mvs/image.cc
-index efb6fb3f..9363440d 100644
+index 5c4adb42..f46b6f91 100644
 --- a/src/colmap/mvs/image.cc
 +++ b/src/colmap/mvs/image.cc
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index efb6fb3f..9363440d 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -38,20 +70,66 @@
+@@ -40,20 +72,67 @@
  namespace colmap {
  namespace mvs {
  
@@ -93,7 +93,7 @@ index efb6fb3f..9363440d 100644
 +  }
 +}
  
- Image::Image(const std::string& path,
+ Image::Image(const std::filesystem::path& path,
               const size_t width,
               const size_t height,
 -             const float* K,
@@ -111,15 +111,41 @@ index efb6fb3f..9363440d 100644
 +  memcpy(K_, K, 9 * sizeof(double));
 +  memcpy(R_, R, 9 * sizeof(double));
 +  memcpy(T_, T, 3 * sizeof(double));
++  UpdateFloatMirrors();
  }
  
- void Image::SetBitmap(const Bitmap& bitmap) {
-@@ -60,6 +138,340 @@ void Image::SetBitmap(const Bitmap& bitmap) {
-   THROW_CHECK_EQ(height_, bitmap_.Height());
+ void Image::SetBitmap(Bitmap bitmap) {
+@@ -62,6 +141,365 @@ void Image::SetBitmap(Bitmap bitmap) {
+   bitmap_ = std::move(bitmap);
  }
  
++void Image::UpdateFloatMirrors() {
++  float K_float[9];
++  for (int i = 0; i < 9; ++i) {
++    K_float[i] = static_cast<float>(K_[i]);
++    R_float_[i] = static_cast<float>(R_[i]);
++  }
++  for (int i = 0; i < 3; ++i) {
++    T_float_[i] = static_cast<float>(T_[i]);
++  }
++  ComposeProjectionMatrix(K_float, R_float_, T_float_, P_float_);
++  ComposeInverseProjectionMatrix(K_float, R_float_, T_float_, inv_P_float_);
++}
++
++const float* Image::GetR() const { return R_float_; }
++
++const float* Image::GetT() const { return T_float_; }
++
++const float* Image::GetP() const { return P_float_; }
++
++const float* Image::GetInvP() const { return inv_P_float_; }
++
++const float* Image::GetViewingDirection() const { return &R_float_[6]; }
++
 +void Image::SetK(const double K[9]) const {
 +  memcpy(K_, K, 9 * sizeof(double));
++  // NOTE: K_ is mutable and SetK is const in the satellite design; the float
++  // mirrors are only consumed by vanilla code paths that do not use SetK.
 +}
 +
 +size_t Image::GetWidth() const { return width_; }
@@ -128,7 +154,7 @@ index efb6fb3f..9363440d 100644
 +
 +const Bitmap& Image::GetBitmap() const { return bitmap_; }
 +
-+const std::string& Image::GetPath() const { return path_; }
++const std::filesystem::path& Image::GetPath() const { return path_; }
 +
 +
 +void Image::SetLastRow(const double last_row[4]) {
@@ -455,7 +481,7 @@ index efb6fb3f..9363440d 100644
  void Image::Rescale(const float factor) { Rescale(factor, factor); }
  
  void Image::Rescale(const float factor_x, const float factor_y) {
-@@ -70,14 +482,13 @@ void Image::Rescale(const float factor_x, const float factor_y) {
+@@ -72,17 +510,18 @@ void Image::Rescale(const float factor_x, const float factor_y) {
      bitmap_.Rescale(new_width, new_height);
    }
  
@@ -464,7 +490,7 @@ index efb6fb3f..9363440d 100644
 +  const double scale_x = new_width / static_cast<float>(width_);
 +  const double scale_y = new_height / static_cast<float>(height_);
    K_[0] *= scale_x;
-+   K_[1] *= scale_x;
++  K_[1] *= scale_x;
    K_[2] *= scale_x;
    K_[4] *= scale_y;
    K_[5] *= scale_y;
@@ -473,64 +499,8 @@ index efb6fb3f..9363440d 100644
  
    width_ = new_width;
    height_ = new_height;
-@@ -92,60 +503,5 @@ void Image::Downsize(const size_t max_width, const size_t max_height) {
-   Rescale(std::min(factor_x, factor_y));
++
++  UpdateFloatMirrors();
  }
  
--void ComputeRelativePose(const float R1[9],
--                         const float T1[3],
--                         const float R2[9],
--                         const float T2[3],
--                         float R[9],
--                         float T[3]) {
--  const Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> R1_m(R1);
--  const Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> R2_m(R2);
--  const Eigen::Map<const Eigen::Matrix<float, 3, 1>> T1_m(T1);
--  const Eigen::Map<const Eigen::Matrix<float, 3, 1>> T2_m(T2);
--  Eigen::Map<Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> R_m(R);
--  Eigen::Map<Eigen::Vector3f> T_m(T);
--
--  R_m = R2_m * R1_m.transpose();
--  T_m = T2_m - R_m * T1_m;
--}
--
--void ComposeProjectionMatrix(const float K[9],
--                             const float R[9],
--                             const float T[3],
--                             float P[12]) {
--  Eigen::Map<Eigen::Matrix<float, 3, 4, Eigen::RowMajor>> P_m(P);
--  P_m.leftCols<3>() =
--      Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(R);
--  P_m.rightCols<1>() = Eigen::Map<const Eigen::Vector3f>(T);
--  P_m = Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(K) * P_m;
--}
--
--void ComposeInverseProjectionMatrix(const float K[9],
--                                    const float R[9],
--                                    const float T[3],
--                                    float inv_P[12]) {
--  Eigen::Matrix<float, 4, 4, Eigen::RowMajor> P;
--  ComposeProjectionMatrix(K, R, T, P.data());
--  P.row(3) = Eigen::Vector4f(0, 0, 0, 1);
--  const Eigen::Matrix4f inv_P_temp = P.inverse();
--  Eigen::Map<Eigen::Matrix<float, 3, 4, Eigen::RowMajor>> inv_P_m(inv_P);
--  inv_P_m = inv_P_temp.topRows<3>();
--}
--
--void ComputeProjectionCenter(const float R[9], const float T[3], float C[3]) {
--  const Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> R_m(R);
--  const Eigen::Map<const Eigen::Matrix<float, 3, 1>> T_m(T);
--  Eigen::Map<Eigen::Vector3f> C_m(C);
--  C_m = -R_m.transpose() * T_m;
--}
--
--void RotatePose(const float RR[9], float R[9], float T[3]) {
--  Eigen::Map<Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> R_m(R);
--  Eigen::Map<Eigen::Matrix<float, 3, 1>> T_m(T);
--  const Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>> RR_m(RR);
--  R_m = RR_m * R_m;
--  T_m = RR_m * T_m;
--}
--
- }  // namespace mvs
- }  // namespace colmap
+ void Image::Downsize(const size_t max_width, const size_t max_height) {

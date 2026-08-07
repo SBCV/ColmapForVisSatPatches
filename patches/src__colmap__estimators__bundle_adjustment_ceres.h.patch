@@ -1,0 +1,25 @@
+diff --git a/src/colmap/estimators/bundle_adjustment_ceres.h b/src/colmap/estimators/bundle_adjustment_ceres.h
+index dfaff05a..bed7ca25 100644
+--- a/src/colmap/estimators/bundle_adjustment_ceres.h
++++ b/src/colmap/estimators/bundle_adjustment_ceres.h
+@@ -46,6 +46,12 @@ struct CeresBundleAdjustmentOptions {
+   // Scaling factor determines residual at which robustification takes place.
+   double loss_function_scale = 1.0;
+ 
++  // Loss for the satellite soft 3D-point constraints (the weight is applied
++  // on top via ScaledLoss).
++  LossFunctionType constrain_points_loss = LossFunctionType::TRIVIAL;
++  double constrain_points_loss_scale = 1.0;
++  double constrain_points_loss_weight = 1.0;
++
+   // Whether to use Ceres' CUDA linear algebra library, if available.
+   bool use_gpu = false;
+   std::string gpu_index = "-1";
+@@ -80,6 +86,7 @@ struct CeresBundleAdjustmentOptions {
+ 
+   // Create loss function for given options.
+   std::unique_ptr<ceres::LossFunction> CreateLossFunction() const;
++  std::unique_ptr<ceres::LossFunction> CreateConstrainPointsLossFunction() const;
+ 
+   // Create options tailored for given bundle adjustment config and problem.
+   ceres::Solver::Options CreateSolverOptions(

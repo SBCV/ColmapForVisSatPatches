@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.h b/src/colmap/estimators/bundle_adjustment.h
-index 14f9a346..54b34ed7 100644
+index 063da830..8d9067da 100644
 --- a/src/colmap/estimators/bundle_adjustment.h
 +++ b/src/colmap/estimators/bundle_adjustment.h
 @@ -1,3 +1,35 @@
@@ -38,14 +38,15 @@ index 14f9a346..54b34ed7 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -87,18 +119,23 @@ class BundleAdjustmentConfig {
-   // be variable or constant but not both at the same time.
+@@ -123,13 +155,17 @@ class BundleAdjustmentConfig {
    void AddVariablePoint(point3D_t point3D_id);
    void AddConstantPoint(point3D_t point3D_id);
+   void IgnorePoint(point3D_t point3D_id);
 +  void AddConstrainedPoint(point3D_t point3D_id);
    bool HasPoint(point3D_t point3D_id) const;
    bool HasVariablePoint(point3D_t point3D_id) const;
    bool HasConstantPoint(point3D_t point3D_id) const;
+   bool IsIgnoredPoint(point3D_t point3D_id) const;
 +  bool HasConstrainedPoint(point3D_t point3D_id) const;
    void RemoveVariablePoint(point3D_t point3D_id);
    void RemoveConstantPoint(point3D_t point3D_id);
@@ -53,42 +54,32 @@ index 14f9a346..54b34ed7 100644
 +  void RemoveConstrainedPoint(const point3D_t point3D_id);
 +
    // Access configuration data.
-   const std::unordered_set<camera_t> ConstantIntrinsics() const;
-   const std::unordered_set<image_t>& Images() const;
-   const std::unordered_set<point3D_t>& VariablePoints() const;
-   const std::unordered_set<point3D_t>& ConstantPoints() const;
-   const std::unordered_set<image_t>& ConstantCamPoses() const;
-+  const std::unordered_set<point3D_t>& ConstrainedPoints() const;
-   const std::vector<int>& ConstantCamPositions(image_t image_id) const;
+   const FlatHashSet<image_t>& Images() const;
+   const FlatHashSet<point3D_t>& VariablePoints() const;
+@@ -137,6 +173,7 @@ class BundleAdjustmentConfig {
+   const FlatHashSet<camera_t>& ConstantCamIntrinsics() const;
+   const FlatHashSet<sensor_t>& ConstantSensorFromRigPoses() const;
+   const FlatHashSet<frame_t>& ConstantRigFromWorldPoses() const;
++  const FlatHashSet<point3D_t>& ConstrainedPoints() const;
  
   private:
-@@ -106,6 +143,8 @@ class BundleAdjustmentConfig {
-   std::unordered_set<image_t> image_ids_;
-   std::unordered_set<point3D_t> variable_point3D_ids_;
-   std::unordered_set<point3D_t> constant_point3D_ids_;
+   BundleAdjustmentGauge fixed_gauge_ = BundleAdjustmentGauge::UNSPECIFIED;
+@@ -145,6 +182,8 @@ class BundleAdjustmentConfig {
+   FlatHashSet<point3D_t> variable_point3D_ids_;
+   FlatHashSet<point3D_t> constant_point3D_ids_;
+   FlatHashSet<point3D_t> ignored_point3D_ids_;
 +  // add constrained 3D points
-+  std::unordered_set<point3D_t> constrained_point3D_ids_;
-   std::unordered_set<image_t> constant_cam_poses_;
-   std::unordered_map<image_t, std::vector<int>> constant_cam_positions_;
++  FlatHashSet<point3D_t> constrained_point3D_ids_;
+   FlatHashSet<sensor_t> constant_sensor_from_rig_poses_;
+   FlatHashSet<frame_t> constant_rig_from_world_poses_;
  };
-@@ -148,6 +187,12 @@ struct BundleAdjustmentOptions {
-   // bundle adjustment problems due to the overhead of threading.
-   int min_num_residuals_for_cpu_multi_threading = 50000;
+@@ -202,6 +241,9 @@ struct BundleAdjustmentOptions : public BundleAdjustmentBackendOptions {
+   // Whether to print a final summary.
+   bool print_summary = true;
  
 +  // whether to add soft constraint on 3D points
 +  bool constrain_points = false;
-+  LossFunctionType constrain_points_loss = LossFunctionType::TRIVIAL;
-+  double constrain_points_loss_scale = 1.0;
-+  double constrain_points_loss_weight = 1.0;
 +
-   // Heuristic thresholds to switch between direct, sparse, and iterative
-   // solvers. These thresholds may not be optimal for all types of problems.
-   int max_num_images_direct_dense_cpu_solver = 50;
-@@ -176,6 +221,7 @@ struct BundleAdjustmentOptions {
-   // Create a new loss function based on the specified options. The caller
-   // takes ownership of the loss function.
-   ceres::LossFunction* CreateLossFunction() const;
-+  ceres::LossFunction* CreateConstrainPointsLossFunction() const;
+   // Solver backend to use for bundle adjustment.
+   BundleAdjustmentBackend backend = BundleAdjustmentBackend::CERES;
  
-   // Create options tailored for given bundle adjustment config and problem.
-   ceres::Solver::Options CreateSolverOptions(

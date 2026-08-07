@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match.cc b/src/colmap/mvs/patch_match.cc
-index f59fa3f5..c810caca 100644
+index 7a6735b2..b768ede3 100644
 --- a/src/colmap/mvs/patch_match.cc
 +++ b/src/colmap/mvs/patch_match.cc
 @@ -1,3 +1,35 @@
@@ -38,16 +38,16 @@ index f59fa3f5..c810caca 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -37,6 +69,7 @@
- #include "colmap/util/misc.h"
+@@ -41,6 +73,7 @@
  
  #include <numeric>
+ #include <set>
 +#include <sstream>
- #include <unordered_set>
  
  #define PrintOption(option) LOG(INFO) << #option ": " << option << std::endl
-@@ -62,6 +95,24 @@ void PatchMatch::Problem::Print() const {
-   }
+ 
+@@ -64,6 +97,24 @@ void PatchMatch::Problem::Print() const {
+   LOG(INFO) << "src_image_idxs: " << src_image_idxs_stream.str();
  }
  
 +std::string PatchMatch::Problem::PrintToString() const {
@@ -71,7 +71,7 @@ index f59fa3f5..c810caca 100644
  void PatchMatch::Check() const {
    THROW_CHECK(options_.Check());
  
-@@ -99,13 +150,6 @@ void PatchMatch::Check() const {
+@@ -101,13 +152,6 @@ void PatchMatch::Check() const {
      THROW_CHECK_EQ(image.GetWidth(), image.GetBitmap().Width()) << image_idx;
      THROW_CHECK_EQ(image.GetHeight(), image.GetBitmap().Height()) << image_idx;
  
@@ -85,7 +85,7 @@ index f59fa3f5..c810caca 100644
      if (options_.geom_consistency) {
        THROW_CHECK_LT(image_idx, problem_.depth_maps->size()) << image_idx;
        const DepthMap& depth_map = problem_.depth_maps->at(image_idx);
-@@ -175,7 +219,7 @@ void PatchMatchController::Run() {
+@@ -180,7 +224,7 @@ void PatchMatchController::Run() {
  
    // If geometric consistency is enabled, then photometric output must be
    // computed first for all images without filtering.
@@ -94,7 +94,7 @@ index f59fa3f5..c810caca 100644
      auto photometric_options = options_;
      photometric_options.geom_consistency = false;
      photometric_options.filter = false;
-@@ -196,6 +240,9 @@ void PatchMatchController::Run() {
+@@ -201,6 +245,9 @@ void PatchMatchController::Run() {
          &PatchMatchController::ProcessProblem, this, options_, problem_idx);
    }
  
@@ -104,7 +104,7 @@ index f59fa3f5..c810caca 100644
    thread_pool_->Wait();
  
    run_timer.PrintMinutes();
-@@ -208,10 +255,6 @@ void PatchMatchController::ReadWorkspace() {
+@@ -213,10 +260,6 @@ void PatchMatchController::ReadWorkspace() {
  
    auto workspace_format_lower_case = workspace_format_;
    StringToLower(&workspace_format_lower_case);
@@ -115,7 +115,7 @@ index f59fa3f5..c810caca 100644
  
    workspace_options.max_image_size = options_.max_image_size;
    workspace_options.image_as_rgb = false;
-@@ -228,7 +271,7 @@ void PatchMatchController::ReadWorkspace() {
+@@ -233,7 +276,7 @@ void PatchMatchController::ReadWorkspace() {
      ImportPMVSWorkspace(*workspace_, pmvs_option_name_);
    }
  
@@ -124,7 +124,7 @@ index f59fa3f5..c810caca 100644
  }
  
  void PatchMatchController::ReadProblems() {
-@@ -260,6 +303,7 @@ void PatchMatchController::ReadProblems() {
+@@ -265,6 +308,7 @@ void PatchMatchController::ReadProblems() {
    };
    std::vector<ProblemConfig> problem_configs;
  
@@ -132,7 +132,7 @@ index f59fa3f5..c810caca 100644
    for (size_t i = 0; i < config.size(); ++i) {
      std::string& config_line = config[i];
      StringTrim(&config_line);
-@@ -283,6 +327,7 @@ void PatchMatchController::ReadProblems() {
+@@ -288,6 +332,7 @@ void PatchMatchController::ReadProblems() {
      ref_image_name.clear();
    }
  
@@ -140,7 +140,7 @@ index f59fa3f5..c810caca 100644
    for (const auto& problem_config : problem_configs) {
      PatchMatch::Problem problem;
  
-@@ -346,7 +391,7 @@ void PatchMatchController::ReadProblems() {
+@@ -351,7 +396,7 @@ void PatchMatchController::ReadProblems() {
        for (size_t i = 0; i < eff_max_num_src_images; ++i) {
          problem.src_image_idxs.push_back(src_images[i].first);
        }
@@ -149,12 +149,12 @@ index f59fa3f5..c810caca 100644
        problem.src_image_idxs.reserve(problem_config.src_image_names.size());
        for (const auto& src_image_name : problem_config.src_image_names) {
          problem.src_image_idxs.push_back(model.GetImageIdx(src_image_name));
-@@ -363,6 +408,13 @@ void PatchMatchController::ReadProblems() {
+@@ -368,6 +413,13 @@ void PatchMatchController::ReadProblems() {
      }
    }
  
 +  // write all problems into a text
-+  std::ofstream ref2src_file(JoinPaths(workspace_path_, "ref2src.txt"), std::ios::trunc);
++  std::ofstream ref2src_file(workspace_path_ / "ref2src.txt", std::ios::trunc);
 +  for(size_t i=0; i < problems_.size(); ++i) {
 +    ref2src_file << problems_[i].PrintToString();
 +  }
@@ -163,9 +163,9 @@ index f59fa3f5..c810caca 100644
    LOG(INFO) << StringPrintf("Configuration has %d problems...",
                              problems_.size());
  }
-@@ -402,9 +454,10 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
-   const std::string consistency_graph_path = JoinPaths(
-       workspace_path_, stereo_folder, "consistency_graphs", file_name);
+@@ -407,9 +459,10 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
+   const auto consistency_graph_path =
+       workspace_path_ / stereo_folder / "consistency_graphs" / file_name;
  
 -  if (ExistsFile(depth_map_path) && ExistsFile(normal_map_path) &&
 +  if ((!options.overwrite) && ExistsFile(depth_map_path) && ExistsFile(normal_map_path) &&
@@ -175,7 +175,7 @@ index f59fa3f5..c810caca 100644
      return;
    }
  
-@@ -415,7 +468,7 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
+@@ -420,7 +473,7 @@ void PatchMatchController::ProcessProblem(const PatchMatchOptions& options,
  
    auto patch_match_options = options;
  

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.cc b/src/colmap/scene/reconstruction.cc
-index 5641002b..d6ae43f6 100644
+index 8032d707..990e5f28 100644
 --- a/src/colmap/scene/reconstruction.cc
 +++ b/src/colmap/scene/reconstruction.cc
 @@ -1,3 +1,35 @@
@@ -38,8 +38,8 @@ index 5641002b..d6ae43f6 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -290,11 +322,17 @@ void Reconstruction::DeRegisterImage(const image_t image_id) {
-   reg_image_ids_.erase(image_id);
+@@ -695,11 +727,17 @@ void Reconstruction::DeRegisterFrame(const frame_t frame_id) {
+   reg_frame_ids_.erase(erase_begin_it, reg_frame_ids_.end());
  }
  
 +// @kai
@@ -56,8 +56,8 @@ index 5641002b..d6ae43f6 100644
 +                                double* scale_applied) {
    THROW_CHECK_GT(extent, 0);
  
-   if ((use_images && NumRegImages() < 2) ||
-@@ -318,6 +356,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
+   if ((use_images && NumRegFrames() < 2) ||
+@@ -723,6 +761,12 @@ Sim3d Reconstruction::Normalize(const bool fixed_scale,
    Sim3d tform(scale, Eigen::Quaterniond::Identity(), -scale * centroid);
    Transform(tform);
  
@@ -70,48 +70,49 @@ index 5641002b..d6ae43f6 100644
    return tform;
  }
  
-@@ -538,14 +582,16 @@ void Reconstruction::UpdatePoint3DErrors() {
+@@ -974,13 +1018,15 @@ void Reconstruction::UpdatePoint3DErrors() {
    }
  }
  
 +// @kai never use the binary format that is not very intuitive
- void Reconstruction::Read(const std::string& path) {
--  if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
--      ExistsFile(JoinPaths(path, "images.bin")) &&
--      ExistsFile(JoinPaths(path, "points3D.bin"))) {
+ void Reconstruction::Read(const std::filesystem::path& path) {
+-  if (ExistsFile(path / "cameras.bin") && ExistsFile(path / "images.bin") &&
+-      ExistsFile(path / "points3D.bin")) {
 -    ReadBinary(path);
--  } else if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
--             ExistsFile(JoinPaths(path, "images.txt")) &&
--             ExistsFile(JoinPaths(path, "points3D.txt"))) {
-+  // if (ExistsFile(JoinPaths(path, "cameras.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "images.bin")) &&
-+  //     ExistsFile(JoinPaths(path, "points3D.bin"))) {
+-  } else if (ExistsFile(path / "cameras.txt") &&
+-             ExistsFile(path / "images.txt") &&
+-             ExistsFile(path / "points3D.txt")) {
++  // if (ExistsFile(path / "cameras.bin") && ExistsFile(path / "images.bin") &&
++  //     ExistsFile(path / "points3D.bin")) {
 +  //   ReadBinary(path);
 +  // } else if (...) {
-+  if (ExistsFile(JoinPaths(path, "cameras.txt")) &&
-+      ExistsFile(JoinPaths(path, "images.txt")) &&
-+      ExistsFile(JoinPaths(path, "points3D.txt"))) {
++  if (ExistsFile(path / "cameras.txt") &&
++      ExistsFile(path / "images.txt") &&
++      ExistsFile(path / "points3D.txt")) {
      ReadText(path);
    } else {
-     LOG(FATAL_THROW) << "cameras, images, points3D files do not exist at "
-@@ -553,7 +599,8 @@ void Reconstruction::Read(const std::string& path) {
-   }
+     LOG(FATAL_THROW)
+@@ -990,8 +1036,11 @@ void Reconstruction::Read(const std::filesystem::path& path) {
  }
  
--void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
-+void Reconstruction::Write(const std::string& path) const { WriteText(path); }
-+// void Reconstruction::Write(const std::string& path) const { WriteBinary(path); }
+ void Reconstruction::Write(const std::filesystem::path& path) const {
+-  WriteBinary(path);
++  WriteText(path);
+ }
++// void Reconstruction::Write(const std::filesystem::path& path) const {
++//   WriteBinary(path);
++// }
  
- void Reconstruction::ReadText(const std::string& path) {
+ void Reconstruction::ReadText(const std::filesystem::path& path) {
    cameras_.clear();
-@@ -738,4 +785,28 @@ std::ostream& operator<<(std::ostream& stream,
+@@ -1211,4 +1260,28 @@ std::ostream& operator<<(std::ostream& stream,
    return stream;
  }
  
 +
 +// @kai
 +void Reconstruction::UpdateReprojErr() {
-+  const std::unordered_set<point3D_t>& point3D_ids = this->Point3DIds();
++  const FlatHashSet<point3D_t> point3D_ids = this->Point3DIds();
 +  for (const auto point3D_id : point3D_ids) {
 +    if (!ExistsPoint3D(point3D_id)) {
 +      continue;

@@ -1,2 +1,2 @@
-d45dacc621163427fcc60f65b486332518964bde   (2025-01-25 16:34:43 +0000)
-Remove year from copyright (#3124)
+b0af55be2808366609ee2023c5b9a980fdabd1ea   (2026-08-05 16:20:14 +0000)
+Minor: Expose optional cheirality check in ImgFromCam (#4616)

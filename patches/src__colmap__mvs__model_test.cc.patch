@@ -1,0 +1,147 @@
+diff --git a/src/colmap/mvs/model_test.cc b/src/colmap/mvs/model_test.cc
+index 6eb9ccba..863bf316 100644
+--- a/src/colmap/mvs/model_test.cc
++++ b/src/colmap/mvs/model_test.cc
+@@ -41,53 +41,19 @@ namespace colmap {
+ namespace mvs {
+ namespace {
+ 
+-TEST(Model, ReadCOLMAP) {
+-  Reconstruction reconstruction;
+-  SyntheticDatasetOptions synthetic_dataset_options;
+-  synthetic_dataset_options.num_rigs = 1;
+-  synthetic_dataset_options.num_cameras_per_rig = 1;
+-  synthetic_dataset_options.num_frames_per_rig = 3;
+-  synthetic_dataset_options.num_points3D = 10;
+-  SynthesizeDataset(synthetic_dataset_options, &reconstruction);
+-
+-  const auto test_dir = CreateTestDir();
+-  const auto sparse_path = test_dir / "sparse";
+-  std::filesystem::create_directories(sparse_path);
+-  reconstruction.WriteBinary(sparse_path);
+-
+-  Model model;
+-  model.ReadFromCOLMAP(test_dir);
+-  EXPECT_EQ(model.images.size(), reconstruction.NumRegImages());
+-  EXPECT_EQ(model.points.size(), reconstruction.NumPoints3D());
+-
+-  Model model_lower;
+-  model_lower.Read(test_dir, "colmap");
+-  EXPECT_EQ(model_lower.images.size(), reconstruction.NumRegImages());
+-  EXPECT_EQ(model_lower.points.size(), reconstruction.NumPoints3D());
+-
+-  // Verify case insensitivity.
+-  Model model_upper;
+-  model_upper.Read(test_dir, "COLMAP");
+-  EXPECT_EQ(model_upper.images.size(), reconstruction.NumRegImages());
+-  EXPECT_EQ(model_upper.points.size(), reconstruction.NumPoints3D());
+-
+-  const std::string name = model.GetImageName(0);
+-  EXPECT_FALSE(name.empty());
+-  EXPECT_EQ(model.GetImageIdx(name), 0);
+-
+-  EXPECT_THROW(model.GetImageIdx("nonexistent"), std::exception);
+-  EXPECT_THROW(model.GetImageName(-1), std::exception);
+-  EXPECT_THROW(model.GetImageName(model.images.size()), std::exception);
+-}
++// NOTE (satellite fork): the vanilla ReadCOLMAP test is not applicable — the
++// satellite Model::ReadFromCOLMAP requires the VisSat workspace sidecar files
++// (last_rows.txt, depth_ranges.txt) and the satellite Reconstruction
++// dispatches Read/Write to the text format only.
+ 
+ TEST(Model, ComputeSharedPoints) {
+   Model model;
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+   // Projection center = -R^T * T = -T (for R=I).
+-  const float T1[3] = {0, 0, 0};
+-  const float T2[3] = {-1, 0, 0};
+-  const float T3[3] = {-2, 0, 0};
++  const double T1[3] = {0, 0, 0};
++  const double T2[3] = {-1, 0, 0};
++  const double T3[3] = {-2, 0, 0};
+   model.images.emplace_back("img0.jpg", 100, 100, K, R, T1);
+   model.images.emplace_back("img1.jpg", 100, 100, K, R, T2);
+   model.images.emplace_back("img2.jpg", 100, 100, K, R, T3);
+@@ -106,51 +72,23 @@ TEST(Model, ComputeSharedPoints) {
+   EXPECT_EQ(shared[2].at(1), 1);
+ }
+ 
+-TEST(Model, ComputeDepthRanges) {
+-  Model model;
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
+-  model.images.emplace_back("img0.jpg", 100, 100, K, R, T);
+-
+-  for (int i = 1; i <= 100; ++i) {
+-    model.points.emplace_back(
+-        Model::Point{0.0f, 0.0f, static_cast<float>(i), {0}});
+-  }
+-
+-  const std::vector<std::pair<float, float>> depth_ranges =
+-      model.ComputeDepthRanges();
+-  EXPECT_EQ(depth_ranges.size(), 1);
+-
+-  // The points span depths in the range [1..100] and
+-  // the range is computed at percentiles 1% and 99%
+-  // with some additional padding.
+-  EXPECT_FLOAT_EQ(depth_ranges[0].first, 1.5f);
+-  EXPECT_FLOAT_EQ(depth_ranges[0].second, 125.0f);
+-}
+-
+-TEST(Model, ComputeDepthRangesNoPoints) {
++// NOTE (satellite fork): vanilla ComputeDepthRanges (cam-frame z-depth
++// percentiles over the sparse cloud) was removed — per-view depth ranges are
++// loaded from the VisSat workspace's depth_ranges.txt during Read and exposed
++// via GetDepthRanges.
++TEST(Model, GetDepthRangesEmptyByDefault) {
+   Model model;
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+-  const float T[3] = {0, 0, 0};
+-  model.images.emplace_back("img0.jpg", 100, 100, K, R, T);
+-
+-  const std::vector<std::pair<float, float>> depth_ranges =
+-      model.ComputeDepthRanges();
+-  EXPECT_EQ(depth_ranges.size(), 1);
+-  EXPECT_FLOAT_EQ(depth_ranges[0].first, -1.0f);
+-  EXPECT_FLOAT_EQ(depth_ranges[0].second, -1.0f);
++  EXPECT_TRUE(model.GetDepthRanges().empty());
+ }
+ 
+ TEST(Model, ComputeTriangulationAngles) {
+   Model model;
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+   // Projection center = -R^T * T = -T (for R=I).
+   // Place cameras at (0,0,0) and (1,0,0).
+-  const float T1[3] = {0, 0, 0};
+-  const float T2[3] = {-1, 0, 0};
++  const double T1[3] = {0, 0, 0};
++  const double T2[3] = {-1, 0, 0};
+   model.images.emplace_back("img0.jpg", 100, 100, K, R, T1);
+   model.images.emplace_back("img1.jpg", 100, 100, K, R, T2);
+ 
+@@ -168,12 +106,12 @@ TEST(Model, ComputeTriangulationAngles) {
+ 
+ TEST(Model, GetMaxOverlappingImages) {
+   Model model;
+-  const float K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
+-  const float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double K[9] = {100, 0, 50, 0, 100, 50, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+   // Projection center = -R^T * T = -T (for R=I).
+-  const float T1[3] = {0, 0, 0};
+-  const float T2[3] = {-1, 0, 0};
+-  const float T3[3] = {-2, 0, 0};
++  const double T1[3] = {0, 0, 0};
++  const double T2[3] = {-1, 0, 0};
++  const double T3[3] = {-2, 0, 0};
+   model.images.emplace_back("img0.jpg", 100, 100, K, R, T1);
+   model.images.emplace_back("img1.jpg", 100, 100, K, R, T2);
+   model.images.emplace_back("img2.jpg", 100, 100, K, R, T3);
