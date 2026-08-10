@@ -7,9 +7,10 @@ Different `patched Colmap versions` (mimicking `ColmapForVisSat`) can be found [
 
 ## Compatibility
 
-**In contrast to the original ColmapForVisSat library, this repository supports CUDA 11.**
+**In contrast to the original ColmapForVisSat library, this repository supports current CUDA versions (validated with CUDA 13.2 on Ubuntu 24.04; earlier patch set generations were also validated with CUDA 11.8).**
 
-Current patch files are created for the Colmap commit `64916f856259d8386df96bc95e0eb28cd5fca86e (2023-03-01 20:54:52 +0000)`
+Current patch files are created for the Colmap commit `b0af55be2808366609ee2023c5b9a980fdabd1ea (2026-08-05 16:20:14 +0000)`.
+The authoritative value is always the one in [compatible_commit.txt](compatible_commit.txt).
 
 ## Apply a set of satellite specific patch files to the original Colmap repository
 
@@ -18,7 +19,7 @@ This repository uses [Repository Patcher](https://github.com/SBCV/RepositoryPatc
 Afterwards apply the patch files in the `patches folder` using the instructions [here](https://github.com/SBCV/RepositoryPatcher?tab=readme-ov-file#apply-a-set-of-patch-files-to-the-target-repository).
 
 ## Build the patched Colmap repository
-- Run `sudo apt-get install libmetis-dev`
+- Run `sudo apt-get install libmetis-dev libopenimageio-dev openimageio-tools libopencv-dev libqt5svg5-dev` (the OpenImageIO/OpenCV/Qt5Svg packages are required since the `b0af55be`-era Colmap replaced FreeImage with OpenImageIO and added a Qt5Svg dependency)
 - If anaconda/miniconda is installed, make sure to run `conda deactivate` before running `cmake`.
 - Follow the [official install insctructions of Colmap for Linux](https://colmap.github.io/install.html#linux).
 
