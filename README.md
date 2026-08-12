@@ -12,6 +12,32 @@ Different `patched Colmap versions` (mimicking `ColmapForVisSat`) can be found [
 Current patch files are created for the Colmap commit `b0af55be2808366609ee2023c5b9a980fdabd1ea (2026-08-05 16:20:14 +0000)`.
 The authoritative value is always the one in [compatible_commit.txt](compatible_commit.txt).
 
+## Camera model id
+
+Colmap assigns camera model ids **positionally** (the `MAKE_ENUM_CLASS` macro
+numbers the enum entries by their position in the list, explicit values cannot
+be expressed). The patches append the `PERSPECTIVE` model at the end of the
+enum, so its numeric id depends on how many models the patched Colmap commit
+defines — it has drifted across patch set generations (11 → 12 → 14 → 18) and
+will drift again whenever upstream adds camera models.
+
+Consequences for **data compatibility**:
+
+- Artifacts that persist the **numeric** model id — `database.db` (the
+  `cameras.model` column and the camera blobs in `two_view_geometries`) and
+  binary models (`cameras.bin`) — are only valid for builds of the **same
+  patch set generation**. Do not reuse them across generations; convert
+  through the text model format instead.
+- **Text models** (`cameras.txt`) identify the model by **name** and are
+  portable across all generations.
+
+The patched `src/colmap/sensor/models.h` carries a `static_assert` that pins
+the numeric id validated for the current generation (`18` for the `b0af55be`
+patch set). If the assert fires when building — e.g. after retargeting the
+patches to a newer Colmap commit — the id has drifted: update the asserted
+value deliberately, and treat databases and binary models produced by earlier
+generations as incompatible with the new build.
+
 ## Apply a set of satellite specific patch files to the original Colmap repository
 
 This repository uses [Repository Patcher](https://github.com/SBCV/RepositoryPatcher) to apply the patches. Follow the install instructions [here](https://github.com/SBCV/RepositoryPatcher?tab=readme-ov-file#installation) and the configuration instructions [here](https://github.com/SBCV/RepositoryPatcher?tab=readme-ov-file#configuration-of-the-target-repository-and-the-patch-directory).
