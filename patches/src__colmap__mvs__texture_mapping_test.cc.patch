@@ -1,0 +1,91 @@
+diff --git a/src/colmap/mvs/texture_mapping_test.cc b/src/colmap/mvs/texture_mapping_test.cc
+index 4a726829..0f84cc62 100644
+--- a/src/colmap/mvs/texture_mapping_test.cc
++++ b/src/colmap/mvs/texture_mapping_test.cc
+@@ -62,7 +62,7 @@ PlyMesh MakeTriangleMesh() {
+ // +Z_cam.
+ Image MakeTestImage(int width, int height, const BitmapColor<uint8_t>& color) {
+   // K: focal length = width, principal point at center.
+-  float K[9] = {0};
++  double K[9] = {0};
+   K[0] = static_cast<float>(width);          // fx
+   K[4] = static_cast<float>(height);         // fy
+   K[2] = static_cast<float>(width) / 2.0f;   // cx
+@@ -71,11 +71,11 @@ Image MakeTestImage(int width, int height, const BitmapColor<uint8_t>& color) {
+ 
+   // R: 180° rotation around X-axis. Row-major: [1,0,0, 0,-1,0, 0,0,-1].
+   // This makes the camera look along -Z in world, with +Y up.
+-  float R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
++  double R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+ 
+   // C = (0.5, 0.5, 5), T = -R*C.
+   // T = -[1,0,0;0,-1,0;0,0,-1] * [0.5,0.5,5] = [-0.5, 0.5, 5]
+-  float T[3] = {-0.5f, 0.5f, 5.0f};
++  double T[3] = {-0.5f, 0.5f, 5.0f};
+ 
+   Image image("test_image.png",
+               static_cast<size_t>(width),
+@@ -94,7 +94,7 @@ Image MakeTestImage(int width, int height, const BitmapColor<uint8_t>& color) {
+ // Create a camera where the mesh at Z=0 is behind the camera.
+ // Camera at (0.5, 0.5, -5), looking along -Z in world (away from mesh).
+ Image MakeBehindCameraImage(int width, int height) {
+-  float K[9] = {0};
++  double K[9] = {0};
+   K[0] = static_cast<float>(width);
+   K[4] = static_cast<float>(height);
+   K[2] = static_cast<float>(width) / 2.0f;
+@@ -102,10 +102,10 @@ Image MakeBehindCameraImage(int width, int height) {
+   K[8] = 1.0f;
+ 
+   // R: 180° around X, looks along -Z in world.
+-  float R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
++  double R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+ 
+   // C = (0.5, 0.5, -5), T = -R*C = [-0.5, 0.5, -5]
+-  float T[3] = {-0.5f, 0.5f, -5.0f};
++  double T[3] = {-0.5f, 0.5f, -5.0f};
+ 
+   Image image("behind.png",
+               static_cast<size_t>(width),
+@@ -124,7 +124,7 @@ Image MakeBehindCameraImage(int width, int height) {
+ // Create a camera that views the mesh at a very grazing angle.
+ // Camera nearly in-plane with XY mesh, at (0.5, 0.5, 0.01), looking along -Z.
+ Image MakeGrazingAngleImage(int width, int height) {
+-  float K[9] = {0};
++  double K[9] = {0};
+   K[0] = static_cast<float>(width);
+   K[4] = static_cast<float>(height);
+   K[2] = static_cast<float>(width) / 2.0f;
+@@ -132,10 +132,10 @@ Image MakeGrazingAngleImage(int width, int height) {
+   K[8] = 1.0f;
+ 
+   // R: 180° around X.
+-  float R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
++  double R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+ 
+   // C = (0.5, 0.5, 0.01), T = -R*C = [-0.5, 0.5, 0.01]
+-  float T[3] = {-0.5f, 0.5f, 0.01f};
++  double T[3] = {-0.5f, 0.5f, 0.01f};
+ 
+   Image image("grazing.png",
+               static_cast<size_t>(width),
+@@ -316,16 +316,16 @@ TEST(MeshTextureMapping, SingleFaceTwoViews) {
+   auto img_close = MakeTestImage(256, 256, BitmapColor<uint8_t>(255, 0, 0));
+ 
+   // Image 1: farther camera -> smaller projected area.
+-  float K[9] = {0};
++  double K[9] = {0};
+   K[0] = 256.0f;
+   K[4] = 256.0f;
+   K[2] = 128.0f;
+   K[5] = 128.0f;
+   K[8] = 1.0f;
+   // R: 180° around X, same orientation as MakeTestImage.
+-  float R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
++  double R[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+   // C = (0.5, 0.5, 20), T = -R*C = [-0.5, 0.5, 20]
+-  float T[3] = {-0.5f, 0.5f, 20.0f};
++  double T[3] = {-0.5f, 0.5f, 20.0f};
+   Image img_far("far.png", 256, 256, K, R, T);
+   Bitmap bitmap(256, 256, /*as_rgb=*/true);
+   bitmap.Fill(BitmapColor<uint8_t>(0, 255, 0));

@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/fusion.h b/src/colmap/mvs/fusion.h
-index 77534375..474896bf 100644
+index f427f49e..24ed493d 100644
 --- a/src/colmap/mvs/fusion.h
 +++ b/src/colmap/mvs/fusion.h
 @@ -1,3 +1,35 @@

@@ -1,2 +1,2 @@
-b0af55be2808366609ee2023c5b9a980fdabd1ea   (2026-08-05 16:20:14 +0000)
-Minor: Expose optional cheirality check in ImgFromCam (#4616)
+dbb4168000fa56bb93bfd978deea4346c55e7a45   (2026-09-04 16:44:56 +0200)
+Stop deriving the hash map backend from the build machine (#4673)
