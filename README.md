@@ -9,7 +9,7 @@ Different `patched Colmap versions` (mimicking `ColmapForVisSat`) can be found [
 
 **In contrast to the original ColmapForVisSat library, this repository supports current CUDA versions (validated with CUDA 13.2 on Ubuntu 24.04; earlier patch set generations were also validated with CUDA 11.8).**
 
-Current patch files are created for the Colmap commit `b0af55be2808366609ee2023c5b9a980fdabd1ea (2026-08-05 16:20:14 +0000)`.
+Current patch files are created for the Colmap commit `dbb4168000fa56bb93bfd978deea4346c55e7a45 (2026-09-04 16:44:56 +0200)` (37 patch files; the `mvs/texture_mapping_test.cc` patch only adapts an upstream unit test to the satellite `mvs::Image` and does not affect the binary).
 The authoritative value is always the one in [compatible_commit.txt](compatible_commit.txt).
 
 ## Camera model id
@@ -32,7 +32,7 @@ Consequences for **data compatibility**:
   portable across all generations.
 
 The patched `src/colmap/sensor/models.h` carries a `static_assert` that pins
-the numeric id validated for the current generation (`18` for the `b0af55be`
+the numeric id validated for the current generation (`18` for the `b0af55be` and `dbb41680`
 patch set). If the assert fires when building — e.g. after retargeting the
 patches to a newer Colmap commit — the id has drifted: update the asserted
 value deliberately, and treat databases and binary models produced by earlier
