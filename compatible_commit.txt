@@ -1,2 +1,2 @@
-b0af55be2808366609ee2023c5b9a980fdabd1ea   (2026-08-05 16:20:14 +0000)
-Minor: Expose optional cheirality check in ImgFromCam (#4616)
+5bae98485ef16294ec14cca548486da33734c31b   (2026-08-12 16:23:23 +0000)
+Fix row stride when uploading source images to the layered texture (regression) (#4634)

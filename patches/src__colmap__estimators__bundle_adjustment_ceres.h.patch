@@ -1,8 +1,8 @@
 diff --git a/src/colmap/estimators/bundle_adjustment_ceres.h b/src/colmap/estimators/bundle_adjustment_ceres.h
-index dfaff05a..bed7ca25 100644
+index a51f4bbb..766e0b6f 100644
 --- a/src/colmap/estimators/bundle_adjustment_ceres.h
 +++ b/src/colmap/estimators/bundle_adjustment_ceres.h
-@@ -46,6 +46,12 @@ struct CeresBundleAdjustmentOptions {
+@@ -45,6 +45,12 @@ struct CeresBundleAdjustmentOptions {
    // Scaling factor determines residual at which robustification takes place.
    double loss_function_scale = 1.0;
  
@@ -15,7 +15,7 @@ index dfaff05a..bed7ca25 100644
    // Whether to use Ceres' CUDA linear algebra library, if available.
    bool use_gpu = false;
    std::string gpu_index = "-1";
-@@ -80,6 +86,7 @@ struct CeresBundleAdjustmentOptions {
+@@ -79,6 +85,7 @@ struct CeresBundleAdjustmentOptions {
  
    // Create loss function for given options.
    std::unique_ptr<ceres::LossFunction> CreateLossFunction() const;

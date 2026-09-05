@@ -1,8 +1,8 @@
 diff --git a/src/colmap/mvs/model_test.cc b/src/colmap/mvs/model_test.cc
-index 6eb9ccba..863bf316 100644
+index 6ab37d09..3a069de4 100644
 --- a/src/colmap/mvs/model_test.cc
 +++ b/src/colmap/mvs/model_test.cc
-@@ -41,53 +41,19 @@ namespace colmap {
+@@ -40,53 +40,19 @@ namespace colmap {
  namespace mvs {
  namespace {
  
@@ -65,7 +65,7 @@ index 6eb9ccba..863bf316 100644
    model.images.emplace_back("img0.jpg", 100, 100, K, R, T1);
    model.images.emplace_back("img1.jpg", 100, 100, K, R, T2);
    model.images.emplace_back("img2.jpg", 100, 100, K, R, T3);
-@@ -106,51 +72,23 @@ TEST(Model, ComputeSharedPoints) {
+@@ -105,51 +71,23 @@ TEST(Model, ComputeSharedPoints) {
    EXPECT_EQ(shared[2].at(1), 1);
  }
  
@@ -127,7 +127,7 @@ index 6eb9ccba..863bf316 100644
    model.images.emplace_back("img0.jpg", 100, 100, K, R, T1);
    model.images.emplace_back("img1.jpg", 100, 100, K, R, T2);
  
-@@ -168,12 +106,12 @@ TEST(Model, ComputeTriangulationAngles) {
+@@ -167,12 +105,12 @@ TEST(Model, ComputeTriangulationAngles) {
  
  TEST(Model, GetMaxOverlappingImages) {
    Model model;

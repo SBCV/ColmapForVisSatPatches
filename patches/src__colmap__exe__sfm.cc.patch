@@ -1,5 +1,5 @@
 diff --git a/src/colmap/exe/sfm.cc b/src/colmap/exe/sfm.cc
-index b77010c7..cf6b239b 100644
+index eb6aa0b7..23432056 100644
 --- a/src/colmap/exe/sfm.cc
 +++ b/src/colmap/exe/sfm.cc
 @@ -1,3 +1,35 @@
@@ -130,7 +130,7 @@ index b77010c7..cf6b239b 100644
    return EXIT_SUCCESS;
  }
  
-@@ -627,6 +729,9 @@ void RunPointTriangulatorImpl(
+@@ -645,6 +747,9 @@ void RunPointTriangulatorImpl(
      const IncrementalPipelineOptions& options,
      const bool clear_points,
      const bool refine_intrinsics) {
@@ -140,7 +140,7 @@ index b77010c7..cf6b239b 100644
    THROW_CHECK_GE(reconstruction->NumRegImages(), 2)
        << "Need at least two images for triangulation";
    if (clear_points) {
-@@ -649,6 +754,19 @@ void RunPointTriangulatorImpl(
+@@ -667,6 +772,19 @@ void RunPointTriangulatorImpl(
        custom_options, Database::Open(database_path), reconstruction_manager);
    mapper.TriangulateReconstruction(reconstruction);
    reconstruction->Write(output_path);
