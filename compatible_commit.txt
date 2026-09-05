@@ -1,2 +1,2 @@
-365e16212e367acf69ab71d8788a1182d52274f4   (2026-08-31 14:41:40 +0200)
-Add graceful shutdown support for processing pipelines (#4662)
+dbb4168000fa56bb93bfd978deea4346c55e7a45   (2026-09-04 16:44:56 +0200)
+Stop deriving the hash map backend from the build machine (#4673)
