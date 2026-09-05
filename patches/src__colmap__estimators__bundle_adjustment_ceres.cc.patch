@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment_ceres.cc b/src/colmap/estimators/bundle_adjustment_ceres.cc
-index e128d407..16e8ec6a 100644
+index df15b170..4918c890 100644
 --- a/src/colmap/estimators/bundle_adjustment_ceres.cc
 +++ b/src/colmap/estimators/bundle_adjustment_ceres.cc
 @@ -119,6 +119,18 @@ CeresBundleAdjustmentOptions::CreateLossFunction() const {
@@ -29,7 +29,7 @@ index e128d407..16e8ec6a 100644
    CHECK_OPTION_LT(max_num_images_direct_dense_cpu_solver,
                    max_num_images_direct_sparse_cpu_solver);
    CHECK_OPTION_LT(max_num_images_direct_dense_gpu_solver,
-@@ -630,6 +643,18 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
+@@ -653,6 +666,18 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
        AddPointToProblem(point3D_id, reconstruction);
      }
  
@@ -48,7 +48,7 @@ index e128d407..16e8ec6a 100644
      ParameterizeCameras(options_,
                          config_,
                          parameterized_camera_ids_,
-@@ -663,6 +688,18 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
+@@ -686,6 +711,18 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
      }
    }
  
@@ -67,7 +67,7 @@ index e128d407..16e8ec6a 100644
    std::shared_ptr<BundleAdjustmentSummary> Solve() override {
      if (problem_->NumResiduals() == 0) {
        return std::make_shared<BundleAdjustmentSummary>();
-@@ -891,6 +928,7 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
+@@ -914,6 +951,7 @@ class DefaultBundleAdjuster : public CeresBundleAdjuster {
   private:
    std::shared_ptr<ceres::Problem> problem_;
    std::unique_ptr<ceres::LossFunction> loss_function_;
