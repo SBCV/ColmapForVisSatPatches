@@ -1,8 +1,16 @@
 diff --git a/src/colmap/mvs/image_test.cc b/src/colmap/mvs/image_test.cc
-index 43b35122..09cbcac8 100644
+index 43b35122..31cb6c6f 100644
 --- a/src/colmap/mvs/image_test.cc
 +++ b/src/colmap/mvs/image_test.cc
-@@ -35,17 +35,13 @@ namespace colmap {
+@@ -29,23 +29,21 @@
+ 
+ #include "colmap/mvs/image.h"
+ 
++#include <cmath>
++
+ #include <gtest/gtest.h>
+ 
+ namespace colmap {
  namespace mvs {
  namespace {
  
@@ -25,7 +33,7 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
  
-@@ -53,7 +49,8 @@ TEST(Image, ParameterizedConstructor) {
+@@ -53,7 +51,8 @@ TEST(Image, ParameterizedConstructor) {
    EXPECT_EQ(image.GetHeight(), 100);
    EXPECT_EQ(image.GetPath(), "test.jpg");
  
@@ -35,7 +43,7 @@ index 43b35122..09cbcac8 100644
    const float* image_R = image.GetR();
    const float* image_T = image.GetT();
  
-@@ -68,9 +65,9 @@ TEST(Image, ParameterizedConstructor) {
+@@ -68,9 +67,9 @@ TEST(Image, ParameterizedConstructor) {
  }
  
  TEST(Image, Rescale) {
@@ -48,7 +56,7 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Rescale(0.5);
-@@ -78,7 +75,8 @@ TEST(Image, Rescale) {
+@@ -78,7 +77,8 @@ TEST(Image, Rescale) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 50);
  
@@ -58,7 +66,7 @@ index 43b35122..09cbcac8 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
    EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
-@@ -86,9 +84,9 @@ TEST(Image, Rescale) {
+@@ -86,9 +86,9 @@ TEST(Image, Rescale) {
  }
  
  TEST(Image, RescaleNonUniform) {
@@ -71,7 +79,7 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Rescale(0.5, 0.25);
-@@ -96,7 +94,8 @@ TEST(Image, RescaleNonUniform) {
+@@ -96,7 +96,8 @@ TEST(Image, RescaleNonUniform) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 25);
  
@@ -81,7 +89,7 @@ index 43b35122..09cbcac8 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled by factor_x
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled by factor_x
    EXPECT_FLOAT_EQ(image_K[4], 25.0f);  // fy scaled by factor_y
-@@ -104,9 +103,9 @@ TEST(Image, RescaleNonUniform) {
+@@ -104,9 +105,9 @@ TEST(Image, RescaleNonUniform) {
  }
  
  TEST(Image, Downsize) {
@@ -94,7 +102,7 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Downsize(50, 50);
-@@ -114,7 +113,8 @@ TEST(Image, Downsize) {
+@@ -114,7 +115,8 @@ TEST(Image, Downsize) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 50);
  
@@ -104,7 +112,7 @@ index 43b35122..09cbcac8 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
    EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
-@@ -122,9 +122,9 @@ TEST(Image, Downsize) {
+@@ -122,9 +124,9 @@ TEST(Image, Downsize) {
  }
  
  TEST(Image, DownsizeNoChange) {
@@ -117,7 +125,7 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Downsize(200, 200);
-@@ -134,9 +134,9 @@ TEST(Image, DownsizeNoChange) {
+@@ -134,9 +136,9 @@ TEST(Image, DownsizeNoChange) {
  }
  
  TEST(Image, GetViewingDirection) {
@@ -130,3 +138,40 @@ index 43b35122..09cbcac8 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    const float* viewing_dir = image.GetViewingDirection();
+@@ -170,6 +172,36 @@ TEST(ComposeProjectionMatrix, Identity) {
+   }
+ }
+ 
++// NOTE (satellite fork): the RPC-approximated cameras put the principal point
++// hundreds of image widths outside the image, so the fourth column of P is a
++// difference of near-equal large terms. Composing the float mirror from float
++// inputs loses ~1e-5 relative there; composing in double and rounding once
++// keeps it at float32 storage precision, ~1e-8. Constants are the worst real
++// MVS3DM site 1 camera scaled to cancel by ~900x in P[3] and ~2000x in P[7].
++TEST(Image, FloatMirrorComposedInDouble) {
++  const double fx = 4223082.0;
++  const double fy = 3875869.0;
++  const double cx = 20842.8;
++  const double cy = 1627083.1;
++  const double tx = -7345.6460439713619;
++  const double ty = -625186.67222511908;
++  const double tz = 1490000.0;
++
++  const double K[9] = {fx, 0, cx, 0, fy, cy, 0, 0, 1};
++  const double R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
++  const double T[3] = {tx, ty, tz};
++
++  const Image image("test.jpg", 2276, 2132, K, R, T);
++  const float* P = image.GetP();
++
++  // R is the identity, so these are the exact values of the fourth column.
++  const double expected_03 = fx * tx + cx * tz;
++  const double expected_13 = fy * ty + cy * tz;
++
++  EXPECT_LT(std::abs(P[3] - expected_03) / std::abs(expected_03), 1e-6);
++  EXPECT_LT(std::abs(P[7] - expected_13) / std::abs(expected_13), 1e-6);
++}
++
+ TEST(RotatePose, Identity) {
+   const float RR[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+   float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};

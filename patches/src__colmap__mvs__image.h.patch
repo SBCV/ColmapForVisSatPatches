@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.h b/src/colmap/mvs/image.h
-index 57b59d95..db08e91a 100644
+index 57b59d95..2d643f66 100644
 --- a/src/colmap/mvs/image.h
 +++ b/src/colmap/mvs/image.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index 57b59d95..db08e91a 100644
  // Copyright (c), ETH Zurich and UNC Chapel Hill.
  // All rights reserved.
  //
-@@ -36,43 +68,78 @@
+@@ -36,43 +68,79 @@
  namespace colmap {
  namespace mvs {
  
@@ -81,13 +81,15 @@ index 57b59d95..db08e91a 100644
 +
 +  const std::filesystem::path& GetPath() const;
 +
-+  // Float mirrors of the (double-precision) satellite pose data, kept for
-+  // vanilla mvs consumers (e.g. texture mapping) that the satellite
-+  // pipeline does not use. The satellite MVS path reads the doubles.
++  // Float mirrors of the (double-precision) satellite pose data, for the
++  // vanilla mvs consumers that read floats. The satellite MVS path reads the
++  // doubles. Texture mapping IS such a consumer and the SSR pipeline does run
++  // it, so UpdateFloatMirrors composes these in double and rounds once;
++  // composing them in float cancels catastrophically for the
++  // RPC-approximated cameras. Note SetK does not refresh them.
 +  const float* GetR() const;
 +  const float* GetT() const;
 +  const float* GetP() const;
-+  const float* GetInvP() const;
 +  const float* GetViewingDirection() const;
  
    void Rescale(float factor);
@@ -132,11 +134,19 @@ index 57b59d95..db08e91a 100644
 +  float R_float_[9];
 +  float T_float_[3];
 +  float P_float_[12];
-+  float inv_P_float_[12];
    Bitmap bitmap_;
  };
  
-@@ -97,29 +164,5 @@ void ComputeProjectionCenter(const float R[9], const float T[3], float C[3]);
+@@ -88,38 +156,9 @@ void ComposeProjectionMatrix(const float K[9],
+                              const float T[3],
+                              float P[12]);
+ 
+-void ComposeInverseProjectionMatrix(const float K[9],
+-                                    const float R[9],
+-                                    const float T[3],
+-                                    float inv_P[12]);
+-
+ void ComputeProjectionCenter(const float R[9], const float T[3], float C[3]);
  
  void RotatePose(const float RR[9], float R[9], float T[3]);
  
