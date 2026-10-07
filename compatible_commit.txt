@@ -1,2 +1,2 @@
-902bfe96fd8647932e6105c6b9759490caea1d41   (2026-09-16 12:43:46 +0200)
-Introduce SetFullPrecTextStream and fix dropped THROW_CHECK messages (#4749)
+a938058ed26a829df8be644b1ece9de9af1020cc   (2026-10-07 04:45:17 +0000)
+Add SKEWED_PINHOLE camera model (#4815)

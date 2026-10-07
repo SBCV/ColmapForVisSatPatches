@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index 035bff65..942209c8 100644
+index 035bff65..ea0c95a5 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -85,7 +85,7 @@ index 035bff65..942209c8 100644
 -    const auto image_path = path / images_path / image.Name();
 -    const Eigen::Matrix<float, 3, 3, Eigen::RowMajor> K =
 +    CHECK(camera.model_id == PinholeCameraModel::model_id ||
-+          camera.model_id == PerspectiveCameraModel::model_id);
++          camera.model_id == SkewedPinholeCameraModel::model_id);
  
 -        camera.CalibrationMatrix().cast<float>();
 -    const Eigen::Matrix<float, 3, 3, Eigen::RowMajor> R =
