@@ -1,2 +1,2 @@
-cb3477c64b55d299d27d26c3753f691152308f12   (2026-09-15 16:45:51 +0000)
-Introduce CHECK_OPTION_IN and use it in option checks (#4741)
+902bfe96fd8647932e6105c6b9759490caea1d41   (2026-09-16 12:43:46 +0200)
+Introduce SetFullPrecTextStream and fix dropped THROW_CHECK messages (#4749)
