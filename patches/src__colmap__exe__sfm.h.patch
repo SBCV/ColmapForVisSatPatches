@@ -1,5 +1,5 @@
 diff --git a/src/colmap/exe/sfm.h b/src/colmap/exe/sfm.h
-index 0613b500..24f70c80 100644
+index 50b56a85..4c1f5e86 100644
 --- a/src/colmap/exe/sfm.h
 +++ b/src/colmap/exe/sfm.h
 @@ -48,6 +48,8 @@ bool RunHierarchicalMapperImpl(

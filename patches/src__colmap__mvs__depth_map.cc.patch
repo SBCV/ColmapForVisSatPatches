@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/depth_map.cc b/src/colmap/mvs/depth_map.cc
-index 3ad40d7b..9f005bc7 100644
+index 96132bcc..5d0d0fd7 100644
 --- a/src/colmap/mvs/depth_map.cc
 +++ b/src/colmap/mvs/depth_map.cc
 @@ -1,3 +1,35 @@
