@@ -1,2 +1,2 @@
-a938058ed26a829df8be644b1ece9de9af1020cc   (2026-10-07 04:45:17 +0000)
-Add SKEWED_PINHOLE camera model (#4815)
+7d0c470c7de051c8d28fbeb7142278ac56722aa2   (2026-10-07 14:35:31 +0200)
+Guard cubic solver against rounding near repeated roots (#4818)
