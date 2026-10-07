@@ -1,5 +1,5 @@
 diff --git a/src/colmap/sfm/incremental_mapper.cc b/src/colmap/sfm/incremental_mapper.cc
-index de330807..f35a7a26 100644
+index b89c2a66..48398158 100644
 --- a/src/colmap/sfm/incremental_mapper.cc
 +++ b/src/colmap/sfm/incremental_mapper.cc
 @@ -1,3 +1,35 @@
@@ -38,11 +38,12 @@ index de330807..f35a7a26 100644
  // SPDX-License-Identifier: BSD-3-Clause
  
  #include "colmap/sfm/incremental_mapper.h"
-@@ -51,7 +83,8 @@ bool IncrementalMapper::Options::Check() const {
+@@ -50,7 +82,9 @@ size_t NumRegisteredPosePriors(const std::vector<PosePrior>& pose_priors,
+ bool IncrementalMapper::Options::Check() const {
    CHECK_OPTION_GT(init_min_num_inliers, 0);
    CHECK_OPTION_GT(init_max_error, 0.0);
-   CHECK_OPTION_GE(init_max_forward_motion, 0.0);
--  CHECK_OPTION_LE(init_max_forward_motion, 1.0);
+-  CHECK_OPTION_IN(init_max_forward_motion, 0.0, 1.0);
++  CHECK_OPTION_GE(init_max_forward_motion, 0.0);
 +  // @kai seems not to work with satellite images
 +  // CHECK_OPTION_LE(init_max_forward_motion, 1.0);
    CHECK_OPTION_GE(init_min_tri_angle, 0.0);

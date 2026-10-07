@@ -1,2 +1,2 @@
-2fbc70622e8c8066d5a1128ee58fb59fe136991e   (2026-09-12 13:55:10 +0200)
-Standardize on SPDX license headers and rename COPYING.txt to LICENSE (#4713)
+cb3477c64b55d299d27d26c3753f691152308f12   (2026-09-15 16:45:51 +0000)
+Introduce CHECK_OPTION_IN and use it in option checks (#4741)

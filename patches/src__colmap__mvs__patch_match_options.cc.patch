@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match_options.cc b/src/colmap/mvs/patch_match_options.cc
-index a4f155e5..e01a920d 100644
+index e289d5e0..d811b068 100644
 --- a/src/colmap/mvs/patch_match_options.cc
 +++ b/src/colmap/mvs/patch_match_options.cc
 @@ -31,6 +31,8 @@ void PatchMatchOptions::Print() const {
@@ -11,14 +11,14 @@ index a4f155e5..e01a920d 100644
    PrintOption(geom_consistency_regularizer);
    PrintOption(geom_consistency_max_cost);
    PrintOption(filter);
-@@ -44,9 +46,8 @@ void PatchMatchOptions::Print() const {
+@@ -44,8 +46,8 @@ void PatchMatchOptions::Print() const {
  }
  
  bool PatchMatchOptions::Check() const {
 -  if (depth_min != -1.0f || depth_max != -1.0f) {
+-    CHECK_OPTION_IN(depth_min, 0.0f, depth_max);
 +  if (depth_min > -1e19f || depth_max > -1e19f) {
-     CHECK_OPTION_LE(depth_min, depth_max);
--    CHECK_OPTION_GE(depth_min, 0.0f);
++    CHECK_OPTION_LE(depth_min, depth_max);
    }
    CHECK_OPTION_LE(window_radius, static_cast<int>(kMaxPatchMatchWindowRadius));
    CHECK_OPTION_GT(sigma_color, 0.0f);
