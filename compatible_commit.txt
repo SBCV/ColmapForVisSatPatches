@@ -1,2 +1,2 @@
-af9aa0eae485cacf698cd35cbe58f58d8fe77826   (2026-09-05 20:53:25 +0200)
-Centralize Ceres loss and stock utility seams (#4669)
+0d2bf2b5b15d32ea4cd68dde4814582dab08fc0f   (2026-09-09 15:31:59 +0000)
+Refactor camera models into self-contained sensor/models/ headers (#4687)

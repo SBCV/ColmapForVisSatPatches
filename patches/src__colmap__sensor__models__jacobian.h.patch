@@ -1,12 +1,11 @@
-diff --git a/src/colmap/sensor/models_jacobian.h b/src/colmap/sensor/models_jacobian.h
-index a6ebd11d..4b998a65 100644
---- a/src/colmap/sensor/models_jacobian.h
-+++ b/src/colmap/sensor/models_jacobian.h
-@@ -1562,4 +1562,60 @@ bool EquirectangularCameraModel::ImgFromCamWithJac(
+diff --git a/src/colmap/sensor/models/jacobian.h b/src/colmap/sensor/models/jacobian.h
+index 16980c9d..84ae58cd 100644
+--- a/src/colmap/sensor/models/jacobian.h
++++ b/src/colmap/sensor/models/jacobian.h
+@@ -1561,4 +1561,59 @@ bool EquirectangularCameraModel::ImgFromCamWithJac(
    return true;
  }
  
-+
 +template <bool Enable, typename std::enable_if<Enable, int>::type>
 +bool PerspectiveCameraModel::ImgFromCamWithJac(const double* params,
 +                                               const double& u,
@@ -25,7 +24,7 @@ index a6ebd11d..4b998a65 100644
 +  const double f2 = params[1];
 +  const double c1 = params[2];
 +  const double c2 = params[3];
-+  const double s = params[4];  // skew parameter
++  const double s = params[4];
 +
 +  const double inv_w = 1.0 / w;
 +  const double uu = u * inv_w;
@@ -36,7 +35,7 @@ index a6ebd11d..4b998a65 100644
 +
 +  if (J_uvw) {
 +    // J_uvw is a 2x3 matrix (row-major): d(x, y) / d(u, v, w)
-+    // x = (fx * u + s * v) / w + cx, y = fy * v / w + cy
++    // x = fx * u / w + s * v / w + cx, y = fy * v / w + cy
 +    J_uvw[0] = f1 * inv_w;
 +    J_uvw[1] = s * inv_w;
 +    J_uvw[2] = -inv_w * (f1 * uu + s * vv);

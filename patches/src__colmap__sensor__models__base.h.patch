@@ -1,0 +1,43 @@
+diff --git a/src/colmap/sensor/models/base.h b/src/colmap/sensor/models/base.h
+index e5782907..42819b9d 100644
+--- a/src/colmap/sensor/models/base.h
++++ b/src/colmap/sensor/models/base.h
+@@ -71,9 +71,27 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
+                                 kSimpleFisheye,           // = 14
+                                 kFisheye,                 // = 15
+                                 kEUCM,                    // = 16
+-                                kEquirectangular          // = 17
++                                kEquirectangular,         // = 17
++                                kPerspective              // = 18
+ );
+ 
++// ColmapForVisSatPatches: MAKE_ENUM_CLASS assigns ids positionally, so the
++// numeric value of kPerspective depends on how many models upstream defines
++// at the patched commit (it has drifted 11 -> 12 -> 14 -> 18 across patch
++// generations). database.db (cameras.model, two_view_geometries blobs) and
++// cameras.bin persist this NUMBER, so such artifacts are only portable
++// between builds with the same value; text models (cameras.txt) travel by
++// NAME and are always safe. If this assert fires after retargeting the
++// patches, update the expected value DELIBERATELY and record that databases
++// and binary models from earlier patch generations are not portable (see the
++// "Camera model id" section of the ColmapForVisSatPatches README).
++static_assert(static_cast<int>(CameraModelId::kPerspective) == 18,
++              "PERSPECTIVE camera model id drifted from the value validated "
++              "for this patch generation. Old database.db / cameras.bin "
++              "artifacts are NOT portable across this change. Update this "
++              "assert deliberately and record the drift; see the "
++              "ColmapForVisSatPatches README, section 'Camera model id'.");
++
+ // Builds a consecutive parameter index array {Offset, ..., Offset + N - 1}.
+ // Camera model parameters are stored consecutively by group (focal length,
+ // principal point, extra), so the group index arrays are derived from the
+@@ -194,7 +212,8 @@ constexpr std::array<size_t, N> IotaArray() {
+   CAMERA_MODEL_CASE(DivisionCameraModel)            \
+   CAMERA_MODEL_CASE(SimpleFisheyeCameraModel)       \
+   CAMERA_MODEL_CASE(FisheyeCameraModel)             \
+-  CAMERA_MODEL_CASE(EUCMCameraModel)
++  CAMERA_MODEL_CASE(EUCMCameraModel)                \
++  CAMERA_MODEL_CASE(PerspectiveCameraModel)
+ #endif
+ 
+ #ifndef SPHERICAL_CAMERA_MODEL_CASES
