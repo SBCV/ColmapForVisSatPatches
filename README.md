@@ -9,34 +9,34 @@ Different `patched Colmap versions` (mimicking `ColmapForVisSat`) can be found [
 
 **In contrast to the original ColmapForVisSat library, this repository supports current CUDA versions (validated with CUDA 13.2 on Ubuntu 24.04; earlier patch set generations were also validated with CUDA 11.8).**
 
-Current patch files are created for the Colmap commit `dbb4168000fa56bb93bfd978deea4346c55e7a45 (2026-09-04 16:44:56 +0200)` (37 patch files; the `mvs/texture_mapping_test.cc` patch only adapts an upstream unit test to the satellite `mvs::Image` and does not affect the binary).
+Current patch files are created for the Colmap commit `7d0c470c7de051c8d28fbeb7142278ac56722aa2 (2026-10-07 14:35:31 +0200)` (35 patch files; the `mvs/texture_mapping_test.cc` patch only adapts an upstream unit test to the satellite `mvs::Image` and does not affect the binary).
 The authoritative value is always the one in [compatible_commit.txt](compatible_commit.txt).
 
-## Camera model id
+## Camera model
 
-Colmap assigns camera model ids **positionally** (the `MAKE_ENUM_CLASS` macro
-numbers the enum entries by their position in the list, explicit values cannot
-be expressed). The patches append the `PERSPECTIVE` model at the end of the
-enum, so its numeric id depends on how many models the patched Colmap commit
-defines — it has drifted across patch set generations (11 → 12 → 14 → 18) and
-will drift again whenever upstream adds camera models.
+Since Colmap commit `a938058e` ([PR #4815](https://github.com/colmap/colmap/pull/4815))
+the skewed pinhole camera the satellite pipeline needs (`fx, fy, cx, cy, s`)
+is an upstream model named **`SKEWED_PINHOLE`** (model id 18). Earlier patch
+set generations defined the same model themselves under the name
+`PERSPECTIVE`, appended to the end of the model enum, which made its numeric
+id drift with upstream's model list (11 → 12 → 14 → 18). That problem is
+gone: the patches no longer define a camera model. The only camera-model
+hunk left is in `src/colmap/sensor/models/pinhole.h`: `SkewedPinholeCameraModel`
+gets a `HasBogusParams` override that returns `false`, because the cameras of
+the RPC perspective approximation fail Colmap's focal-length-ratio and
+principal-point heuristics by construction (focal length ratios of 250-7000
+against a default maximum of 10) and would otherwise be dropped from
+triangulation and filtering.
 
 Consequences for **data compatibility**:
 
-- Artifacts that persist the **numeric** model id — `database.db` (the
-  `cameras.model` column and the camera blobs in `two_view_geometries`) and
-  binary models (`cameras.bin`) — are only valid for builds of the **same
-  patch set generation**. Do not reuse them across generations; convert
-  through the text model format instead.
-- **Text models** (`cameras.txt`) identify the model by **name** and are
-  portable across all generations.
-
-The patched `src/colmap/sensor/models.h` carries a `static_assert` that pins
-the numeric id validated for the current generation (`18` for the `b0af55be` and `dbb41680`
-patch set). If the assert fires when building — e.g. after retargeting the
-patches to a newer Colmap commit — the id has drifted: update the asserted
-value deliberately, and treat databases and binary models produced by earlier
-generations as incompatible with the new build.
+- Text models (`cameras.txt`) written by earlier generations name the model
+  `PERSPECTIVE`; rename it to `SKEWED_PINHOLE` (same parameters, same order)
+  to load them with a current build.
+- `database.db` and binary models (`cameras.bin`) persist the numeric id.
+  Artifacts of the `b0af55be` and `dbb41680` generations (id 18) load
+  unchanged; artifacts of older generations (ids 11, 12, 14) must go through
+  the text format.
 
 ## Apply a set of satellite specific patch files to the original Colmap repository
 
