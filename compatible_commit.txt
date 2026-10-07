@@ -1,2 +1,2 @@
-dbb4168000fa56bb93bfd978deea4346c55e7a45   (2026-09-04 16:44:56 +0200)
-Stop deriving the hash map backend from the build machine (#4673)
+af9aa0eae485cacf698cd35cbe58f58d8fe77826   (2026-09-05 20:53:25 +0200)
+Centralize Ceres loss and stock utility seams (#4669)
