@@ -1,8 +1,8 @@
 diff --git a/src/colmap/sensor/models/jacobian.h b/src/colmap/sensor/models/jacobian.h
-index 16980c9d..84ae58cd 100644
+index a127511b..aaa24b6f 100644
 --- a/src/colmap/sensor/models/jacobian.h
 +++ b/src/colmap/sensor/models/jacobian.h
-@@ -1561,4 +1561,59 @@ bool EquirectangularCameraModel::ImgFromCamWithJac(
+@@ -1534,4 +1534,59 @@ bool EquirectangularCameraModel::ImgFromCamWithJac(
    return true;
  }
  

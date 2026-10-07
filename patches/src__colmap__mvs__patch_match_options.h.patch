@@ -1,8 +1,8 @@
 diff --git a/src/colmap/mvs/patch_match_options.h b/src/colmap/mvs/patch_match_options.h
-index bc6c1f29..c69a9928 100644
+index 75c96555..6fcdab2c 100644
 --- a/src/colmap/mvs/patch_match_options.h
 +++ b/src/colmap/mvs/patch_match_options.h
-@@ -36,8 +36,8 @@ namespace mvs {
+@@ -9,8 +9,8 @@ namespace mvs {
  
  struct PatchMatchOptions {
    // Depth range in which to randomly sample depth hypotheses.
@@ -13,7 +13,7 @@ index bc6c1f29..c69a9928 100644
  
    // Parameters for bilaterally weighted NCC.
    double sigma_spatial = -1;
-@@ -111,6 +111,9 @@ struct PatchMatchOptions {
+@@ -84,6 +84,9 @@ struct PatchMatchOptions {
    // Whether to add a regularized geometric consistency term to the cost
    // function. If true, the `depth_maps` and `normal_maps` must not be null.
    bool geom_consistency = true;

@@ -1,2 +1,2 @@
-0d2bf2b5b15d32ea4cd68dde4814582dab08fc0f   (2026-09-09 15:31:59 +0000)
-Refactor camera models into self-contained sensor/models/ headers (#4687)
+2fbc70622e8c8066d5a1128ee58fb59fe136991e   (2026-09-12 13:55:10 +0200)
+Standardize on SPDX license headers and rename COPYING.txt to LICENSE (#4713)

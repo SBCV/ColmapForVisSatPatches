@@ -1,8 +1,8 @@
 diff --git a/src/colmap/sensor/models/pinhole.h b/src/colmap/sensor/models/pinhole.h
-index dc69d6c3..5a664dd6 100644
+index e9ee61e2..465d4fdb 100644
 --- a/src/colmap/sensor/models/pinhole.h
 +++ b/src/colmap/sensor/models/pinhole.h
-@@ -156,4 +156,127 @@ struct PinholeCameraModel
+@@ -129,4 +129,127 @@ struct PinholeCameraModel
    }
  };
  

@@ -1,8 +1,8 @@
 diff --git a/src/colmap/sensor/models/base.h b/src/colmap/sensor/models/base.h
-index e5782907..42819b9d 100644
+index facd39a2..09f0c7ea 100644
 --- a/src/colmap/sensor/models/base.h
 +++ b/src/colmap/sensor/models/base.h
-@@ -71,9 +71,27 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
+@@ -44,9 +44,27 @@ MAKE_ENUM_CLASS_OVERLOAD_STREAM(CameraModelId,
                                  kSimpleFisheye,           // = 14
                                  kFisheye,                 // = 15
                                  kEUCM,                    // = 16
@@ -31,7 +31,7 @@ index e5782907..42819b9d 100644
  // Builds a consecutive parameter index array {Offset, ..., Offset + N - 1}.
  // Camera model parameters are stored consecutively by group (focal length,
  // principal point, extra), so the group index arrays are derived from the
-@@ -194,7 +212,8 @@ constexpr std::array<size_t, N> IotaArray() {
+@@ -167,7 +185,8 @@ constexpr std::array<size_t, N> IotaArray() {
    CAMERA_MODEL_CASE(DivisionCameraModel)            \
    CAMERA_MODEL_CASE(SimpleFisheyeCameraModel)       \
    CAMERA_MODEL_CASE(FisheyeCameraModel)             \

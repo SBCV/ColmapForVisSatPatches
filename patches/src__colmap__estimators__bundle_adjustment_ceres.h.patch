@@ -1,8 +1,8 @@
 diff --git a/src/colmap/estimators/bundle_adjustment_ceres.h b/src/colmap/estimators/bundle_adjustment_ceres.h
-index 0ad2929a..90bae0ad 100644
+index af25c10e..509ccb9f 100644
 --- a/src/colmap/estimators/bundle_adjustment_ceres.h
 +++ b/src/colmap/estimators/bundle_adjustment_ceres.h
-@@ -48,6 +48,12 @@ struct CeresBundleAdjustmentOptions {
+@@ -21,6 +21,12 @@ struct CeresBundleAdjustmentOptions {
    // Multiplier applied to the loss function output.
    double loss_function_weight = 1.0;
  

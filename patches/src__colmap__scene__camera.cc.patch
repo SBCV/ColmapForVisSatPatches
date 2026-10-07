@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/camera.cc b/src/colmap/scene/camera.cc
-index fd558eb0..4048a061 100644
+index 4ef78e09..407cea90 100644
 --- a/src/colmap/scene/camera.cc
 +++ b/src/colmap/scene/camera.cc
 @@ -1,3 +1,35 @@
@@ -35,10 +35,10 @@ index fd558eb0..4048a061 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c), ETH Zurich and UNC Chapel Hill.
- // All rights reserved.
- //
-@@ -68,6 +100,12 @@ Eigen::Matrix3d Camera::CalibrationMatrix() const {
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+ #include "colmap/scene/camera.h"
+@@ -41,6 +73,12 @@ Eigen::Matrix3d Camera::CalibrationMatrix() const {
    K(1, 1) = FocalLengthY();
    K(0, 2) = PrincipalPointX();
    K(1, 2) = PrincipalPointY();

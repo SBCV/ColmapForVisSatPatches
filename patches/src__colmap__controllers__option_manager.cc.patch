@@ -1,5 +1,5 @@
 diff --git a/src/colmap/controllers/option_manager.cc b/src/colmap/controllers/option_manager.cc
-index fdca843a..ab55e55e 100644
+index 400aa2de..fb2227e7 100644
 --- a/src/colmap/controllers/option_manager.cc
 +++ b/src/colmap/controllers/option_manager.cc
 @@ -1,3 +1,35 @@
@@ -35,10 +35,10 @@ index fdca843a..ab55e55e 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c), ETH Zurich and UNC Chapel Hill.
- // All rights reserved.
- //
-@@ -687,6 +719,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+ #include "colmap/controllers/option_manager.h"
+@@ -650,6 +682,18 @@ void OptionManager::AddBundleAdjustmentOptions() {
    AddDefaultOption("BundleAdjustmentCaspar.gpu_index",
                     &bundle_adjustment->caspar->gpu_index);
  #endif  // CASPAR_ENABLED
@@ -57,7 +57,7 @@ index fdca843a..ab55e55e 100644
  }
  
  void OptionManager::AddMapperOptions() {
-@@ -1078,6 +1122,10 @@ void OptionManager::AddPatchMatchStereoOptions() {
+@@ -1035,6 +1079,10 @@ void OptionManager::AddPatchMatchStereoOptions() {
                     &patch_match_stereo->write_consistency_graph);
    AddDefaultOption("PatchMatchStereo.num_threads",
                     &patch_match_stereo->num_threads);

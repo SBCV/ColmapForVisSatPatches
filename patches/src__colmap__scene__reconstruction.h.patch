@@ -1,8 +1,8 @@
 diff --git a/src/colmap/scene/reconstruction.h b/src/colmap/scene/reconstruction.h
-index c2d3b1e1..6fa56698 100644
+index efdd130d..1a049677 100644
 --- a/src/colmap/scene/reconstruction.h
 +++ b/src/colmap/scene/reconstruction.h
-@@ -198,7 +198,9 @@ class Reconstruction {
+@@ -171,7 +171,9 @@ class Reconstruction {
                    double extent = 10.0,
                    double min_percentile = 0.1,
                    double max_percentile = 0.9,
@@ -13,7 +13,7 @@ index c2d3b1e1..6fa56698 100644
  
    // Compute the centroid of camera centers or 3D points.
    Eigen::Vector3d ComputeCentroid(double min_percentile = 0.1,
-@@ -240,6 +242,9 @@ class Reconstruction {
+@@ -213,6 +215,9 @@ class Reconstruction {
    // Updates mean reprojection errors for all 3D points.
    void UpdatePoint3DErrors();
  

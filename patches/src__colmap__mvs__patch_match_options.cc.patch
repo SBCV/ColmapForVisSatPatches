@@ -1,8 +1,8 @@
 diff --git a/src/colmap/mvs/patch_match_options.cc b/src/colmap/mvs/patch_match_options.cc
-index 79110e82..fe170cef 100644
+index a4f155e5..e01a920d 100644
 --- a/src/colmap/mvs/patch_match_options.cc
 +++ b/src/colmap/mvs/patch_match_options.cc
-@@ -58,6 +58,8 @@ void PatchMatchOptions::Print() const {
+@@ -31,6 +31,8 @@ void PatchMatchOptions::Print() const {
    PrintOption(incident_angle_sigma);
    PrintOption(num_iterations);
    PrintOption(geom_consistency);
@@ -11,7 +11,7 @@ index 79110e82..fe170cef 100644
    PrintOption(geom_consistency_regularizer);
    PrintOption(geom_consistency_max_cost);
    PrintOption(filter);
-@@ -71,9 +73,8 @@ void PatchMatchOptions::Print() const {
+@@ -44,9 +46,8 @@ void PatchMatchOptions::Print() const {
  }
  
  bool PatchMatchOptions::Check() const {

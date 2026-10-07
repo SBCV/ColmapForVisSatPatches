@@ -1,8 +1,8 @@
 diff --git a/src/colmap/exe/sfm.h b/src/colmap/exe/sfm.h
-index 26a18d29..8b683727 100644
+index 0613b500..24f70c80 100644
 --- a/src/colmap/exe/sfm.h
 +++ b/src/colmap/exe/sfm.h
-@@ -75,6 +75,8 @@ bool RunHierarchicalMapperImpl(
+@@ -48,6 +48,8 @@ bool RunHierarchicalMapperImpl(
  
  int RunAutomaticReconstructor(int argc, char** argv);
  int RunBundleAdjuster(int argc, char** argv);
