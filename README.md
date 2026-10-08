@@ -38,6 +38,22 @@ Consequences for **data compatibility**:
   unchanged; artifacts of older generations (ids 11, 12, 14) must go through
   the text format.
 
+## Known failing upstream tests
+
+Building with `-DTESTS_ENABLED=ON` compiles every upstream test; five test
+binaries fail by satellite design and are left as they are:
+
+- `mvs/fusion_test` and `mvs/workspace_test` abort in the satellite
+  `mvs::Model::ReadFromCOLMAP`, whose CHECK admits only `PINHOLE` and
+  `SKEWED_PINHOLE` cameras (the vanilla tests synthesize another model).
+- `mvs/depth_map_test` (`DepthMap.Empty`): the satellite depth sentinel is
+  `-1e20`, the vanilla one `-1`.
+- `scene/reconstruction_test` (`Reconstruction.ReadAutoDetectFormat`): the
+  satellite `Reconstruction::Read` is text-only.
+- `sensor/models_test` (`SkewedPinhole.Nominal`,
+  `SkewedPinhole.BoundsSkewRelativeToFocalLength`): they test the
+  bogus-parameter check that the bypass above disables for this model.
+
 ## Apply a set of satellite specific patch files to the original Colmap repository
 
 This repository uses [Repository Patcher](https://github.com/SBCV/RepositoryPatcher) to apply the patches. Follow the install instructions [here](https://github.com/SBCV/RepositoryPatcher?tab=readme-ov-file#installation) and the configuration instructions [here](https://github.com/SBCV/RepositoryPatcher?tab=readme-ov-file#configuration-of-the-target-repository-and-the-patch-directory).
