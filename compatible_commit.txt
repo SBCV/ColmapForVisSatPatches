@@ -1,2 +1,2 @@
-c6ab4f897c94f10b15bdecc442dcfce4688f1b76   (2026-10-08 11:51:46 +0200)
-Fix 0.5px principal point offset in MVS PatchMatch and StereoFusion (#4822)
+08c03ec309b1d56c08d09e7ffa2f90fbe3ff28b1   (2026-10-12 11:14:37 +0000)
+Use northern UTM northing at the equator (#4848)
