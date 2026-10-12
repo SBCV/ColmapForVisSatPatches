@@ -1,2 +1,2 @@
-7d0c470c7de051c8d28fbeb7142278ac56722aa2   (2026-10-07 14:35:31 +0200)
-Guard cubic solver against rounding near repeated roots (#4818)
+c6ab4f897c94f10b15bdecc442dcfce4688f1b76   (2026-10-08 11:51:46 +0200)
+Fix 0.5px principal point offset in MVS PatchMatch and StereoFusion (#4822)

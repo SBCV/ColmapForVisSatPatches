@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.cc b/src/colmap/mvs/image.cc
-index 2a0f9c1f..b996a635 100644
+index 2a0f9c1f..886fd843 100644
 --- a/src/colmap/mvs/image.cc
 +++ b/src/colmap/mvs/image.cc
 @@ -1,3 +1,35 @@
@@ -115,7 +115,7 @@ index 2a0f9c1f..b996a635 100644
  }
  
  void Image::SetBitmap(Bitmap bitmap) {
-@@ -35,6 +114,374 @@ void Image::SetBitmap(Bitmap bitmap) {
+@@ -35,6 +114,397 @@ void Image::SetBitmap(Bitmap bitmap) {
    bitmap_ = std::move(bitmap);
  }
  
@@ -220,11 +220,26 @@ index 2a0f9c1f..b996a635 100644
 +  memcpy(K, K_, 9*sizeof(double));
 +}
 +
++// K in the pixel grid of patch-match and fusion: pixel (col, row) of an
++// image or depth map lies at (col, row) there, while K puts pixel centres
++// at (col + 0.5, row + 0.5), as COLMAP's camera models and keypoints do.
++// Upstream shifts by the same half pixel in PatchMatchCuda::InitTransforms
++// and StereoFusion::Run since c6ab4f89 (#4822); the satellite matrices are
++// composed here instead, so the shift lives here. It comes after any
++// rescaling of K_ and before the integer-grid rotations (w - 1 - u).
++void Image::GetKPixelGrid(double K[9]) const {
++  memcpy(K, K_, 9 * sizeof(double));
++  K[2] -= 0.5;
++  K[5] -= 0.5;
++}
++
 +void Image::GetPinvP(float P[16], float inv_P[16]) const {
 +  // compute projection matrix
++  double K_grid[9];
++  GetKPixelGrid(K_grid);
 +  double P_double[16];
 +  double inv_P_double[16];
-+  Compute4by4ProjectionMatrix(K_, R_, T_, last_row_, P_double, inv_P_double);
++  Compute4by4ProjectionMatrix(K_grid, R_, T_, last_row_, P_double, inv_P_double);
 +
 +  // convert to low-precision
 +  DoubleArrToFloatArr(P_double, P, 16);
@@ -239,20 +254,22 @@ index 2a0f9c1f..b996a635 100644
 +// low-precision output
 +void Image::Original(float K[9], float inv_K[9], float R[9], float T[3], float P[16], float inv_P[16], float C[3]) const{
 +  // compute projection matrix
++  double K_grid[9];
++  GetKPixelGrid(K_grid);
 +  double P_double[16];
 +  double inv_P_double[16];
-+  Compute4by4ProjectionMatrix(K_, R_, T_, last_row_, P_double, inv_P_double);
++  Compute4by4ProjectionMatrix(K_grid, R_, T_, last_row_, P_double, inv_P_double);
 +
 +  double C_double[3];
 +  ComputeProjectionCenter(R_, T_, C_double);
 +
 +  // compute inverse K
-+  const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_mat(K_);
++  const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_mat(K_grid);
 +  Eigen::Matrix<double, 3, 3, Eigen::RowMajor> K_mat_inv = K_mat.inverse();
 +  const double *K_mat_inv_data = K_mat_inv.data();
 +
 +  // convert to low-precision
-+  DoubleArrToFloatArr(K_, K, 9);
++  DoubleArrToFloatArr(K_grid, K, 9);
 +  DoubleArrToFloatArr(K_mat_inv_data, inv_K, 9);
 +  DoubleArrToFloatArr(R_, R, 9);
 +  DoubleArrToFloatArr(T_, T, 3);
@@ -342,7 +359,9 @@ index 2a0f9c1f..b996a635 100644
 +// then, [v; w-1-u; 1] = [0, 1, 0; -1, 0, w-1; 0, 0, 1][u; v; 1]
 +void Image::Rotate90(float K[9], float inv_K[9], float R[9], float T[3], float P[16], float inv_P[16], float C[3]) const {
 +    // modify intrinsics
-+    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_);
++    double K_grid[9];
++    GetKPixelGrid(K_grid);
++    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_grid);
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> A;
 +    A << 0, 1, 0, -1, 0, width_-1, 0, 0, 1;
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> B;
@@ -393,7 +412,9 @@ index 2a0f9c1f..b996a635 100644
 +// then, [w-1-u; h-1-v; 1] = [-1, 0, w-1; 0, -1, h-1; 0, 0, 1][u; v; 1]
 +void Image::Rotate180(float K[9], float inv_K[9], float R[9], float T[3], float P[16], float inv_P[16], float C[3]) const {
 +    // modify intrinsics
-+    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_);
++    double K_grid[9];
++    GetKPixelGrid(K_grid);
++    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_grid);
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> A;
 +    A << -1, 0, width_-1, 0, -1, height_-1, 0, 0, 1;
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> B;
@@ -444,7 +465,9 @@ index 2a0f9c1f..b996a635 100644
 +// then, [h-1-v; u; 1] = [0, -1, h-1; 1, 0, 0; 0, 0, 1][u; v; 1]
 +void Image::Rotate270(float K[9], float inv_K[9], float R[9], float T[3], float P[16], float inv_P[16], float C[3]) const {
 +    // modify intrinsics
-+    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_);
++    double K_grid[9];
++    GetKPixelGrid(K_grid);
++    const Eigen::Map<const Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> K_old(K_grid);
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> A;
 +    A << 0, -1, height_-1, 1, 0, 0, 0, 0, 1;
 +    Eigen::Matrix<double, 3, 3, Eigen::RowMajor> B;
@@ -490,7 +513,7 @@ index 2a0f9c1f..b996a635 100644
  void Image::Rescale(const float factor) { Rescale(factor, factor); }
  
  void Image::Rescale(const float factor_x, const float factor_y) {
-@@ -45,17 +492,18 @@ void Image::Rescale(const float factor_x, const float factor_y) {
+@@ -45,17 +515,18 @@ void Image::Rescale(const float factor_x, const float factor_y) {
      bitmap_.Rescale(new_width, new_height);
    }
  
@@ -513,7 +536,7 @@ index 2a0f9c1f..b996a635 100644
  }
  
  void Image::Downsize(const size_t max_width, const size_t max_height) {
-@@ -95,18 +543,6 @@ void ComposeProjectionMatrix(const float K[9],
+@@ -95,18 +566,6 @@ void ComposeProjectionMatrix(const float K[9],
    P_m = Eigen::Map<const Eigen::Matrix<float, 3, 3, Eigen::RowMajor>>(K) * P_m;
  }
  
