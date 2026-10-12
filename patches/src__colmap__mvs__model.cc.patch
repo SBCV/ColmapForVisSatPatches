@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/model.cc b/src/colmap/mvs/model.cc
-index c1a09a8c..5e120bbb 100644
+index 035bff65..ea0c95a5 100644
 --- a/src/colmap/mvs/model.cc
 +++ b/src/colmap/mvs/model.cc
 @@ -1,3 +1,35 @@
@@ -35,22 +35,18 @@ index c1a09a8c..5e120bbb 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c), ETH Zurich and UNC Chapel Hill.
- // All rights reserved.
- //
-@@ -37,7 +69,11 @@
- #include "colmap/util/hash_containers.h"
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+ #include "colmap/mvs/model.h"
+@@ -11,6 +43,7 @@
+ #include "colmap/util/string.h"
  
  #include <fstream>
-+#include <iomanip>
- #include <locale>
 +#include <map>
-+
-+#define PRECISION 17
  
  namespace colmap {
  namespace mvs {
-@@ -47,8 +83,8 @@ void Model::Read(const std::filesystem::path& path, const std::string& format) {
+@@ -20,8 +53,8 @@ void Model::Read(const std::filesystem::path& path, const std::string& format) {
    StringToLower(&format_lower_case);
    if (format_lower_case == "colmap") {
      ReadFromCOLMAP(path);
@@ -61,14 +57,14 @@ index c1a09a8c..5e120bbb 100644
    } else {
      LOG(FATAL_THROW) << "Invalid input format";
    }
-@@ -60,6 +96,20 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
+@@ -33,6 +66,20 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
    Reconstruction reconstruction;
    reconstruction.Read(path / sparse_path);
  
 +  // read-in the last row of the 4 by 4 matrices here
 +  std::map<std::string, double *> last_rows;
 +  std::ifstream infile;
-+  infile.imbue(std::locale::classic());
++  SetFullPrecTextStream(infile);
 +  infile.open(path / "last_rows.txt");
 +  std::string image_name;
 +  double vec[4];
@@ -82,24 +78,24 @@ index c1a09a8c..5e120bbb 100644
    images.reserve(reconstruction.NumRegImages());
    NodeHashMap<image_t, size_t> image_id_to_idx;
    size_t image_idx = 0;
-@@ -67,22 +117,52 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
+@@ -40,22 +87,52 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
      const auto& image = reconstruction.Image(image_id);
      const auto& camera = *image.CameraPtr();
  
 -    const auto image_path = path / images_path / image.Name();
 -    const Eigen::Matrix<float, 3, 3, Eigen::RowMajor> K =
 +    CHECK(camera.model_id == PinholeCameraModel::model_id ||
-+          camera.model_id == PerspectiveCameraModel::model_id);
-+
-+    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> K = camera.CalibrationMatrix();
-+    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> R =
-+        image.CamFromWorld().rotation().toRotationMatrix();
-+    const Eigen::Vector3d T = image.CamFromWorld().translation();
++          camera.model_id == SkewedPinholeCameraModel::model_id);
  
 -        camera.CalibrationMatrix().cast<float>();
 -    const Eigen::Matrix<float, 3, 3, Eigen::RowMajor> R =
 -        image.CamFromWorld().rotation().toRotationMatrix().cast<float>();
 -    const Eigen::Vector3f T = image.CamFromWorld().translation().cast<float>();
++    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> K = camera.CalibrationMatrix();
++    const Eigen::Matrix<double, 3, 3, Eigen::RowMajor> R =
++        image.CamFromWorld().rotation().toRotationMatrix();
++    const Eigen::Vector3d T = image.CamFromWorld().translation();
++
 +    const auto image_path = path / images_path / image.Name();
  
      images.emplace_back(
@@ -141,7 +137,7 @@ index c1a09a8c..5e120bbb 100644
    points.reserve(reconstruction.NumPoints3D());
    for (const auto& [_, point3D] : reconstruction.Points3D()) {
      Point point;
-@@ -95,6 +175,44 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
+@@ -68,6 +145,44 @@ void Model::ReadFromCOLMAP(const std::filesystem::path& path,
      }
      points.push_back(point);
    }
@@ -156,11 +152,11 @@ index c1a09a8c..5e120bbb 100644
 +  // write projection matrices and inverse projection matrices to files
 +  std::ofstream P_file(path / "proj_mats.txt", std::ios::trunc);
 +  // set fulll precision
-+  P_file << std::setprecision(PRECISION);
++  SetFullPrecTextStream(P_file);
 +
 +  std::ofstream inv_P_file(path / "inv_proj_mats.txt", std::ios::trunc);
 +  // set fulll precision
-+  inv_P_file << std::setprecision(PRECISION);
++  SetFullPrecTextStream(inv_P_file);
 +
 +  for (const auto& image: images) {
 +    std::string img_path = image.GetPath();
@@ -186,7 +182,7 @@ index c1a09a8c..5e120bbb 100644
  }
  
  void Model::ReadFromPMVS(const std::filesystem::path& path) {
-@@ -175,47 +293,6 @@ const std::vector<std::vector<int>>& Model::GetMaxOverlappingImagesFromPMVS()
+@@ -148,47 +263,6 @@ const std::vector<std::vector<int>>& Model::GetMaxOverlappingImagesFromPMVS()
    return pmvs_vis_dat_;
  }
  
@@ -234,7 +230,7 @@ index c1a09a8c..5e120bbb 100644
  
  std::vector<std::map<int, int>> Model::ComputeSharedPoints() const {
    std::vector<std::map<int, int>> shared_points(images.size());
-@@ -239,9 +316,9 @@ std::vector<std::map<int, float>> Model::ComputeTriangulationAngles(
+@@ -212,9 +286,9 @@ std::vector<std::map<int, float>> Model::ComputeTriangulationAngles(
    std::vector<Eigen::Vector3d> proj_centers(images.size());
    for (size_t image_idx = 0; image_idx < images.size(); ++image_idx) {
      const auto& image = images[image_idx];
@@ -247,7 +243,7 @@ index c1a09a8c..5e120bbb 100644
    }
  
    std::vector<std::map<int, std::vector<float>>> all_triangulation_angles(
-@@ -299,7 +376,7 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
+@@ -272,7 +346,7 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
      const std::string image_name = StringPrintf("%08d.jpg", image_idx);
      const auto image_path = path / "visualize" / image_name;
  
@@ -256,7 +252,7 @@ index c1a09a8c..5e120bbb 100644
  
      THROW_CHECK(file >> K[0]);
      K[4] = K[0];
-@@ -309,12 +386,12 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
+@@ -282,12 +356,12 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
      K[2] = bitmap.Width() / 2.0f;
      K[5] = bitmap.Height() / 2.0f;
  
@@ -271,7 +267,7 @@ index c1a09a8c..5e120bbb 100644
      for (size_t i = 0; i < 9; ++i) {
        THROW_CHECK(file >> R[i]);
      }
-@@ -322,7 +399,7 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
+@@ -295,7 +369,7 @@ bool Model::ReadFromBundlerPMVS(const std::filesystem::path& path) {
        R[i] = -R[i];
      }
  
@@ -280,7 +276,7 @@ index c1a09a8c..5e120bbb 100644
      THROW_CHECK(file >> T[0] >> T[1] >> T[2]);
      T[1] = -T[1];
      T[2] = -T[2];
-@@ -401,9 +478,9 @@ bool Model::ReadFromRawPMVS(const std::filesystem::path& path) {
+@@ -374,9 +448,9 @@ bool Model::ReadFromRawPMVS(const std::filesystem::path& path) {
      K(2, 1) = 0.0f;
      K(2, 2) = 1.0f;
  

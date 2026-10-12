@@ -1,8 +1,8 @@
 diff --git a/src/pycolmap/mvs/model.cc b/src/pycolmap/mvs/model.cc
-index bc3f9a19..833f43da 100644
+index 058f1060..9b7437b3 100644
 --- a/src/pycolmap/mvs/model.cc
 +++ b/src/pycolmap/mvs/model.cc
-@@ -52,9 +52,9 @@ void BindMVSModel(py::module& m) {
+@@ -54,9 +54,9 @@ void BindMVSModel(py::module& m) {
             py::return_value_policy::reference_internal,
             "Get overlapping images defined in the PMVS vis.dat file.")
        .def("compute_depth_ranges",

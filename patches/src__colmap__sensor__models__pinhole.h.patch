@@ -1,0 +1,28 @@
+diff --git a/src/colmap/sensor/models/pinhole.h b/src/colmap/sensor/models/pinhole.h
+index d35c31a4..94957462 100644
+--- a/src/colmap/sensor/models/pinhole.h
++++ b/src/colmap/sensor/models/pinhole.h
+@@ -167,6 +167,23 @@ struct SkewedPinholeCameraModel
+                                        1,
+                                        true)
+ 
++  // ColmapForVisSatPatches: the satellite pipeline's cameras come from a
++  // perspective approximation of the RPC model and fail the upstream
++  // bogus-parameter heuristics by construction (focal length ratios of
++  // 250-7000 against a default maximum of 10, DLT principal points far
++  // outside the image), which would drop their images from triangulation
++  // and filtering. Scoped to SKEWED_PINHOLE, the only model the satellite
++  // pipeline creates, so the vanilla models keep upstream behavior.
++  template <typename T>
++  static inline bool HasBogusParams(const std::vector<T>& /*params*/,
++                                    size_t /*width*/,
++                                    size_t /*height*/,
++                                    T /*min_focal_length_ratio*/,
++                                    T /*max_focal_length_ratio*/,
++                                    T /*max_extra_param*/) {
++    return false;
++  }
++
+   static inline std::vector<double> InitializeParams(const double focal_length,
+                                                      const size_t width,
+                                                      const size_t height) {

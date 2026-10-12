@@ -1,5 +1,5 @@
 diff --git a/src/colmap/estimators/bundle_adjustment.cc b/src/colmap/estimators/bundle_adjustment.cc
-index c8ac84b2..46638626 100644
+index d0199036..235d2b84 100644
 --- a/src/colmap/estimators/bundle_adjustment.cc
 +++ b/src/colmap/estimators/bundle_adjustment.cc
 @@ -1,3 +1,35 @@
@@ -35,10 +35,10 @@ index c8ac84b2..46638626 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c), ETH Zurich and UNC Chapel Hill.
- // All rights reserved.
- //
-@@ -213,6 +245,11 @@ const FlatHashSet<frame_t>& BundleAdjustmentConfig::ConstantRigFromWorldPoses()
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+ #include "colmap/estimators/bundle_adjustment.h"
+@@ -186,6 +218,11 @@ const FlatHashSet<frame_t>& BundleAdjustmentConfig::ConstantRigFromWorldPoses()
    return constant_rig_from_world_poses_;
  }
  
@@ -50,7 +50,7 @@ index c8ac84b2..46638626 100644
  void BundleAdjustmentConfig::AddVariablePoint(const point3D_t point3D_id) {
    THROW_CHECK(!HasConstantPoint(point3D_id));
    variable_point3D_ids_.insert(point3D_id);
-@@ -229,6 +266,11 @@ void BundleAdjustmentConfig::IgnorePoint(const point3D_t point3D_id) {
+@@ -202,6 +239,11 @@ void BundleAdjustmentConfig::IgnorePoint(const point3D_t point3D_id) {
    ignored_point3D_ids_.insert(point3D_id);
  }
  
@@ -62,7 +62,7 @@ index c8ac84b2..46638626 100644
  bool BundleAdjustmentConfig::HasPoint(const point3D_t point3D_id) const {
    return HasVariablePoint(point3D_id) || HasConstantPoint(point3D_id);
  }
-@@ -247,6 +289,10 @@ bool BundleAdjustmentConfig::IsIgnoredPoint(const point3D_t point3D_id) const {
+@@ -220,6 +262,10 @@ bool BundleAdjustmentConfig::IsIgnoredPoint(const point3D_t point3D_id) const {
    return ignored_point3D_ids_.count(point3D_id);
  }
  
@@ -73,7 +73,7 @@ index c8ac84b2..46638626 100644
  void BundleAdjustmentConfig::RemoveVariablePoint(const point3D_t point3D_id) {
    variable_point3D_ids_.erase(point3D_id);
  }
-@@ -255,6 +301,10 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
+@@ -228,6 +274,10 @@ void BundleAdjustmentConfig::RemoveConstantPoint(const point3D_t point3D_id) {
    constant_point3D_ids_.erase(point3D_id);
  }
  

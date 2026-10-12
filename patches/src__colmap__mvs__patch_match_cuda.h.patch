@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/patch_match_cuda.h b/src/colmap/mvs/patch_match_cuda.h
-index 6e6a7daf..ed0bd253 100644
+index d1785b92..82a7ec08 100644
 --- a/src/colmap/mvs/patch_match_cuda.h
 +++ b/src/colmap/mvs/patch_match_cuda.h
 @@ -1,3 +1,35 @@
@@ -35,10 +35,10 @@ index 6e6a7daf..ed0bd253 100644
 +// ===============================================================================================================
 +//
 +//
- // Copyright (c), ETH Zurich and UNC Chapel Hill.
- // All rights reserved.
- //
-@@ -97,26 +129,36 @@ class PatchMatchCuda {
+ // SPDX-License-Identifier: BSD-3-Clause
+ 
+ #pragma once
+@@ -70,26 +102,36 @@ class PatchMatchCuda {
    std::unique_ptr<CudaArrayLayeredTexture<uint8_t>> src_images_texture_;
    std::unique_ptr<CudaArrayLayeredTexture<float>> src_depth_maps_texture_;
  
