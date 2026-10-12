@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image_test.cc b/src/colmap/mvs/image_test.cc
-index beb0e395..c7ffa663 100644
+index beb0e395..ef2187ad 100644
 --- a/src/colmap/mvs/image_test.cc
 +++ b/src/colmap/mvs/image_test.cc
 @@ -2,23 +2,24 @@
@@ -178,7 +178,7 @@ index beb0e395..c7ffa663 100644
  TEST(RotatePose, Identity) {
    const float RR[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
    float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-@@ -182,6 +217,163 @@ TEST(RotatePose, Rotation90DegreesZ) {
+@@ -182,6 +217,164 @@ TEST(RotatePose, Rotation90DegreesZ) {
    }
  }
  
@@ -209,7 +209,8 @@ index beb0e395..c7ffa663 100644
 +         Eigen::AngleAxisd(-0.1, Eigen::Vector3d::UnitY()) *
 +         Eigen::AngleAxisd(0.3, Eigen::Vector3d::UnitZ()))
 +            .toRotationMatrix();
-+    Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>>(R) = R_mat;
++    Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> R_map(R);
++    R_map = R_mat;
 +  }
 +};
 +
