@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image_test.cc b/src/colmap/mvs/image_test.cc
-index beb0e395..ef2187ad 100644
+index beb0e395..dcb5112d 100644
 --- a/src/colmap/mvs/image_test.cc
 +++ b/src/colmap/mvs/image_test.cc
 @@ -2,23 +2,24 @@
@@ -178,7 +178,7 @@ index beb0e395..ef2187ad 100644
  TEST(RotatePose, Identity) {
    const float RR[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
    float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
-@@ -182,6 +217,164 @@ TEST(RotatePose, Rotation90DegreesZ) {
+@@ -182,6 +217,196 @@ TEST(RotatePose, Rotation90DegreesZ) {
    }
  }
  
@@ -337,6 +337,38 @@ index beb0e395..ef2187ad 100644
 +  for (int i = 0; i < 16; ++i) {
 +    EXPECT_EQ(P_fusion[i], P[i]) << i;
 +    EXPECT_EQ(inv_P_fusion[i], inv_P[i]) << i;
++  }
++}
++
++TEST(Image, FusionScalesBeforeShifting) {
++  // Fusion scales K to the depth map's size (GetKDouble, fx, s and cx by sx,
++  // fy and cy by sy, SetK) and then takes GetPinvP. A point's index in the
++  // scaled grid must be its scaled COLMAP position minus half a pixel, as
++  // upstream's StereoFusion::Run computes it since c6ab4f89.
++  const SkewedCamera cam;
++  Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  image.SetLastRow(cam.last_row);
++  double P_colmap[16], inv_P_colmap[16];
++  image.GetPinvPDouble(P_colmap, inv_P_colmap);
++  const double sx = 0.5;
++  const double sy = 0.68;
++  double K[9];
++  image.GetKDouble(K);
++  K[0] *= sx;
++  K[1] *= sx;
++  K[2] *= sx;
++  K[4] *= sy;
++  K[5] *= sy;
++  image.SetK(K);
++  float P[16], inv_P[16];
++  image.GetPinvP(P, inv_P);
++  for (const Eigen::Vector3d& X : GridScenePoints()) {
++    const Eigen::Vector3d centre =
++        ProjectPixelDepth(ToMatrix4d(P_colmap), X);
++    const Eigen::Vector3d grid = ProjectPixelDepth(ToMatrix4d(P), X);
++    EXPECT_NEAR(grid(0), sx * centre(0) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(1), sy * centre(1) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(2), centre(2), 1e-5 * std::abs(centre(2)));
 +  }
 +}
 +
