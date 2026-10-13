@@ -1,5 +1,5 @@
 diff --git a/src/colmap/mvs/image.h b/src/colmap/mvs/image.h
-index a438a2ef..17de4194 100644
+index a438a2ef..88116e20 100644
 --- a/src/colmap/mvs/image.h
 +++ b/src/colmap/mvs/image.h
 @@ -1,3 +1,35 @@
@@ -38,7 +38,7 @@ index a438a2ef..17de4194 100644
  // SPDX-License-Identifier: BSD-3-Clause
  
  #pragma once
-@@ -9,43 +41,79 @@
+@@ -9,43 +41,85 @@
  namespace colmap {
  namespace mvs {
  
@@ -99,6 +99,12 @@ index a438a2ef..17de4194 100644
 +    // high-precision output
 +  void GetCDouble(double C[3]) const;
 +  void GetKDouble(double K[9]) const;
++  // K in the pixel grid of patch-match and fusion, i.e. with cx - 0.5 and
++  // cy - 0.5 (see image.cc). Original, Rotate90Multi and GetPinvP are
++  // composed from it; GetK, GetP, GetKDouble and GetPinvPDouble keep
++  // COLMAP's pixel-centre convention, so GetPinvP is not a float copy of
++  // GetPinvPDouble: the two differ by half a pixel.
++  void GetKPixelGrid(double K[9]) const;
 +  void GetPinvPDouble(double P[16], double inv_P[16]) const;
 +
 +  // low-precision output
@@ -137,7 +143,7 @@ index a438a2ef..17de4194 100644
    Bitmap bitmap_;
  };
  
-@@ -61,38 +129,9 @@ void ComposeProjectionMatrix(const float K[9],
+@@ -61,38 +135,9 @@ void ComposeProjectionMatrix(const float K[9],
                               const float T[3],
                               float P[12]);
  

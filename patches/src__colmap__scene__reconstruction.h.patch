@@ -1,5 +1,5 @@
 diff --git a/src/colmap/scene/reconstruction.h b/src/colmap/scene/reconstruction.h
-index efdd130d..1a049677 100644
+index 9b2d5076..65ea0483 100644
 --- a/src/colmap/scene/reconstruction.h
 +++ b/src/colmap/scene/reconstruction.h
 @@ -171,7 +171,9 @@ class Reconstruction {

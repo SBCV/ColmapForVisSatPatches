@@ -1,13 +1,16 @@
 diff --git a/src/colmap/mvs/image_test.cc b/src/colmap/mvs/image_test.cc
-index beb0e395..1ece58f6 100644
+index beb0e395..dcb5112d 100644
 --- a/src/colmap/mvs/image_test.cc
 +++ b/src/colmap/mvs/image_test.cc
-@@ -2,23 +2,21 @@
+@@ -2,23 +2,24 @@
  
  #include "colmap/mvs/image.h"
  
 +#include <cmath>
++#include <vector>
 +
++#include <Eigen/Core>
++#include <Eigen/Geometry>
  #include <gtest/gtest.h>
  
  namespace colmap {
@@ -33,7 +36,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
  
-@@ -26,7 +24,8 @@ TEST(Image, ParameterizedConstructor) {
+@@ -26,7 +27,8 @@ TEST(Image, ParameterizedConstructor) {
    EXPECT_EQ(image.GetHeight(), 100);
    EXPECT_EQ(image.GetPath(), "test.jpg");
  
@@ -43,7 +46,7 @@ index beb0e395..1ece58f6 100644
    const float* image_R = image.GetR();
    const float* image_T = image.GetT();
  
-@@ -41,9 +40,9 @@ TEST(Image, ParameterizedConstructor) {
+@@ -41,9 +43,9 @@ TEST(Image, ParameterizedConstructor) {
  }
  
  TEST(Image, Rescale) {
@@ -56,7 +59,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Rescale(0.5);
-@@ -51,7 +50,8 @@ TEST(Image, Rescale) {
+@@ -51,7 +53,8 @@ TEST(Image, Rescale) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 50);
  
@@ -66,7 +69,7 @@ index beb0e395..1ece58f6 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
    EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
-@@ -59,9 +59,9 @@ TEST(Image, Rescale) {
+@@ -59,9 +62,9 @@ TEST(Image, Rescale) {
  }
  
  TEST(Image, RescaleNonUniform) {
@@ -79,7 +82,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Rescale(0.5, 0.25);
-@@ -69,7 +69,8 @@ TEST(Image, RescaleNonUniform) {
+@@ -69,7 +72,8 @@ TEST(Image, RescaleNonUniform) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 25);
  
@@ -89,7 +92,7 @@ index beb0e395..1ece58f6 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled by factor_x
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled by factor_x
    EXPECT_FLOAT_EQ(image_K[4], 25.0f);  // fy scaled by factor_y
-@@ -77,9 +78,9 @@ TEST(Image, RescaleNonUniform) {
+@@ -77,9 +81,9 @@ TEST(Image, RescaleNonUniform) {
  }
  
  TEST(Image, Downsize) {
@@ -102,7 +105,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Downsize(50, 50);
-@@ -87,7 +88,8 @@ TEST(Image, Downsize) {
+@@ -87,7 +91,8 @@ TEST(Image, Downsize) {
    EXPECT_EQ(image.GetWidth(), 50);
    EXPECT_EQ(image.GetHeight(), 50);
  
@@ -112,7 +115,7 @@ index beb0e395..1ece58f6 100644
    EXPECT_FLOAT_EQ(image_K[0], 50.0f);  // fx scaled
    EXPECT_FLOAT_EQ(image_K[2], 25.0f);  // cx scaled
    EXPECT_FLOAT_EQ(image_K[4], 50.0f);  // fy scaled
-@@ -95,9 +97,9 @@ TEST(Image, Downsize) {
+@@ -95,9 +100,9 @@ TEST(Image, Downsize) {
  }
  
  TEST(Image, DownsizeNoChange) {
@@ -125,7 +128,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    image.Downsize(200, 200);
-@@ -107,9 +109,9 @@ TEST(Image, DownsizeNoChange) {
+@@ -107,9 +112,9 @@ TEST(Image, DownsizeNoChange) {
  }
  
  TEST(Image, GetViewingDirection) {
@@ -138,7 +141,7 @@ index beb0e395..1ece58f6 100644
  
    Image image("test.jpg", 100, 100, K, R, T);
    const float* viewing_dir = image.GetViewingDirection();
-@@ -143,6 +145,36 @@ TEST(ComposeProjectionMatrix, Identity) {
+@@ -143,6 +148,36 @@ TEST(ComposeProjectionMatrix, Identity) {
    }
  }
  
@@ -175,3 +178,200 @@ index beb0e395..1ece58f6 100644
  TEST(RotatePose, Identity) {
    const float RR[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
    float R[9] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+@@ -182,6 +217,196 @@ TEST(RotatePose, Rotation90DegreesZ) {
+   }
+ }
+ 
++
++// Half-pixel port of upstream c6ab4f89 (#4822). Patch-match and fusion
++// address pixel (col, row) at (col, row), while K and COLMAP's camera models
++// put its centre at (col + 0.5, row + 0.5). The satellite matrices for
++// patch-match and fusion (Original, Rotate90/180/270, GetPinvP) are composed
++// from GetKPixelGrid; GetK, GetP, GetKDouble and GetPinvPDouble keep COLMAP's
++// convention. The tests project known scene points with the latter and
++// require the former to put each point at its centre minus half a pixel.
++
++constexpr size_t kGridWidth = 1280;
++constexpr size_t kGridHeight = 960;
++
++// A skewed camera with a rotated pose and a nontrivial last row, as the
++// RPC-approximated satellite cameras have, at a scale where float matrices
++// resolve far below half a pixel.
++struct SkewedCamera {
++  double K[9] = {1200, 25, 640.3, 0, 1150, 480.7, 0, 0, 1};
++  double R[9];
++  double T[3] = {0.3, -0.2, 6.0};
++  double last_row[4] = {0.05, -0.02, 0.4, -1.3};
++
++  SkewedCamera() {
++    const Eigen::Matrix3d R_mat =
++        (Eigen::AngleAxisd(0.2, Eigen::Vector3d::UnitX()) *
++         Eigen::AngleAxisd(-0.1, Eigen::Vector3d::UnitY()) *
++         Eigen::AngleAxisd(0.3, Eigen::Vector3d::UnitZ()))
++            .toRotationMatrix();
++    Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>> R_map(R);
++    R_map = R_mat;
++  }
++};
++
++std::vector<Eigen::Vector3d> GridScenePoints() {
++  return {Eigen::Vector3d(0, 0, 0),
++          Eigen::Vector3d(0.8, -0.5, 0.3),
++          Eigen::Vector3d(-1.2, 0.9, -0.4),
++          Eigen::Vector3d(0.4, 1.1, 0.8)};
++}
++
++Eigen::Matrix4d ToMatrix4d(const float* M) {
++  return Eigen::Map<const Eigen::Matrix<float, 4, 4, Eigen::RowMajor>>(M)
++      .cast<double>();
++}
++
++Eigen::Matrix4d ToMatrix4d(const double* M) {
++  return Eigen::Map<const Eigen::Matrix<double, 4, 4, Eigen::RowMajor>>(M);
++}
++
++// Pixel (u, v) of X and its reparameterized depth d under the 4x4 P.
++Eigen::Vector3d ProjectPixelDepth(const Eigen::Matrix4d& P,
++                                  const Eigen::Vector3d& X) {
++  const Eigen::Vector4d h = P * X.homogeneous();
++  return Eigen::Vector3d(h(0) / h(2), h(1) / h(2), h(3) / h(2));
++}
++
++// The scene point of pixel (u, v) at the reparameterized depth d.
++Eigen::Vector3d BackProjectPixelDepth(const Eigen::Matrix4d& inv_P,
++                                      const double u,
++                                      const double v,
++                                      const double d) {
++  const Eigen::Vector4d h = inv_P * Eigen::Vector4d(u, v, 1, d);
++  return h.head<3>() / h(3);
++}
++
++TEST(Image, KPixelGridShiftsOnlyThePrincipalPoint) {
++  const SkewedCamera cam;
++  const Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  double K_grid[9];
++  image.GetKPixelGrid(K_grid);
++  double K_double[9];
++  image.GetKDouble(K_double);
++  float K_float[9];
++  image.GetK(K_float);
++  for (int i = 0; i < 9; ++i) {
++    const double shift = (i == 2 || i == 5) ? 0.5 : 0.0;
++    EXPECT_EQ(K_grid[i], cam.K[i] - shift) << i;
++    EXPECT_EQ(K_double[i], cam.K[i]) << i;
++    EXPECT_EQ(K_float[i], static_cast<float>(cam.K[i])) << i;
++  }
++}
++
++TEST(Image, OriginalPutsPixelIndicesOnTheRaysOfTheirCentres) {
++  const SkewedCamera cam;
++  Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  image.SetLastRow(cam.last_row);
++  float K[9], inv_K[9], R[9], T[3], P[16], inv_P[16], C[3];
++  image.Original(K, inv_K, R, T, P, inv_P, C);
++  double P_colmap[16], inv_P_colmap[16];
++  image.GetPinvPDouble(P_colmap, inv_P_colmap);
++  for (const Eigen::Vector3d& X : GridScenePoints()) {
++    const Eigen::Vector3d centre =
++        ProjectPixelDepth(ToMatrix4d(P_colmap), X);
++    const Eigen::Vector3d grid = ProjectPixelDepth(ToMatrix4d(P), X);
++    EXPECT_NEAR(grid(0), centre(0) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(1), centre(1) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(2), centre(2), 1e-5 * std::abs(centre(2)));
++    const Eigen::Vector3d X_grid = BackProjectPixelDepth(
++        ToMatrix4d(inv_P), centre(0) - 0.5, centre(1) - 0.5, centre(2));
++    // Half a pixel would be about 2.5e-3 here.
++    EXPECT_LT((X_grid - X).norm(), 1e-4);
++  }
++}
++
++TEST(Image, RotatedReferenceCamerasKeepEveryPixelOnItsRay) {
++  // The satellite counterpart of upstream's
++  // StereoFusion.Rotation180Invariance: patch-match also runs on the
++  // reference image rotated by 90, 180 and 270 degrees, where pixel (u, v)
++  // becomes (v, w-1-u), (w-1-u, h-1-v) and (h-1-v, u). These integer-grid
++  // mappings hold once K is shifted to the pixel grid; with the unshifted K
++  // the 180-degree pixel would be one pixel off.
++  const SkewedCamera cam;
++  Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  image.SetLastRow(cam.last_row);
++  float K0[9], inv_K0[9], R0[9], T0[3], P0[16], inv_P0[16], C0[3];
++  image.Original(K0, inv_K0, R0, T0, P0, inv_P0, C0);
++  const double w = kGridWidth;
++  const double h = kGridHeight;
++  for (int cnt = 1; cnt < 4; ++cnt) {
++    float K[9], inv_K[9], R[9], T[3], P[16], inv_P[16], C[3];
++    image.Rotate90Multi(cnt, K, inv_K, R, T, P, inv_P, C);
++    for (const Eigen::Vector3d& X : GridScenePoints()) {
++      const Eigen::Vector3d px = ProjectPixelDepth(ToMatrix4d(P0), X);
++      double u = px(0);
++      double v = px(1);
++      if (cnt == 1) {
++        u = px(1);
++        v = w - 1 - px(0);
++      } else if (cnt == 2) {
++        u = w - 1 - px(0);
++        v = h - 1 - px(1);
++      } else {
++        u = h - 1 - px(1);
++        v = px(0);
++      }
++      const Eigen::Vector3d rotated = ProjectPixelDepth(ToMatrix4d(P), X);
++      EXPECT_NEAR(rotated(0), u, 1e-3) << 90 * cnt;
++      EXPECT_NEAR(rotated(1), v, 1e-3) << 90 * cnt;
++      const Eigen::Vector3d X_rotated =
++          BackProjectPixelDepth(ToMatrix4d(inv_P), u, v, px(2));
++      EXPECT_LT((X_rotated - X).norm(), 1e-4) << 90 * cnt;
++    }
++  }
++}
++
++TEST(Image, FusionUsesThePatchMatchPixelGrid) {
++  const SkewedCamera cam;
++  Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  image.SetLastRow(cam.last_row);
++  float K[9], inv_K[9], R[9], T[3], P[16], inv_P[16], C[3];
++  image.Original(K, inv_K, R, T, P, inv_P, C);
++  float P_fusion[16], inv_P_fusion[16];
++  image.GetPinvP(P_fusion, inv_P_fusion);
++  for (int i = 0; i < 16; ++i) {
++    EXPECT_EQ(P_fusion[i], P[i]) << i;
++    EXPECT_EQ(inv_P_fusion[i], inv_P[i]) << i;
++  }
++}
++
++TEST(Image, FusionScalesBeforeShifting) {
++  // Fusion scales K to the depth map's size (GetKDouble, fx, s and cx by sx,
++  // fy and cy by sy, SetK) and then takes GetPinvP. A point's index in the
++  // scaled grid must be its scaled COLMAP position minus half a pixel, as
++  // upstream's StereoFusion::Run computes it since c6ab4f89.
++  const SkewedCamera cam;
++  Image image("test.jpg", kGridWidth, kGridHeight, cam.K, cam.R, cam.T);
++  image.SetLastRow(cam.last_row);
++  double P_colmap[16], inv_P_colmap[16];
++  image.GetPinvPDouble(P_colmap, inv_P_colmap);
++  const double sx = 0.5;
++  const double sy = 0.68;
++  double K[9];
++  image.GetKDouble(K);
++  K[0] *= sx;
++  K[1] *= sx;
++  K[2] *= sx;
++  K[4] *= sy;
++  K[5] *= sy;
++  image.SetK(K);
++  float P[16], inv_P[16];
++  image.GetPinvP(P, inv_P);
++  for (const Eigen::Vector3d& X : GridScenePoints()) {
++    const Eigen::Vector3d centre =
++        ProjectPixelDepth(ToMatrix4d(P_colmap), X);
++    const Eigen::Vector3d grid = ProjectPixelDepth(ToMatrix4d(P), X);
++    EXPECT_NEAR(grid(0), sx * centre(0) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(1), sy * centre(1) - 0.5, 1e-3);
++    EXPECT_NEAR(grid(2), centre(2), 1e-5 * std::abs(centre(2)));
++  }
++}
++
+ }  // namespace
+ }  // namespace mvs
+ }  // namespace colmap

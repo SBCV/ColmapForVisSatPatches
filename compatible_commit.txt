@@ -1,2 +1,2 @@
-7d0c470c7de051c8d28fbeb7142278ac56722aa2   (2026-10-07 14:35:31 +0200)
-Guard cubic solver against rounding near repeated roots (#4818)
+08c03ec309b1d56c08d09e7ffa2f90fbe3ff28b1   (2026-10-12 11:14:37 +0000)
+Use northern UTM northing at the equator (#4848)
