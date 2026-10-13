@@ -9,7 +9,7 @@ Different `patched Colmap versions` (mimicking `ColmapForVisSat`) can be found [
 
 **In contrast to the original ColmapForVisSat library, this repository supports current CUDA versions (validated with CUDA 13.2 on Ubuntu 24.04; earlier patch set generations were also validated with CUDA 11.8).**
 
-Current patch files are created for the Colmap commit `7d0c470c7de051c8d28fbeb7142278ac56722aa2 (2026-10-07 14:35:31 +0200)` (35 patch files; the `mvs/texture_mapping_test.cc` patch only adapts an upstream unit test to the satellite `mvs::Image` and does not affect the binary).
+Current patch files are created for the Colmap commit `08c03ec309b1d56c08d09e7ffa2f90fbe3ff28b1 (2026-10-12 11:14:37 +0000)` (35 patch files; the `mvs/texture_mapping_test.cc` patch only adapts an upstream unit test to the satellite `mvs::Image` and does not affect the binary).
 The authoritative value is always the one in [compatible_commit.txt](compatible_commit.txt).
 
 ## Camera model
@@ -34,9 +34,31 @@ Consequences for **data compatibility**:
   `PERSPECTIVE`; rename it to `SKEWED_PINHOLE` (same parameters, same order)
   to load them with a current build.
 - `database.db` and binary models (`cameras.bin`) persist the numeric id.
-  Artifacts of the `b0af55be` and `dbb41680` generations (id 18) load
-  unchanged; artifacts of older generations (ids 11, 12, 14) must go through
+  Artifacts of the `b0af55be`, `dbb41680` and `7d0c470c` generations
+  (id 18) load unchanged; artifacts of older generations (ids 11, 12, 14) must go through
   the text format.
+
+## Pixel convention of the MVS
+
+Since Colmap commit `c6ab4f89` ([PR #4822](https://github.com/colmap/colmap/pull/4822))
+patch-match and fusion put pixel (col, row) of an image or depth map on the
+ray through its centre (col + 0.5, row + 0.5), the convention of Colmap's
+cameras and keypoints; before, they used (col, row) with the unshifted
+calibration, half a pixel off. The satellite patches build the MVS cameras
+themselves (double precision, with skew, 4x4 projections with VisSat's depth
+parameterization), so the same half-pixel shift lives in one helper,
+`mvs::Image::GetKPixelGrid` (cx - 0.5, cy - 0.5), which `Original` and
+`Rotate90/180/270` (patch-match) and `GetPinvP` (fusion) use. `GetK`, `GetP`,
+`GetKDouble` and `GetPinvPDouble` keep Colmap's convention; `GetPinvPDouble`
+is exported as `proj_mats.txt` / `inv_proj_mats.txt`.
+
+Consequences for **data compatibility**:
+
+- Pixel (col, row) of a depth map lies on the ray through (col + 0.5,
+  row + 0.5) of the camera in `cameras.txt` or `inv_proj_mats.txt`; readers
+  back-project there (VisSat's `aggregate_2p5d_util.py` since `793acea`).
+- Depth maps of earlier patch sets put that ray at (col, row). Do not mix
+  MVS workspaces of the two conventions.
 
 ## Known failing upstream tests
 
@@ -46,6 +68,10 @@ binaries fail by satellite design and are left as they are:
 - `mvs/fusion_test` and `mvs/workspace_test` abort in the satellite
   `mvs::Model::ReadFromCOLMAP`, whose CHECK admits only `PINHOLE` and
   `SKEWED_PINHOLE` cameras (the vanilla tests synthesize another model).
+  `fusion_test` also holds upstream's `StereoFusion.Rotation180Invariance`
+  (`c6ab4f89`); the satellite port of that fix is tested in
+  `mvs/image_test` instead (`Image.KPixelGrid*`, `Image.Original*`,
+  `Image.RotatedReferenceCameras*`, `Image.Fusion*`).
 - `mvs/depth_map_test` (`DepthMap.Empty`): the satellite depth sentinel is
   `-1e20`, the vanilla one `-1`.
 - `scene/reconstruction_test` (`Reconstruction.ReadAutoDetectFormat`): the
